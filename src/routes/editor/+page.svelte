@@ -2,30 +2,37 @@
   import { onMount } from 'svelte';
   import createInteractionHandler from '../../lib/interaction.js';
 
-  let pieces = $state([
-    { id: 1, x: 50, y: 50, rotation: 0, flipped: false, animationKey: 0 },
-    { id: 2, x: 150, y: 50, rotation: 0, flipped: false, animationKey: 0 },
-    { id: 3, x: 250, y: 50, rotation: 0, flipped: false, animationKey: 0 },
-    { id: 4, x: 350, y: 50, rotation: 0, flipped: false, animationKey: 0 },
-    { id: 5, x: 50, y: 150, rotation: 0, flipped: false, animationKey: 0 },
-    { id: 6, x: 150, y: 150, rotation: 0, flipped: false, animationKey: 0 },
-    { id: 7, x: 250, y: 150, rotation: 0, flipped: false, animationKey: 0 },
+ let pieces = $state([
+    { id: 1, x: 50, y: 50, origX: 50, origY: 50, rotation: 0, flipped: false, animationKey: 0 },
+    { id: 2, x: 150, y: 50, origX: 150, origY: 50, rotation: 0, flipped: false, animationKey: 0 },
+    { id: 3, x: 250, y: 50, origX: 250, origY: 50, rotation: 0, flipped: false, animationKey: 0 },
+    { id: 4, x: 350, y: 50, origX: 350, origY: 50, rotation: 0, flipped: false, animationKey: 0 },
+    { id: 5, x: 50, y: 150, origX: 50, origY: 150, rotation: 0, flipped: false, animationKey: 0 },
+    { id: 6, x: 150, y: 150, origX: 150, origY: 150, rotation: 0, flipped: false, animationKey: 0 },
+    { id: 7, x: 250, y: 150, origX: 250, origY: 150, rotation: 0, flipped: false, animationKey: 0 },
   ]);
+
+  const PIECES_DATA = {
+    1: {  name: 'Le Grand Triangle',color: '#A9BCC4',story: 'Cette pièce représente la majestuosité de la pyramide de Khéops...',artwork: 'Pyramide de Khéops - Égypte Antique',points: '15,15 150,150 285,15' /* Large right triangle*/},
+    2: {	name: 'Le Triangle Moyen',	color: '#FFF35C',	story: 'Inspiré des voiles des navires vénitiens...',	artwork: 'Les Marchands de Venise - Canaletto',	points: '15,15 150,150 15,285' /* Large left triangle */ },
+    3: { 	name: 'Le Petit Triangle', 	color: '#2B3B6D', 	story: 'Cette petite forme géométrique fait écho...', 	artwork: "Livre d'Heures - Art Médiéval", 	points: '150,150 217,217 217,83' /* Small triangle (top right) */ },
+    4: { 	name: 'Le Carré', 	color: '#7AC142', 	story: "Le carré parfait représente l'équilibre...", 	artwork: 'Le Parthénon - Grèce Antique', 	points: '150,150 217,217 150,285 83,217' /* Square in center */ },
+    5: { 	name: 'Le Parallélogramme', 	color: '#6B8FD6', 	story: 'Cette oeuvre fait partie de la série...', 	artwork: 'MC Mitout. Les plus belles heures...', 	points: '217,83 217,217 285,150 285,15' /* Parallelogram (right) */ },
+    6: { 	name: 'Le Grand Trapèze', 	color: '#3B5D3A', 	story: 'Inspiré des toitures des pagodes japonaises...', 	artwork: 'Temple Kinkaku-ji - Architecture Japonaise', 	points: '15,285 150,285 83,217' /* Small triangle (bottom left) */ },
+    7: { 	name: 'Le Petit Trapèze', 	color: '#8B83D2', 	story: 'Cette dernière pièce représente les rayons...', 	artwork: 'Impression, soleil levant - Claude Monet', 	points: '150,285 285,150 285,285' /* Triangle (bottom right) */ }
+  };
+
+  const noFlipPieces = [4,6]; // Les pièces Le Grand Triangle id:1, Le Carré id:4, Le Grand Trapèze id:6 n'on pas besoin de flip
 
   // --- STATE ---
   let activePieceId = $state(null);
   let importJson = $state('');
   let containerSize = $state({ width: 0, height: 0 });
-
+  let puzzleScale = $state(1);
   let puzzleContainer;
-  const VIRTUAL_SIZE = 460;
 
   // --- DERIVED STATE ---
   const activePiece = $derived(pieces.find(p => p.id === activePieceId));
-
-  let scale = $derived(
-    Math.min(containerSize.width, containerSize.height) / VIRTUAL_SIZE || 0
-  );
 
   // This helper function does the geometry for us
   function getTransformedPoints(piece, pieceData) {
@@ -70,101 +77,87 @@
     dropSound = new Audio('/snd/tap_04.mp3');
   });
 
-  function rotateActivePiece() {
-    if (activePiece) {
-      activePiece.rotation = (activePiece.rotation + 45) % 360;
-      activePiece.animationKey += 1;
-    }
+  function rotateActivePiece() { if (activePiece) { activePiece.rotation = (activePiece.rotation + 45) % 360; activePiece.animationKey += 1; } }
+  function flipActivePiece() { if (activePiece) { activePiece.flipped = !activePiece.flipped; activePiece.animationKey += 1; } }
+
+   function exportPuzzleData() {
+    // We should export the unscaled "orig" data so it can be re-imported reliably.
+    const dataToExport = pieces.map(({ id, origX, origY, rotation, flipped }) => ({ x: origX, y: origY, id, rotation, flipped }));
+    const jsonString = JSON.stringify(dataToExport, null, 2);
+    console.log(jsonString);
+    navigator.clipboard.writeText(jsonString).then(() => {
+        alert('Puzzle data copied to clipboard!');
+    }, () => {
+        alert('Puzzle data logged to console.');
+    });
   }
 
-  function flipActivePiece() {
-    if (activePiece) {
-      activePiece.flipped = !activePiece.flipped;
-    }
-  }
-
-  function exportPuzzleData() {
-    console.log(JSON.stringify(pieces, null, 2));
-    alert('Puzzle data has been logged to the console! (Press F12)');
-  }
-
-function handleImport() {
-    if (!importJson.trim()) {
-      alert('Please paste puzzle data into the text area first.');
-      return;
-    }
-    try {
-      const importedPieces = JSON.parse(importJson);
-      if (Array.isArray(importedPieces) && importedPieces.length > 0 && 'id' in importedPieces[0]) {
-        pieces = importedPieces;
-
-        // Double RAF to ensure DOM is fully updated
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            fitPuzzle();
-          });
-        });
-
-        alert('Puzzle imported successfully!');
-      } else {
-        alert('Invalid puzzle data format.');
+  function handleImport() {
+      if (!importJson.trim()) {
+        alert('Please paste puzzle data into the text area first.');
+        return;
       }
-    } catch (e) {
-      alert('Failed to parse JSON. Please check the data for errors.');
-      console.error("JSON Parse Error:", e);
-    }
-}
+      try {
+        const importedData = JSON.parse(importJson);
+        if (Array.isArray(importedData) && importedData.length > 0 && 'id' in importedData[0]) {
+          pieces = importedData.map(p => ({
+            ...p,
+            origX: p.x,
+            origY: p.y,
+            animationKey: 0
+          }));
 
+          requestAnimationFrame(() => {
+              fitPuzzle();
+          });
+
+          alert('Puzzle imported successfully!');
+        } else {
+          alert('Invalid puzzle data format.');
+        }
+      } catch (e) {
+        alert('Failed to parse JSON. Please check the data for errors.');
+        console.error("JSON Parse Error:", e);
+      }
+  }
 
   function draggable(node, params) {
     let offsetX, offsetY;
 
     const handlePointerDown = createInteractionHandler({
-    // onDown: Called when the pointer is first pressed
-    onDown: (e) => {
-      activePieceId = params.pieceId;
-      playSound(pickupSound);
+      onDown: (e) => {
+        activePieceId = params.pieceId;
+        playSound(pickupSound);
+        const piece = pieces.find(p => p.id === params.pieceId);
+        if (!piece) return;
 
-      // Calculate the initial offset for dragging
-      const piece = pieces.find(p => p.id === params.pieceId);
-      if (!piece) return;
-      const rect = params.container.getBoundingClientRect();
-      const pointerX = (e.clientX - rect.left) / scale;
-      const pointerY = (e.clientY - rect.top) / scale;
-      offsetX = pointerX - piece.x;
-      offsetY = pointerY - piece.y;
-    },
+        // piece.x/y is the center. e.clientX/Y is absolute.
+        // We need the offset between the pointer and the piece's center.
+        offsetX = e.clientX - piece.x;
+        offsetY = e.clientY - piece.y;
+      },
+      onDrag: (e) => {
+        const piece = pieces.find(p => p.id === params.pieceId);
+        if (!piece) return;
 
-    // onDrag: Called when the pointer moves enough to be a drag
-    onDrag: (e) => {
-      const piece = pieces.find(p => p.id === params.pieceId);
-      if (!piece) return;
-
-      const rect = params.container.getBoundingClientRect();
-      const pointerX = (e.clientX - rect.left) / scale;
-      const pointerY = (e.clientY - rect.top) / scale;
-      piece.x = Math.round(pointerX - offsetX);
-      piece.y = Math.round(pointerY - offsetY);
-    },
-
-    // onEnd: Called when the pointer is released
-    onEnd: (e, wasTap, wasDrag) => {
-      if (wasTap) {
-        rotateActivePiece(); // Reuse the component method
-      } else if (wasDrag) {
-        playSound(dropSound);
+        // The new center is simply the current pointer position minus the initial offset.
+        piece.x = Math.round(e.clientX - offsetX);
+        piece.y = Math.round(e.clientY - offsetY);
+      },
+      onEnd: (e, wasTap, wasDrag) => {
+        if (wasTap) {
+          rotateActivePiece();
+        } else if (wasDrag) {
+          playSound(dropSound);
+        }
       }
-    }
-  });
+    });
 
-  node.addEventListener('pointerdown', handlePointerDown);
-
-  return {
-    destroy: () => {
-      node.removeEventListener('pointerdown', handlePointerDown);
-    }
-  };
-}
+    node.addEventListener('pointerdown', handlePointerDown);
+    return {
+      destroy: () => node.removeEventListener('pointerdown', handlePointerDown)
+    };
+  }
 
   function unlockAudio() {
     if (audioUnlocked) return;
@@ -185,13 +178,18 @@ function handleImport() {
     audio.play();
   }
 
-  function observeResize(node, onResize) {
+  function observeResize(node) {
     const observer = new ResizeObserver(entries => {
-      onResize(entries[0].contentRect);
+      // Get the new dimensions from the resize event
+      const rect = entries[0].contentRect;
+      // Update the container size state
+      containerSize.width = rect.width;
+      containerSize.height = rect.height;
+      // ✅ Call fitPuzzle directly from here
+      fitPuzzle();
     });
     observer.observe(node);
 
-    // The destroy function handles cleanup automatically when the component is removed.
     return {
       destroy() {
         observer.unobserve(node);
@@ -199,15 +197,16 @@ function handleImport() {
     };
   }
 
-  function fitPuzzle() {
-    if (pieces.length === 0 || !puzzleContainer) return;
+   function fitPuzzle() {
+    if (pieces.length === 0 || !containerSize.width) return;
 
-    // STEP 1: Compute all transformed vertices for every piece
+    // STEP 1: Get all vertices from the original, unscaled puzzle data.
     const allTransformedPoints = pieces.flatMap(p =>
-      getTransformedPoints(p, PIECES_DATA_WITH_VIEWBOX[p.id])
+      getTransformedPoints({ ...p, x: p.origX, y: p.origY }, PIECES_DATA_WITH_VIEWBOX[p.id])
     );
+    if (allTransformedPoints.length === 0) return;
 
-    // STEP 2: Calculate the puzzle's collective bounding box
+    // STEP 2: Calculate the puzzle's bounding box in its own coordinate space.
     const xs = allTransformedPoints.map(p => p.x);
     const ys = allTransformedPoints.map(p => p.y);
 
@@ -225,34 +224,33 @@ function handleImport() {
       y: (puzzleBounds.minY + puzzleBounds.maxY) / 2
     };
 
-    // STEP 3: Calculate scale to fit width
-    const padding = 0; // padding in virtual units
-    const targetWidth = VIRTUAL_SIZE - padding * 2;
-    const targetHeight = VIRTUAL_SIZE - padding * 2;
+    if (puzzleWidth === 0 || puzzleHeight === 0) return;
+
+    // STEP 3: Calculate scale factor to fit the puzzle into the CONTAINER.
+    const padding = 40; // Pixel padding
+    const targetWidth = containerSize.width - padding * 2;
+    const targetHeight = containerSize.height - padding * 2;
     const scaleFactor = Math.min(targetWidth / puzzleWidth, targetHeight / puzzleHeight);
 
-    // STEP 4: Scale and reposition all pieces
+    // Store this scale to apply to piece dimensions.
+    puzzleScale = scaleFactor;
+
+    // STEP 4: Reposition all pieces based on the new scale and container center.
+    const containerCenterX = containerSize.width / 2;
+    const topAnchorY = padding + (puzzleHeight * scaleFactor) / 2;
+
     for (const piece of pieces) {
-      // Move to origin, scale, then move to final position
-      const dx = piece.x - puzzleCenter.x;
-      const dy = piece.y - puzzleCenter.y;
+      const dx = piece.origX - puzzleCenter.x;
+      const dy = piece.origY - puzzleCenter.y;
 
-      piece.x = Math.round(VIRTUAL_SIZE / 2 + dx * scaleFactor);
-      piece.y = Math.round(VIRTUAL_SIZE / 2 + dy * scaleFactor);
+      // The new position is in pixels, relative to the container.
+      const newX = containerCenterX + (dx * scaleFactor);
+      const newY = topAnchorY + (dy * scaleFactor);
+
+      piece.x = Math.round(newX);
+      piece.y = Math.round(newY);
     }
-}
-
-  const PIECES_DATA = {
-    1: {  name: 'Le Grand Triangle',color: '#A9BCC4',story: 'Cette pièce représente la majestuosité de la pyramide de Khéops...',artwork: 'Pyramide de Khéops - Égypte Antique',points: '15,15 150,150 285,15' /* Large right triangle*/},
-    2: {	name: 'Le Triangle Moyen',	color: '#FFF35C',	story: 'Inspiré des voiles des navires vénitiens...',	artwork: 'Les Marchands de Venise - Canaletto',	points: '15,15 150,150 15,285' /* Large left triangle */ },
-    3: { 	name: 'Le Petit Triangle', 	color: '#2B3B6D', 	story: 'Cette petite forme géométrique fait écho...', 	artwork: "Livre d'Heures - Art Médiéval", 	points: '150,150 217,217 217,83' /* Small triangle (top right) */ },
-    4: { 	name: 'Le Carré', 	color: '#7AC142', 	story: "Le carré parfait représente l'équilibre...", 	artwork: 'Le Parthénon - Grèce Antique', 	points: '150,150 217,217 150,285 83,217' /* Square in center */ },
-    5: { 	name: 'Le Parallélogramme', 	color: '#6B8FD6', 	story: 'Cette oeuvre fait partie de la série...', 	artwork: 'MC Mitout. Les plus belles heures...', 	points: '217,83 217,217 285,150 285,15' /* Parallelogram (right) */ },
-    6: { 	name: 'Le Grand Trapèze', 	color: '#3B5D3A', 	story: 'Inspiré des toitures des pagodes japonaises...', 	artwork: 'Temple Kinkaku-ji - Architecture Japonaise', 	points: '15,285 150,285 83,217' /* Small triangle (bottom left) */ },
-    7: { 	name: 'Le Petit Trapèze', 	color: '#8B83D2', 	story: 'Cette dernière pièce représente les rayons...', 	artwork: 'Impression, soleil levant - Claude Monet', 	points: '150,285 285,150 285,285' /* Triangle (bottom right) */ }
-  };
-
-  const noFlipPieces = [4,6]; // Les pièces Le Grand Triangle id:1, Le Carré id:4, Le Grand Trapèze id:6 n'on pas besoin de flip
+  }
 
   function calculateViewBox(pointsStr) {
     const points = pointsStr.split(' ').map(p => p.split(',').map(Number));
@@ -280,23 +278,22 @@ function handleImport() {
     })
   );
 
-  function centerPuzzle() {
-    if (pieces.length === 0) return;
-    // Find the average center of all piece anchor points (in virtual coords)
-    const sum = pieces.reduce((acc, p) => ({ x: acc.x + p.x, y: acc.y + p.y }), { x: 0, y: 0 });
-    const puzzleCenterX = sum.x / pieces.length;
-    const puzzleCenterY = sum.y / pieces.length;
+  // function centerPuzzle() {
+  //   if (pieces.length === 0) return;
+  //   // Find the average center of all piece anchor points (in virtual coords)
+  //   const sum = pieces.reduce((acc, p) => ({ x: acc.x + p.x, y: acc.y + p.y }), { x: 0, y: 0 });
+  //   const puzzleCenterX = sum.x / pieces.length;
+  //   const puzzleCenterY = sum.y / pieces.length;
 
-    // Center in virtual space
-    const offsetX = VIRTUAL_SIZE / 2 - puzzleCenterX;
-    const offsetY = VIRTUAL_SIZE / 2 - puzzleCenterY;
+  //   // Center in virtual space
+  //   const offsetX = VIRTUAL_SIZE / 2 - puzzleCenterX;
+  //   const offsetY = VIRTUAL_SIZE / 2 - puzzleCenterY;
 
-    for (const piece of pieces) {
-      piece.x = Math.round(piece.x + offsetX);
-      piece.y = Math.round(piece.y + offsetY);
-    }
-  }
-
+  //   for (const piece of pieces) {
+  //     piece.x = Math.round(piece.x + offsetX);
+  //     piece.y = Math.round(piece.y + offsetY);
+  //   }
+  // }
 
 </script>
 
@@ -331,16 +328,15 @@ function handleImport() {
 
   .tangram-piece {
     position: absolute;
-    top: var(--y);
-    left: var(--x);
+    top: 0;
+    left: 0;
     width: var(--w);
     height: var(--h);
-    transform-origin: 50% 50%;
-    transform: translate(-50%, -50%) rotate(var(--rotation)) scaleX(var(--scaleX));
+    transform: translate(calc(var(--x) * 1px - 50%), calc(var(--y) * 1px - 50%)) rotate(var(--rotation)) scaleX(var(--scaleX));
     cursor: grab;
-    transition: top 0.2s, left 0.2s, transform 0.2s;
+    transition: transform 0.2s;
     pointer-events: none;
-    will-change: transform, top, left, width, height;
+    will-change: transform;
   }
 
   .tangram-piece.active {
@@ -401,51 +397,47 @@ function handleImport() {
   }
 </style>
 
-<div class="editor-wrapper"  onpointerdown={unlockAudio}>
-  <div bind:this={puzzleContainer}
+<div class="editor-wrapper" onpointerdown={unlockAudio}>
+  <div
+    bind:this={puzzleContainer}
     class="editor-canvas"
     onpointerdown={() => activePieceId = null}
-    use:observeResize={(rect) => {
-      containerSize.width = rect.width;
-      containerSize.height = rect.height;
-    }}>
+    use:observeResize
+  >
 
-
-      {#if scale > 0}
-        {#each pieces as piece (piece.id)}
-          {@const pieceData = PIECES_DATA_WITH_VIEWBOX[piece.id]}
-          <div
-            class="tangram-piece"
-            class:active={activePieceId === piece.id}
-            style="
-              --x: {piece.x * scale}px;
-              --y: {piece.y * scale}px;
-              --w: {pieceData.width * scale}px;
-              --h: {pieceData.height * scale}px;
-              --rotation: {piece.rotation}deg;
-              --scaleX: {piece.flipped ? -1 : 1};
-            "
+    {#each pieces as piece (piece.id)}
+      {@const pieceData = PIECES_DATA_WITH_VIEWBOX[piece.id]}
+      <div
+        class="tangram-piece"
+        class:active={activePieceId === piece.id}
+        style="
+          --x: {piece.x};
+          --y: {piece.y};
+          --w: {pieceData.width * puzzleScale}px;
+          --h: {pieceData.height * puzzleScale}px;
+          --rotation: {piece.rotation}deg;
+          --scaleX: {piece.flipped ? -1 : 1};
+        "
+      >
+        {#key piece.animationKey}
+          <svg
+            class="tangram-piece-svg"
+            class:wiggling-svg={activePieceId === piece.id}
+            viewBox={pieceData.viewBox}
           >
-            {#key piece.animationKey}
-              <svg
-                class="tangram-piece-svg wiggling-svg"
-                viewBox={pieceData.viewBox}
-                name={pieceData.name}
-              >
-                <polygon
-                  use:draggable={{ pieceId: piece.id, container: puzzleContainer }}
-                  points={pieceData.points}
-                  fill={pieceData.color} />
-              </svg>
-            {/key}
-          </div>
-        {/each}
-      {/if}
+            <polygon
+              use:draggable={{ pieceId: piece.id }}
+              points={pieceData.points}
+              fill={pieceData.color} />
+          </svg>
+        {/key}
+      </div>
+    {/each}
 
-     {#if activePiece}
+    {#if activePiece}
       <div
         class="action-buttons"
-        style="--x: {activePiece.x * scale}px; --y: {activePiece.y * scale}px;"
+        style="--x: {activePiece.x}; --y: {activePiece.y};"
         onpointerdown={(e) => e.stopPropagation()}
       >
         {#if !noFlipPieces.includes(activePiece.id)}
@@ -459,7 +451,6 @@ function handleImport() {
     <textarea bind:value={importJson} placeholder="Paste puzzle data here..."></textarea>
     <div class="flex gap-2">
       <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={handleImport}>Import</button>
-      <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={centerPuzzle}>Center Puzzle</button>
       <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={fitPuzzle}>Fit</button>
       <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={exportPuzzleData}>Export</button>
     </div>

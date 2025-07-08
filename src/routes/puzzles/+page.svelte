@@ -64,52 +64,52 @@
 ]
 
 const planePuzzle = [
-    {
-    "id": 1,
+  {
     "x": 675,
     "y": 421,
+    "id": 1,
     "rotation": 180,
     "flipped": false
   },
   {
-    "id": 2,
     "x": 947,
     "y": 421,
+    "id": 2,
     "rotation": 270,
     "flipped": false
   },
   {
-    "id": 3,
     "x": 777,
     "y": 422,
+    "id": 3,
     "rotation": 0,
     "flipped": false
   },
   {
-    "id": 4,
     "x": 813,
     "y": 537,
+    "id": 4,
     "rotation": 45,
     "flipped": false
   },
   {
-    "id": 5,
     "x": 845,
     "y": 388,
+    "id": 5,
     "rotation": 0,
     "flipped": false
   },
   {
-    "id": 6,
     "x": 836,
     "y": 608,
+    "id": 6,
     "rotation": 45,
     "flipped": false
   },
   {
-    "id": 7,
     "x": 878,
     "y": 286,
+    "id": 7,
     "rotation": 180,
     "flipped": false
   }
