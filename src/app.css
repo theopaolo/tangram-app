@@ -1,1 +1,5 @@
 @import 'tailwindcss';
+
+.btn-primary {
+  @apply bg-white text-black font-extrabold text-3xl uppercase py-2 px-4 w-fit border-4 border-solid border-black shadow-[8px_16px_0_0_black];
+}
