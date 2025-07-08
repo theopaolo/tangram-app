@@ -197,60 +197,34 @@
     };
   }
 
-   function fitPuzzle() {
-    if (pieces.length === 0 || !containerSize.width) return;
+function fitPuzzle() {
+  if (pieces.length === 0 || !containerSize.width) return;
+  const gutter = -1;
 
-    // STEP 1: Get all vertices from the original, unscaled puzzle data.
-    const allTransformedPoints = pieces.flatMap(p =>
-      getTransformedPoints({ ...p, x: p.origX, y: p.origY }, PIECES_DATA_WITH_VIEWBOX[p.id])
-    );
-    if (allTransformedPoints.length === 0) return;
+  const allPts = pieces.flatMap(p =>
+    getTransformedPoints(
+      { ...p, x: p.origX, y: p.origY },
+      PIECES_DATA_WITH_VIEWBOX[p.id]
+    )
+  );
+  const xs = allPts.map(p => p.x),
+        ys = allPts.map(p => p.y);
+  const bounds = {
+    minX: Math.min(...xs),
+    maxX: Math.max(...xs),
+    minY: Math.min(...ys),
+    maxY: Math.max(...ys),
+  };
+  const puzzleWidth  = bounds.maxX - bounds.minX;
+  const availableWidth = containerSize.width - gutter * 2;
+  const scaleFactor = availableWidth / puzzleWidth;
+  puzzleScale = scaleFactor;
 
-    // STEP 2: Calculate the puzzle's bounding box in its own coordinate space.
-    const xs = allTransformedPoints.map(p => p.x);
-    const ys = allTransformedPoints.map(p => p.y);
-
-    const puzzleBounds = {
-      minX: Math.min(...xs),
-      minY: Math.min(...ys),
-      maxX: Math.max(...xs),
-      maxY: Math.max(...ys),
-    };
-
-    const puzzleWidth = puzzleBounds.maxX - puzzleBounds.minX;
-    const puzzleHeight = puzzleBounds.maxY - puzzleBounds.minY;
-    const puzzleCenter = {
-      x: (puzzleBounds.minX + puzzleBounds.maxX) / 2,
-      y: (puzzleBounds.minY + puzzleBounds.maxY) / 2
-    };
-
-    if (puzzleWidth === 0 || puzzleHeight === 0) return;
-
-    // STEP 3: Calculate scale factor to fit the puzzle into the CONTAINER.
-    const padding = 40; // Pixel padding
-    const targetWidth = containerSize.width - padding * 2;
-    const targetHeight = containerSize.height - padding * 2;
-    const scaleFactor = Math.min(targetWidth / puzzleWidth, targetHeight / puzzleHeight);
-
-    // Store this scale to apply to piece dimensions.
-    puzzleScale = scaleFactor;
-
-    // STEP 4: Reposition all pieces based on the new scale and container center.
-    const containerCenterX = containerSize.width / 2;
-    const topAnchorY = padding + (puzzleHeight * scaleFactor) / 2;
-
-    for (const piece of pieces) {
-      const dx = piece.origX - puzzleCenter.x;
-      const dy = piece.origY - puzzleCenter.y;
-
-      // The new position is in pixels, relative to the container.
-      const newX = containerCenterX + (dx * scaleFactor);
-      const newY = topAnchorY + (dy * scaleFactor);
-
-      piece.x = Math.round(newX);
-      piece.y = Math.round(newY);
-    }
+  for (const piece of pieces) {
+    piece.x = Math.round((piece.origX - bounds.minX) * scaleFactor + gutter);
+    piece.y = Math.round((piece.origY - bounds.minY) * scaleFactor + gutter);
   }
+}
 
   function calculateViewBox(pointsStr) {
     const points = pointsStr.split(' ').map(p => p.split(',').map(Number));
