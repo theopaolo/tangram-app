@@ -36,7 +36,6 @@
 
   // This helper function does the geometry for us
   function getTransformedPoints(piece, pieceData) {
-    // Center of rotation (from the original 300x300 viewBox)
     const originX = 150;
     const originY = 150;
 
@@ -185,7 +184,7 @@
       // Update the container size state
       containerSize.width = rect.width;
       containerSize.height = rect.height;
-      // ✅ Call fitPuzzle directly from here
+      // Call fitPuzzle directly from here
       fitPuzzle();
     });
     observer.observe(node);

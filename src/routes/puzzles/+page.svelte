@@ -1,5 +1,6 @@
 <script>
   import { browser } from '$app/environment';
+  import { onMount } from 'svelte';
 
 	const PIECES_DATA = {
 		1: {  name: 'Le Grand Triangle',color: '#A9BCC4',story: 'Cette pièce représente la majestuosité de la pyramide de Khéops...',artwork: 'Pyramide de Khéops - Égypte Antique',points: '15,15 150,150 285,15' /* Large right triangle*/},
@@ -115,6 +116,7 @@ const planePuzzle = [
   }
 ]
 
+
  let pickupSound, dropSound;
   let audioUnlocked = false;
   let audioContext;
@@ -168,51 +170,115 @@ const PIECES_DATA_WITH_VIEWBOX = Object.fromEntries(
     return [id, { ...piece, ...calculateViewBox(piece.points) }];
   })
 );
+
+// --- AUTO-FIT STATE ---
+let pieces = planePuzzle.map(p => ({ ...p, origX: p.x, origY: p.y }));
+let containerSize = { width: 0, height: 0 };
+let puzzleScale = 1;
+let puzzleContainer;
+
+function getTransformedPoints(piece, pieceData) {
+  const originX = 150, originY = 150;
+  const angle = piece.rotation * (Math.PI / 180);
+  const cos = Math.cos(angle), sin = Math.sin(angle);
+  const scaleX = piece.flipped ? -1 : 1;
+  const basePoints = pieceData.points.split(' ').map(p => p.split(',').map(Number));
+  return basePoints.map(([px, py]) => {
+    let x = px - originX, y = py - originY;
+    x *= scaleX;
+    const rx = x * cos - y * sin;
+    const ry = x * sin + y * cos;
+    return { x: rx + piece.x, y: ry + piece.y };
+  });
+}
+
+function fitPuzzle() {
+  if (!containerSize.width || pieces.length === 0) return;
+  const gutter = 0;
+  const allPts = pieces.flatMap(p =>
+    getTransformedPoints({ ...p, x: p.origX, y: p.origY }, PIECES_DATA_WITH_VIEWBOX[p.id])
+  );
+  if (!allPts.length) return;
+  const xs = allPts.map(pt => pt.x), ys = allPts.map(pt => pt.y);
+  const bounds = {
+    minX: Math.min(...xs), minY: Math.min(...ys),
+    maxX: Math.max(...xs), maxY: Math.max(...ys)
+  };
+  const puzzleWidth = bounds.maxX - bounds.minX;
+  const availableWidth = containerSize.width - gutter * 2;
+  puzzleScale = availableWidth / puzzleWidth;
+  for (const piece of pieces) {
+    piece.x = Math.round((piece.origX - bounds.minX) * puzzleScale + gutter);
+    piece.y = Math.round((piece.origY - bounds.minY) * puzzleScale + gutter);
+  }
+}
+
+function observeResize(node) {
+  const observer = new ResizeObserver(entries => {
+    const { width, height } = entries[0].contentRect;
+    containerSize.width = width;
+    containerSize.height = height;
+    fitPuzzle();
+  });
+  observer.observe(node);
+  return { destroy() { observer.unobserve(node); } };
+}
+
+onMount(() => {
+  fitPuzzle();
+});
 </script>
 
 <style>
   .puzzle-canvas {
     position: relative;
-    width: 400px;
-    height: 400px;
+    width: 100vw;
+    height: 100vh;
     border: 1px solid #ccc;
-    margin: 2rem; /* Added margin for better visibility */
   }
 
-  /* ✨ FIX: We apply positioning directly to the SVG */
-  .tangram-piece-svg {
-    /* Use top/left to set the anchor point */
+  .tangram-piece {
     position: absolute;
-    top: var(--y);
-    left: var(--x);
+    top: 0;
+    left: 0;
+    width: var(--w);
+    height: var(--h);
+    transform: translate(
+      calc(var(--x) * 1px - 50%),
+      calc(var(--y) * 1px - 50%)
+    )
+    rotate(var(--rotation))
+    scaleX(var(--scaleX));
+    transition: transform 0.2s;
+    pointer-events: none;
+    will-change: transform;
+  }
 
-    /* Center the piece on its anchor, then rotate/flip */
-    transform-origin: 50% 50%;
-    transform:
-      translate(-50%, -50%) /* This centers the piece on the (x,y) coordinate */
-      rotate(var(--rotation))
-      scaleX(var(--scaleX));
-    transition: transform 0.3s ease;
+  .tangram-piece-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
   }
 </style>
 
-<div class="puzzle-canvas">
-  {#each planePuzzle as pieceTransform}
-    {@const pieceData = PIECES_DATA_WITH_VIEWBOX[pieceTransform.id]}
-
-    <svg
-      class="tangram-piece-svg"
-      viewBox={pieceData.viewBox}
-      width={pieceData.width}
-      height={pieceData.height}
+<div class="puzzle-canvas" bind:this={puzzleContainer} use:observeResize>
+  {#each pieces as piece}
+    {@const pieceData = PIECES_DATA_WITH_VIEWBOX[piece.id]}
+    <div
+      class="tangram-piece"
       style="
-        --x: {pieceTransform.x}px;
-        --y: {pieceTransform.y}px;
-        --rotation: {pieceTransform.rotation}deg;
-        --scaleX: {pieceTransform.flipped ? -1 : 1};
+        --x: {piece.x};
+        --y: {piece.y};
+        --w: {pieceData.width * puzzleScale}px;
+        --h: {pieceData.height * puzzleScale}px;
+        --rotation: {piece.rotation}deg;
+        --scaleX: {piece.flipped ? -1 : 1};
       "
     >
-      <polygon points={pieceData.points} fill={pieceData.color} />
-    </svg>
+      <svg class="tangram-piece-svg" viewBox={pieceData.viewBox}>
+        <polygon points={pieceData.points} fill={pieceData.color} />
+      </svg>
+    </div>
   {/each}
 </div>
