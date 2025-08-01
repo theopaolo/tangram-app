@@ -253,6 +253,59 @@
     };
   }
 
+  // Calculate triangle area using shoelace formula
+  function calculateTriangleArea(pointsStr) {
+    const points = pointsStr.split(' ').map(p => p.split(',').map(Number));
+    if (points.length !== 3) return 0; // Not a triangle
+
+    const [x1, y1] = points[0];
+    const [x2, y2] = points[1];
+    const [x3, y3] = points[2];
+
+    return Math.abs((x1*(y2-y3) + x2*(y3-y1) + x3*(y1-y2)) / 2);
+  }
+
+  // Get triangle similarity groups based on area
+  function getTriangleSimilarityGroups() {
+    const trianglePieces = [1, 2, 3, 6, 7]; // All triangle pieces
+    const areas = {};
+
+    // Calculate areas for all triangles
+    trianglePieces.forEach(id => {
+      areas[id] = calculateTriangleArea(PIECES_DATA[id.toString()].points);
+    });
+
+    console.log("Triangle areas:", areas);
+
+    // Group triangles by similar area (within 5% tolerance)
+    const groups = [];
+    const used = new Set();
+
+    trianglePieces.forEach(id1 => {
+      if (used.has(id1)) return;
+
+      const group = [id1];
+      used.add(id1);
+
+      trianglePieces.forEach(id2 => {
+        if (id1 !== id2 && !used.has(id2)) {
+          const areaDiff = Math.abs(areas[id1] - areas[id2]) / areas[id1];
+          if (areaDiff < 0.05) { // 5% tolerance
+            group.push(id2);
+            used.add(id2);
+          }
+        }
+      });
+
+      if (group.length > 1) {
+        groups.push(group);
+      }
+    });
+
+    console.log("Triangle similarity groups:", groups);
+    return groups;
+  }
+
   function checkRotationMatch(pieceId, pieceRotation, targetId, targetRotation) {
     // Normalize rotations to 0-359 range
     const normalizeDegrees = (deg) => ((deg % 360) + 360) % 360;
@@ -266,37 +319,22 @@
       return normalizedDiff % 90 === 0;
     }
 
-        // For interchangeable pieces, allow more flexible rotation matching
-    const interchangeableGroups = [
-      [1, 2], // Le Grand Triangle and Le Triangle Moyen (mirror triangles)
-      [3, 6]  // Le Petit Triangle and Le Grand Trapèze
-    ];
+            // For interchangeable triangles, use dynamic similarity groups
+    const triangleGroups = getTriangleSimilarityGroups();
+    const triangleGroup = triangleGroups.find(g => g.includes(pieceId) && g.includes(targetId));
 
-    const group = interchangeableGroups.find(g => g.includes(pieceId));
-    if (group && group.includes(targetId)) {
-      // For interchangeable pieces, get both pieces' original rotations
-      const piece1Original = planePuzzle.find(t => t.id === group[0]);
-      const piece2Original = planePuzzle.find(t => t.id === group[1]);
+    if (triangleGroup) {
+      // For similar triangles, allow very flexible rotation
+      // Get all target rotations used by pieces in this group
+      const groupTargetRotations = triangleGroup.map(id => {
+        const target = planePuzzle.find(t => t.id === id);
+        return target ? normalizeDegrees(target.rotation) : null;
+      }).filter(rot => rot !== null);
 
-      if (piece1Original && piece2Original) {
-        // Calculate the rotation difference between the two pieces
-        const rotationDiff = normalizeDegrees(piece2Original.rotation - piece1Original.rotation);
+      console.log(`    🔄 Triangle group ${triangleGroup} allows rotations: ${groupTargetRotations}°`);
 
-        // If piece is in its original target
-        if (pieceId === targetId) {
-          const originalRot = planePuzzle.find(t => t.id === pieceId).rotation;
-          return pieceRot === normalizeDegrees(originalRot);
-        }
-                // If piece is in the other interchangeable target
-        else {
-          const pieceOriginalRot = planePuzzle.find(t => t.id === pieceId).rotation;
-          const targetOriginalRot = planePuzzle.find(t => t.id === targetId).rotation;
-
-          // Allow the piece to use its own original rotation when going to interchangeable target
-          return pieceRot === normalizeDegrees(pieceOriginalRot) ||
-                 pieceRot === normalizeDegrees(targetOriginalRot);
-        }
-      }
+      // Allow any rotation used by this triangle group
+      return groupTargetRotations.includes(pieceRot);
     }
 
     // Default: exact rotation match
@@ -326,17 +364,20 @@
 
     console.log("✅ All pieces are out of container");
 
-    // Define interchangeable piece groups
-    const interchangeableGroups = [
-      [1, 2], // Le Grand Triangle and Le Triangle Moyen
-      [3, 6]  // Le Petit Triangle and Le Grand Trapèze
-    ];
+        // Get dynamic triangle similarity groups
+    const triangleSimilarityGroups = getTriangleSimilarityGroups();
 
     // Create a function to check if two pieces are interchangeable
     const areInterchangeable = (pieceId1, pieceId2) => {
-      return interchangeableGroups.some(group =>
+      // Check triangle similarity groups
+      const inSameTriangleGroup = triangleSimilarityGroups.some(group =>
         group.includes(pieceId1) && group.includes(pieceId2)
       );
+
+      // Also keep square compatibility for any target (squares work anywhere squares are expected)
+      const bothSquares = pieceId1 === 4 && pieceId2 === 4;
+
+      return inSameTriangleGroup || bothSquares;
     };
 
     // Track which pieces have been matched to avoid double-matching
@@ -374,16 +415,15 @@
         // Special rotation info for debugging
         if (piece.id === 4) {
           console.log(`    🔄 Square rotation: ${piece.rotation}° vs ${target.rotation}° (90° symmetric) = ${rotationMatch}`);
-        } else if ([1,2,3,6].includes(piece.id) && [1,2,3,6].includes(target.id) && piece.id !== target.id) {
-          // Calculate expected rotations for interchangeable pieces
-          const group = [[1,2],[3,6]].find(g => g.includes(piece.id));
+        } else if (triangleSimilarityGroups.some(g => g.includes(piece.id) && g.includes(target.id)) && piece.id !== target.id) {
+          // Calculate expected rotations for interchangeable triangles
+          const group = triangleSimilarityGroups.find(g => g.includes(piece.id) && g.includes(target.id));
           if (group) {
-            const piece1Orig = planePuzzle.find(t => t.id === group[0]);
-            const piece2Orig = planePuzzle.find(t => t.id === group[1]);
-            const rotDiff = piece2Orig.rotation - piece1Orig.rotation;
-            const targetOrig = planePuzzle.find(t => t.id === target.id);
-            const allowedRots = [targetOrig.rotation, targetOrig.rotation + rotDiff].map(r => ((r % 360) + 360) % 360);
-            console.log(`    🔄 Interchangeable: piece ${piece.id}@${piece.rotation}° → target ${target.id} (allows: ${allowedRots.join('° or ')}°) = ${rotationMatch}`);
+            const allowedRots = group.map(id => {
+              const target = planePuzzle.find(t => t.id === id);
+              return target ? target.rotation : null;
+            }).filter(rot => rot !== null);
+            console.log(`    🔄 Similar triangles: piece ${piece.id}@${piece.rotation}° → target ${target.id} (group ${group} allows: ${allowedRots.join('° or ')}°) = ${rotationMatch}`);
           }
         } else {
           console.log(`    🔄 Rotation match: ${rotationMatch} (${piece.rotation}° vs ${target.rotation}°)`);
@@ -442,6 +482,10 @@
   onMount(() => {
     initializePieces();
     fitTargets();
+
+    // Log triangle similarity groups on startup
+    console.log("🔍 Initializing robust triangle interchangeability...");
+    getTriangleSimilarityGroups();
   });
 </script>
 
