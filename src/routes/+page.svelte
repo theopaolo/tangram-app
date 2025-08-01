@@ -1,5 +1,5 @@
 
-<main class="container max-w-sm border p-4 flex flex-col gap-4 ">
+<main class="container max-w-sm border flex flex-col gap-4 ">
   <h1 class="uppercase text-4xl font-black text-center">CHROMOGRAM</h1>
 
   <p>CHROMOGRAM ou tangram des couleursest un jeu proposé par l'artiste Armelle Caron qui se renouvelle à chaque exposition.</p>
