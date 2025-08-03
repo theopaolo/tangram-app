@@ -342,6 +342,8 @@ function fitPuzzle() {
     stroke-width: 0;
     transition: stroke 0.2s, stroke-width 0.2s;
     pointer-events: auto;
+    /* Prevent default touch behaviors during drag */
+    touch-action: none;
   }
 
   .tangram-piece.active .tangram-piece-svg polygon {

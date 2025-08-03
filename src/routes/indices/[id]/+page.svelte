@@ -4,13 +4,55 @@
 	import { onMount } from 'svelte';
 
 	const PIECES_DATA = {
-		1: {  name: 'Le Grand Triangle',color: '#A9BCC4',story: 'Cette pièce représente la majestuosité de la pyramide de Khéops...',artwork: 'Pyramide de Khéops - Égypte Antique',points: '15,15 150,150 285,15' /* Large right triangle*/},
-		2: {	name: 'Le Triangle Moyen',	color: '#FFF35C',	story: 'Inspiré des voiles des navires vénitiens...',	artwork: 'Les Marchands de Venise - Canaletto',	points: '15,15 150,150 15,285' /* Large left triangle */ },
-    3: { 	name: 'Le Petit Triangle', 	color: '#2B3B6D', 	story: 'Cette petite forme géométrique fait écho...', 	artwork: "Livre d'Heures - Art Médiéval", 	points: '150,150 217,217 217,83' /* Small triangle (top right) */ },
-    4: { 	name: 'Le Carré', 	color: '#7AC142', 	story: "Le carré parfait représente l'équilibre...", 	artwork: 'Le Parthénon - Grèce Antique', 	points: '150,150 217,217 150,285 83,217' /* Square in center */ },
-    5: { 	name: 'Le Parallélogramme', 	color: '#6B8FD6', 	story: 'Cette oeuvre fait partie de la série...', 	artwork: 'MC Mitout. Les plus belles heures...', 	points: '217,83 217,217 285,150 285,15' /* Parallelogram (right) */ },
-    6: { 	name: 'Le Grand Trapèze', 	color: '#3B5D3A', 	story: 'Inspiré des toitures des pagodes japonaises...', 	artwork: 'Temple Kinkaku-ji - Architecture Japonaise', 	points: '15,285 150,285 83,217' /* Small triangle (bottom left) */ },
-    7: { 	name: 'Le Petit Trapèze', 	color: '#8B83D2', 	story: 'Cette dernière pièce représente les rayons...', 	artwork: 'Impression, soleil levant - Claude Monet', 	points: '150,285 285,150 285,285' /* Triangle (bottom right) */ }
+		1: {
+			name: 'Le Grand Triangle',
+			color: '#A9BCC4',
+			story: 'Cette pièce représente la majestuosité de la pyramide de Khéops...',
+			artwork: 'Pyramide de Khéops - Égypte Antique',
+			points: '15,15 150,150 285,15' /* Large right triangle*/
+		},
+		2: {
+			name: 'Le Triangle Moyen',
+			color: '#FFF35C',
+			story: 'Inspiré des voiles des navires vénitiens...',
+			artwork: 'Les Marchands de Venise - Canaletto',
+			points: '15,15 150,150 15,285' /* Large left triangle */
+		},
+		3: {
+			name: 'Le Petit Triangle',
+			color: '#2B3B6D',
+			story: 'Cette petite forme géométrique fait écho...',
+			artwork: "Livre d'Heures - Art Médiéval",
+			points: '150,150 217,217 217,83' /* Small triangle (top right) */
+		},
+		4: {
+			name: 'Le Carré',
+			color: '#7AC142',
+			story: "Le carré parfait représente l'équilibre...",
+			artwork: 'Le Parthénon - Grèce Antique',
+			points: '150,150 217,217 150,285 83,217' /* Square in center */
+		},
+		5: {
+			name: 'Le Parallélogramme',
+			color: '#6B8FD6',
+			story: 'Cette oeuvre fait partie de la série...',
+			artwork: 'MC Mitout. Les plus belles heures...',
+			points: '217,83 217,217 285,150 285,15' /* Parallelogram (right) */
+		},
+		6: {
+			name: 'Le Grand Trapèze',
+			color: '#3B5D3A',
+			story: 'Inspiré des toitures des pagodes japonaises...',
+			artwork: 'Temple Kinkaku-ji - Architecture Japonaise',
+			points: '15,285 150,285 83,217' /* Small triangle (bottom left) */
+		},
+		7: {
+			name: 'Le Petit Trapèze',
+			color: '#8B83D2',
+			story: 'Cette dernière pièce représente les rayons...',
+			artwork: 'Impression, soleil levant - Claude Monet',
+			points: '150,285 285,150 285,285' /* Triangle (bottom right) */
+		}
 	};
 
 	// --- STATE ---
@@ -65,11 +107,10 @@
 
 {#if currentPiece}
 	<div class="max-w-sm border p-4">
-
-    <header>
-      <h1>Chromograme #1</h1>
-      <nav>ce qu'il faut faire</nav>
-    </header>
+		<header>
+			<h1>Chromograme #1</h1>
+			<nav>ce qu'il faut faire</nav>
+		</header>
 
 		<h2 class="mb-4 text-4xl">
 			{currentPiece.name}

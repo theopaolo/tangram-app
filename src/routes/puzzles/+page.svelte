@@ -267,7 +267,7 @@
 
     // Triangle similarity groups are now managed by debug utils
 
-        function checkPuzzleSolution() {
+    function checkPuzzleSolution() {
     const tolerance = 25 * puzzleScale; // Scale the tolerance for precision
 
     if (DEBUG_MODE) {
@@ -420,6 +420,13 @@
   .puzzle-container {
     height: 100%;
     background: hsl(0, 0%, 96%);
+    border-radius: 8px;
+    /* Prevent scrolling/zooming when interacting with pieces */
+    touch-action: pan-x pan-y;
+    /* Improve touch responsiveness */
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
   }
 
   .puzzle-solved {
@@ -439,6 +446,11 @@
   .tangram-piece {
      transition: transform 0.2s;
      will-change: transform;
+     /* Prevent default touch behaviors during drag */
+     touch-action: none;
+     user-select: none;
+     -webkit-user-select: none;
+     -webkit-touch-callout: none;
   }
   .tangram-piece-svg polygon {
     pointer-events: auto;
@@ -478,6 +490,8 @@
     stroke-width: 0;
     pointer-events: auto;
     transition: stroke 0.2s, stroke-width 0.2s;
+    /* Prevent default touch behaviors during drag */
+    touch-action: none;
   }
 
   .tangram-piece.active .tangram-piece-svg polygon {
@@ -505,6 +519,11 @@
     height: 100%;
     cursor: grab;
     pointer-events: none;
+    /* Prevent default touch behaviors */
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
   }
 
   .container-piece:active {
@@ -515,6 +534,8 @@
     pointer-events: auto;
     height: 100%;
     width: 100%;
+    /* Prevent default touch behaviors during drag */
+    touch-action: none;
   }
   .success-message {
     position: fixed;
@@ -597,13 +618,15 @@
   }
 </style>
 
-<div class="puzzle-wrapper" on:pointerdown={unlockAudio}>
+<div class="puzzle-wrapper" onpointerdown={unlockAudio}>
 
-  <div class="puzzle-container {puzzleSolved ? 'puzzle-solved' : ''}"
-        bind:this={puzzleContainer}
-        use:observeResize
-        role="main"
-        tabindex="0" on:pointerdown={() => activePieceId = null} >
+  <!-- Puzzle area with padding -->
+  <div class="p-4 h-full">
+    <div class="puzzle-container {puzzleSolved ? 'puzzle-solved' : ''}"
+          bind:this={puzzleContainer}
+          use:observeResize
+          role="main"
+          onpointerdown={() => activePieceId = null} >
 
     <!-- Target outline -->
     {#each targetPieces as target (target.id)}
@@ -645,13 +668,14 @@
         {/key}
       </div>
     {/each}
+    </div>
   </div>
 
   {#if activePiece && !activePiece.inContainer}
     <div
       class="action-buttons"
       style="--x: {activePiece.x}px; --y: {activePiece.y}px;"
-      on:pointerdown|stopPropagation
+      onpointerdown={(e) => e.stopPropagation()}
     >
     </div>
   {/if}
