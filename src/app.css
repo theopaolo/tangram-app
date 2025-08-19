@@ -1,5 +1,82 @@
 @import 'tailwindcss';
 
+@theme {
+  --my-drop-shadow: 10px 10px black;
+  --text-micro: 0.563rem;
+  --text-mini: 0.625rem;
+  --text-title: 1.188rem;
+  --text-bouton: 0.938rem;
+  --text-corps: 0.813rem;
+  --text-intro: 1.75rem;
+
+  
+  --c1: #1B3C75;
+  --c2: #FFE215;
+  --c3: #A3CFE6;
+  --c4: #0B4ED1;
+  --c5: #1A5435;
+  --c6: #7B77D4;
+  --c7: #44A635;
+}
+body{
+  font-family: 'Inf Reg';
+  line-height: auto;
+  font-weight: normal;
+}
+img{
+  width: 100%;
+  height: auto;
+}
+
 .btn-primary {
   @apply bg-white text-black font-extrabold text-3xl uppercase py-2 px-4 w-fit border-4 border-solid border-black shadow-[8px_16px_0_0_black];
+}
+.current{
+   @apply underline
+}
+.desactivate{
+  @apply opacity-25
+}
+
+/*************************** FONT ***************************/
+@font-face {
+  font-family: 'Inf Reg';
+  src: url('/fonts/infini-regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inf It';
+  src: url('/fonts/infini-italic.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inf Bold';
+  src: url('/fonts/infini-bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inf Picto';
+  src: url('/fonts/infini-picto.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+.inf-reg{
+  font-family: 'Inf Reg';
+}
+.inf-ita{
+  font-family: 'Inf It';
+}
+.inf-bold{
+  font-family: 'Inf Bold';
+  font-weight: bold;
+}
+.inf-picto{
+  font-family: 'Inf Picto';
 }
