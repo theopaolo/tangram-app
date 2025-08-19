@@ -98,6 +98,14 @@
   let puzzleSolved = $state(false);
   let puzzleContainer,piecesContainer;
 
+  // --- MAGNETIC EFFECT CONSTANTS ---
+  const MAGNETIC_SNAP_DISTANCE = 100; // Distance in pixels to begin attraction
+  const MAGNETIC_SMOOTHNESS = 0.2; // Lower = stronger attraction each frame
+  const HARD_LOCK_DISTANCE = 28; // Inside this radius, piece locks to target and overrides grabbing
+  const SNAP_ON_RELEASE_DISTANCE = 48; // On release, snap perfectly if within this distance
+  let magneticTarget = $state(null); // Currently attracted target
+  let isMagnetLocked = $state(false); // When true, piece stays fixed on target while dragging
+
   // Debug state
   let debugInfo = $state({
     tolerance: 0,
@@ -109,6 +117,34 @@
 
   // Derived state
   const activePiece = $derived(pieces.find(p => p.id === activePieceId));
+
+  // Find the closest compatible target for magnetic attraction
+  function findMagneticTarget(piece) {
+    if (!piece || piece.inContainer) return null;
+
+    let closestTarget = null;
+    let minDistance = MAGNETIC_SNAP_DISTANCE;
+
+    for (const target of targetPieces) {
+      // Check if piece can go in this target (same ID or interchangeable)
+      const canFitTarget = piece.id === target.id || areInterchangeable(piece.id, target.id, PIECES_DATA);
+      if (!canFitTarget) continue;
+
+      // Check rotation compatibility
+      const rotationMatch = checkRotationMatch(piece.id, piece.rotation, target.id, target.rotation, planePuzzle, PIECES_DATA, false);
+      if (!rotationMatch) continue;
+
+      // Calculate distance
+      const distance = Math.hypot(piece.x - target.screenX, piece.y - target.screenY);
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestTarget = target;
+      }
+    }
+
+    return closestTarget;
+  }
 
   function getTransformedPoints(piece, pieceData) {
     const originX = 150, originY = 150;
@@ -224,8 +260,36 @@
         if (!piece) return;
 
         const rect = puzzleContainer.getBoundingClientRect();
-        piece.x = Math.round(e.clientX - rect.left - offsetX);
-        piece.y = Math.round(e.clientY - rect.top - offsetY);
+        const newX = Math.round(e.clientX - rect.left - offsetX);
+        const newY = Math.round(e.clientY - rect.top - offsetY);
+
+        // Temporarily set position to check for magnetic targets
+        piece.x = newX;
+        piece.y = newY;
+
+        // Check for magnetic attraction
+        const target = findMagneticTarget(piece);
+        magneticTarget = target;
+
+        if (target) {
+          const targetDistance = Math.hypot(newX - target.screenX, newY - target.screenY);
+
+          // Inside hard-lock zone, override grabbing and stick to target center
+          if (targetDistance <= HARD_LOCK_DISTANCE) {
+            isMagnetLocked = true;
+            piece.x = target.screenX;
+            piece.y = target.screenY;
+          } else {
+            // Outside lock zone but within magnetic range, apply strong attraction
+            isMagnetLocked = false;
+            const attractionStrength = Math.max(0, 1 - targetDistance / MAGNETIC_SNAP_DISTANCE);
+            piece.x = newX + (target.screenX - newX) * attractionStrength * (1 - MAGNETIC_SMOOTHNESS);
+            piece.y = newY + (target.screenY - newY) * attractionStrength * (1 - MAGNETIC_SMOOTHNESS);
+          }
+        } else {
+          // No target nearby → ensure lock is cleared
+          isMagnetLocked = false;
+        }
 
         pieces = pieces; // Trigger reactivity
       },
@@ -240,18 +304,36 @@
         } else if (wasDrag) {
           playSound(dropSound);
 
-          // Check if piece should return to container
-          const piecesRect = piecesContainer.getBoundingClientRect();
+          // If near a valid target, snap perfectly into place and override rotation
+          const target = findMagneticTarget(piece);
+          if (target) {
+            const dist = Math.hypot(piece.x - target.screenX, piece.y - target.screenY);
+            if (isMagnetLocked || dist <= SNAP_ON_RELEASE_DISTANCE) {
+              piece.inContainer = false;
+              piece.x = target.screenX;
+              piece.y = target.screenY;
+              piece.rotation = target.rotation;
+              piece.animationKey += 1;
+            }
+          }
 
-          if (e.clientY > piecesRect.top - 50) {
-            // Return to container
-            piece.inContainer = true;
-            piece.x = 0;
-            piece.y = 0;
-            piece.rotation = 0;
-            piece.animationKey += 1;
+          // Check if piece should return to container (only if not snapped)
+          if (!target || !(isMagnetLocked || Math.hypot(piece.x - target.screenX, piece.y - target.screenY) <= SNAP_ON_RELEASE_DISTANCE)) {
+            const piecesRect = piecesContainer.getBoundingClientRect();
+            if (e.clientY > piecesRect.top - 50) {
+              // Return to container
+              piece.inContainer = true;
+              piece.x = 0;
+              piece.y = 0;
+              piece.rotation = 0;
+              piece.animationKey += 1;
+            }
           }
         }
+
+        // Clear magnetic target
+        magneticTarget = null;
+        isMagnetLocked = false;
 
         // Check puzzle solution
         checkPuzzleSolution();
@@ -443,6 +525,19 @@
     transform: translate(calc(var(--x) * 1px - 50%), calc(var(--y) * 1px - 50%)) rotate(var(--rotation)) scaleX(var(--scaleX));
     pointer-events: none;
   }
+
+  .target-outline.magnetic-target {
+    animation: magneticGlow 0.8s ease-in-out infinite alternate;
+  }
+
+  @keyframes magneticGlow {
+    0% {
+      filter: drop-shadow(0 0 5px rgba(76, 175, 80, 0.6));
+    }
+    100% {
+      filter: drop-shadow(0 0 15px rgba(76, 175, 80, 0.9));
+    }
+  }
   .tangram-piece {
      transition: transform 0.2s;
      will-change: transform;
@@ -631,7 +726,9 @@
     <!-- Target outline -->
     {#each targetPieces as target (target.id)}
       {@const pieceData = PIECES_DATA_WITH_VIEWBOX[target.id]}
+      {@const isMagneticTarget = magneticTarget && magneticTarget.id === target.id}
       <div class="target-outline"
+        class:magnetic-target={isMagneticTarget}
         style="
           --x: {target.screenX};
           --y: {target.screenY};
@@ -641,7 +738,7 @@
           --scaleX: 1;"
         >
         <svg class="tangram-piece-svg" viewBox={pieceData.viewBox}>
-          <polygon points={pieceData.points} fill="#000" opacity="0.1" stroke="#555" stroke-width="2" stroke-dasharray="5,5" />
+          <polygon points={pieceData.points} fill="#000" opacity="0.1" stroke="{isMagneticTarget ? '#4CAF50' : '#555'}" stroke-width="{isMagneticTarget ? '3' : '2'}" stroke-dasharray="5,5" />
         </svg>
       </div>
     {/each}

@@ -73,6 +73,15 @@ export function getTriangleSimilarityGroups(PIECES_DATA, enableLogging = false) 
 }
 
 /**
+ * Explicit interchangeability groups for this puzzle layout
+ * Ensures critical pairs are interchangeable even if geometric grouping is off by tolerance.
+ */
+const EXPLICIT_INTERCHANGEABLE_GROUPS = [
+  [1, 2], // Two large triangles
+  [3, 6], // Two small triangles (blue/navy and green)
+];
+
+/**
  * Check if rotation is valid for a piece/target combination with smart logic
  * @param {number} pieceId - ID of the piece being placed
  * @param {number} pieceRotation - Current rotation of the piece
@@ -102,14 +111,19 @@ export function checkRotationMatch(pieceId, pieceRotation, targetId, targetRotat
     return result;
   }
 
-  // For interchangeable triangles, use dynamic similarity groups
-  const triangleGroups = getTriangleSimilarityGroups(PIECES_DATA, false);
-  const triangleGroup = triangleGroups.find(g => g.includes(pieceId) && g.includes(targetId));
+  // For interchangeable pieces, allow any rotation that appears for any member in the interchangeable group
+  const allIds = Object.keys(PIECES_DATA).map(Number);
+  const inExplicitSameGroup = EXPLICIT_INTERCHANGEABLE_GROUPS.some(g => g.includes(pieceId) && g.includes(targetId));
+  const inDynamicSameGroup = getTriangleSimilarityGroups(PIECES_DATA, false).some(g => g.includes(pieceId) && g.includes(targetId));
 
-  if (triangleGroup) {
-    // For similar triangles, allow very flexible rotation
-    // Get all target rotations used by pieces in this group
-    const groupTargetRotations = triangleGroup.map(id => {
+  if (inExplicitSameGroup || inDynamicSameGroup) {
+    const groupIds = allIds.filter(id => {
+      const inExplicit = EXPLICIT_INTERCHANGEABLE_GROUPS.some(g => g.includes(id) && (g.includes(pieceId) || g.includes(targetId)));
+      const inDynamic = getTriangleSimilarityGroups(PIECES_DATA, false).some(g => g.includes(id) && (g.includes(pieceId) || g.includes(targetId)));
+      return inExplicit || inDynamic;
+    });
+
+    const groupTargetRotations = groupIds.map(id => {
       const target = planePuzzle.find(t => t.id === id);
       return target ? normalizeDegrees(target.rotation) : null;
     }).filter(rot => rot !== null);
@@ -117,7 +131,7 @@ export function checkRotationMatch(pieceId, pieceRotation, targetId, targetRotat
     const result = groupTargetRotations.includes(pieceRot);
 
     if (enableLogging) {
-      console.log(`    🔄 Similar triangles: piece ${pieceId}@${pieceRotation}° → target ${targetId} (group ${triangleGroup} allows: ${groupTargetRotations.join('° or ')}°) = ${result}`);
+      console.log(`    🔄 Interchangeable group rotation: piece ${pieceId}@${pieceRotation}° → target ${targetId} (group ${groupIds} allows: ${groupTargetRotations.join('° or ')}°) = ${result}`);
     }
 
     return result;
@@ -149,10 +163,15 @@ export function areInterchangeable(pieceId1, pieceId2, PIECES_DATA) {
     group.includes(pieceId1) && group.includes(pieceId2)
   );
 
+  // Check explicit groups
+  const inSameExplicitGroup = EXPLICIT_INTERCHANGEABLE_GROUPS.some(group =>
+    group.includes(pieceId1) && group.includes(pieceId2)
+  );
+
   // Also keep square compatibility for any target (squares work anywhere squares are expected)
   const bothSquares = pieceId1 === 4 && pieceId2 === 4;
 
-  return inSameTriangleGroup || bothSquares;
+  return inSameTriangleGroup || inSameExplicitGroup || bothSquares;
 }
 
 /**
