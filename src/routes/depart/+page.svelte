@@ -18,7 +18,7 @@
     </div>
 
     <div class="py-[30px]">
-        <img src="camera.svg">
+        <img src="/images/camera.svg">
     </div>
 
 

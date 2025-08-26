@@ -176,7 +176,6 @@ function toLayout3(e) {
 
 
 
-
   // 2) Restaure l'épaisseur de trait (état initial)
   // gsap.to(".piece polygon", { strokeWidth: 4, duration: 0.3 });
 
@@ -248,10 +247,6 @@ function toLayout3(e) {
   .piece polygon {
     stroke: #fff; stroke-width: 4; vector-effect: non-scaling-stroke;
   }
-  .conta{
-    height:103dvh; width:103dvh;position: absolute;top: 50%;
-    left: 50%;transform: translate(-60%, -50%);
-  }
   .p1{
     width: 75%;
     top:0;
@@ -302,23 +297,13 @@ function toLayout3(e) {
   .p6 polygon { fill: var(--c6, #7B77D4); }
   .p7 polygon { fill: var(--c7, #44A635); }
 
-  /* Boutons / titre juste pour le décor, comme dans ton code */
-  .controls {
-    position: fixed; z-index: 20; right: 50px; bottom: 35px;
-  }
  
-  /* TITLE : juste position:fixed pour pouvoir le centrer proprement */
-  .title {
-    z-index: 10;
-    width: max-content; 
-    /* transform gérée par GSAP */
-  }
 </style>
 
 <div class="h-screen">
-  <div class="z-10 fixed title text-intro inf-bold mx-auto w-fit tracking-[4%] bg-white border py-1 px-[14px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">CHROMOGRAM #1</div>
+  <div class="z-10 fixed title z-10 w-max text-intro inf-bold mx-auto w-fit tracking-[4%] bg-white border py-1 px-[14px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">CHROMOGRAM #1</div>
 
-  <div class="controls">
+  <div class="controls fixed z-20 right-[50px] bottom-[35px]">
     <div
       on:click={handleBt1}
       on:touchstart={handleBt1}
@@ -346,7 +331,7 @@ function toLayout3(e) {
   </div>
 </div>
 
-<div class="conta">
+<div class="conta h-[103dvh] w-[103dvh] absolute top-1/2 left-1/2 -translate-x-[60%] -translate-y-1/2">
   <div class="piece p1">
     <svg viewBox="0 0 7.5 2.5">
       <polygon points="7.5,2.5 2.5,2.5 0,0 5,0" />
