@@ -299,12 +299,12 @@ $effect(() => {
 {#if currentPiece}
   <div class="max-w-sm border p-5 pt-0" id="section-0">
     <!-- Header / onglets -->
-    <header class="flex fixed z-10 bg-white top-0 pt-[30px] w-full">
+    <header class="flex fixed z-10 bg-white top-0 pt-[30px] items-center pb-[5px]">
       {#each LABELS as label, i}
         <button
           type="button"
           on:click={() => setActiveAndScroll(i)}
-          class="mb-[5px] mr-[20px] text-11 w-fit tracking-[4%] border py-1 px-[11px] transition-colors"
+          class="mr-[20px] text-11 w-fit tracking-[4%] border py-1 px-[11px] transition-colors"
           class:bg-black={active === i}
           class:bg-white={active !== i}
           class:text-white={active === i}
@@ -314,6 +314,12 @@ $effect(() => {
           {label}
         </button>
       {/each}
+	  <div class="absolute right-0">
+		<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<path d="M17.1421 15.1421L15.0208 17.2635L0.87868 3.12132L3 1L17.1421 15.1421Z" fill="black"/>
+			<path d="M2.85786 17.1421L0.736544 15.0208L14.8787 0.87868L17 3L2.85786 17.1421Z" fill="black"/>
+		</svg>
+	  </div>
     </header>
 
     <!-- Visuel -->
