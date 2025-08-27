@@ -49,6 +49,7 @@
 		}
 	});
 
+
 	// --- FUNCTIONS ---
 	function capturePiece() {
 		if (pieceId && !found.includes(pieceId)) {
