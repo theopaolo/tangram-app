@@ -3,6 +3,12 @@
   import { page } from '$app/state'; // SvelteKit (Svelte 5) : store page
   import { onMount } from 'svelte';
 
+// import function to register Swiper custom elements
+  import { register } from 'swiper/element/bundle';
+  import { Pagination } from 'swiper/modules';
+  // register Swiper custom elements
+  register();
+
   // ——————————————————
   // CONSTANTES
   // ——————————————————
@@ -15,115 +21,129 @@
   // ——————————————————
   const PIECES_DATA = {
     1: {
-      color: '#A9BCC4',
-      rvb: '85, 180, 16',
-      cmjn: '68, 0, 100, 0',
-      color_name: 'Le Grand Triangle',
-      titre_artwork: 'Pyramide de Khéops - Égypte Antique',
-      artiste: 'MC Mitout',
-      date: 'Juilet 2016',
-      story: 'Cette pièce représente la majestuosité de la pyramide de Khéops...Cette pièce représente la majestuosité de la pyramide de Khéops...Cette pièce représente la majestuosité de la pyramide de Khéops...',
+      color: '#0b4ed1',
+      rvb: '11, 78, 209',
+      cmjn: '91, 67, 0, 0',
+      color_name: 'Bleu plus bleu que le ciel bleu',
+      titre_artwork: 'Photo-souvenir :\nRotation, travail in situ',
+      artiste: 'Daniel Buren',
+      date: 'Septembre 2006',
+      story: 'Cette oeuvre a été créée spécifiquement pour les ouvertures du musée. Le titre Rotation évoque la façon dont le motif de bandes verticales se déplace de fenêtre en fenêtre dans le sens des aiguilles d’une montre. Lorsque le soleil traverse les fenêtres, les couleurs des triangles sont projetées sur le sol et les murs du musée',
+      dapres_toi: 'D’après toi, dans la maison d’en face vit ?',
       dapres: [
-        '«Allons enfants de la patrie» ',
-        '«Allons» ramasser des petits pois',
-        '«Allons voir si la rose...» '
+        'Une vieille dame avec son chat',
+        'Un fan de K-pop',
+        'Une collectionneuse de mues de serpent'
       ],
+      credits:'',
       points: '15,15 150,150 285,15'
     },
     2: {
-      color: '#FFF35C',
-      rvb: '85, 180, 16',
-      cmjn: '68, 0, 100, 0',
-      color_name: 'Le Triangle Moyen',
-      titre_artwork: 'Pyramide de Khéops - Égypte Antique',
-      artiste: 'MC Mitout',
-      date: 'Juilet 2016',
-      story: 'Cette pièce représente la majestuosité de la pyramide de Khéops...Cette pièce représente la majestuosité de la pyramide de Khéops...Cette pièce représente la majestuosité de la pyramide de Khéops...',
+      color: '#1a5435',
+      rvb: '26, 84, 53',
+      cmjn: '95, 37, 91, 38',
+      color_name: 'Vert forêt scintillante',
+      titre_artwork: 'Tutti Quanti',
+      artiste: 'John M. Armleder',
+      date: '2018',
+      story: 'Pour cette oeuvre, l’artiste John Armleder a utilisé de nombreuses techniques : de la peinture, des feuilles, des paillettes, des faux cheveux, une poupée, ... Il a ressemblé ces matières sur sa toile posée au sol, qu’il a ensuite relevée. Ce mouvement a permis aux différents matériaux de se mélanger et de créer cet effet de coulure.',
+      dapres_toi: 'D’après toi, cette oeuvre représente ?',
       dapres: [
-        '«Allons enfants de la patrie» ',
-        '«Allons» ramasser des petits pois',
-        '«Allons voir si la rose...» '
+        'Un lendemain de Noël',
+        'Une scène de bataille au magasin de jouet',
+        'Un rêve de Drag Queen'
       ],
+      credits:'',
       points: '15,15 150,150 15,285'
     },
     3: {
-      color: '#2B3B6D',
-      rvb: '85, 180, 16',
-      cmjn: '68, 0, 100, 0',
-      color_name: 'Le Petit Triangle',
-      titre_artwork: 'Pyramide de Khéops - Égypte Antique',
-      artiste: 'MC Mitout',
-      date: 'Juilet 2016',
-      story: 'Cette pièce représente la majestuosité de la pyramide de Khéops...Cette pièce représente la majestuosité de la pyramide de Khéops...Cette pièce représente la majestuosité de la pyramide de Khéops...',
+      color: '#1b3c75',
+      rvb: '27, 60, 117',
+      cmjn: '100, 80, 26, 9',
+      color_name: 'Bleu foncé entre les lignes',
+      titre_artwork: 'Cabina',
+      artiste: 'Nathalie Du Pasquier',
+      date: '2021',
+      story: 'Cabania de l’artiste Nathalie Du Pasquier est une oeuvre dans laquelle les visiteur·euses peuvent entrer. Elle est envahie d’oeuvres réalisées par d’autres artistes tel un cabinet de curiosités. Ici, ce cabinet est imaginé autour d’un animal : l’oiseau.',
+      dapres_toi: 'D’après toi, quel est le meilleur endroit pour installer ce carrelage ?',
       dapres: [
-        '«Allons enfants de la patrie» ',
-        '«Allons» ramasser des petits pois',
-        '«Allons voir si la rose...» '
+        'Une salle de bain',
+        'Un mobilhome',
+        'Une piscine'
       ],
+      credits:'',
       points: '150,150 217,217 217,83'
     },
     4: {
-      color: '#7AC142',
-      rvb: '85, 180, 16',
-      cmjn: '68, 0, 100, 0',
-      color_name: 'Le Carré',
-      titre_artwork: 'Pyramide de Khéops - Égypte Antique',
+      color: '#44a635',
+      rvb: '68, 166, 53',
+      cmjn: '82, 0, 100, 0',
+      color_name: 'Vert pomme tout partout',
+      titre_artwork: 'Les plus belles heures /\nSelf Contrôl, Allons',
       artiste: 'MC Mitout',
       date: 'Juilet 2016',
-      story: 'Cette pièce représente la majestuosité de la pyramide de Khéops...Cette pièce représente la majestuosité de la pyramide de Khéops...Cette pièce représente la majestuosité de la pyramide de Khéops...',
+      story: 'Cette oeuvre fait partie de la série Les plus belles heures présentant les meilleurs instants de la vie de l’artiste, MC Mitout. Le mot «Allons» s’adresse à tous celles et ceux qui le lisent et peut exprimer des émotions différentes. Cela encourage aussi à l’action, comme une invitation à parcourir l’exposition.',
+      dapres_toi: 'D’après toi ?',
       dapres: [
-        '«Allons enfants de la patrie» ',
-        '«Allons» ramasser des petits pois',
-        '«Allons voir si la rose...» '
+        '« Allons enfants de la patrie »',
+        '« Allons» ramasser des petits pois »',
+        '« Allons voir si la rose... » '
       ],
+      credits:'',
       points: '150,150 217,217 150,285 83,217'
     },
     5: {
-      color: '#6B8FD6',
-      rvb: '85, 180, 16',
-      cmjn: '68, 0, 100, 0',
-      color_name: 'Le Parallélogramme',
-      titre_artwork: 'Pyramide de Khéops - Égypte Antique',
-      artiste: 'MC Mitout',
-      date: 'Juilet 2016',
-      story: 'Cette pièce représente la majestuosité de la pyramide de Khéops...Cette pièce représente la majestuosité de la pyramide de Khéops...Cette pièce représente la majestuosité de la pyramide de Khéops...',
+      color: '#ccffff',
+      rvb: '204, 255, 255',
+      cmjn: '27, 0, 0, 0',
+      color_name: 'Bleu pâlichon tout autour',
+      titre_artwork: 'CDV - Sans titre',
+      artiste: 'Stefan Rinck',
+      date: 'Juilet 2018',
+      story: 'L’artiste, Stefan Rinck, appelle ce petit personnage « M. Flamboyant ». Il est habillé de plumes et de chaussures à pompons. Il a une allure à la fois élégante et ridicule. Pour imaginer ce personnage, l’artiste s’est inspiré de costumes de théâtre et plus particulièrement d’un style qui date de l’époque du roi Louis XIII',
+      dapres_toi: 'D’après toi, ce «Mr. Flamboyant» va ?',
       dapres: [
-        '«Allons enfants de la patrie» ',
-        '«Allons» ramasser des petits pois',
-        '«Allons voir si la rose...» '
+        'À son premier date',
+        'Réclamer des bonbons pour halloween',
+        'Jouer dans un film d’horreur'
       ],
+      credits:'',
       points: '217,83 217,217 285,150 285,15'
     },
     6: {
-      color: '#3B5D3A',
-      rvb: '85, 180, 16',
-      cmjn: '68, 0, 100, 0',
-      color_name: 'Le Grand Trapèze',
-      titre_artwork: 'Pyramide de Khéops - Égypte Antique',
-      artiste: 'MC Mitout',
-      date: 'Juilet 2016',
-      story: 'Cette pièce représente la majestuosité de la pyramide de Khéops...Cette pièce représente la majestuosité de la pyramide de Khéops...Cette pièce représente la majestuosité de la pyramide de Khéops...',
+      color: '#7b77d4',
+      rvb: '123, 119, 212',
+      cmjn: '62, 56, 0, 0',
+      color_name: 'Violet zigzag',
+      titre_artwork: 'La tour Belair',
+      artiste: 'Genêt Mayor',
+      date: '2013',
+      story: 'Cette tour de Genêt Mayor ressemble à un jeu de construction. Elle est composée de caisses de bois que l’artiste a récupérées et peintes à l’extérieur. Les couleurs changent selon le côté qu’on regarde mais en reprenant toujours ce motif en zigzag : comme des escaliers qui permettent de monter en haut de la tour. Ses ouvertures permettent également de regarder à l’intérieur et de voir ses fondations.',
+      dapres_toi: 'D’après toi, cette tour est ?',
       dapres: [
-        '«Allons enfants de la patrie» ',
-        '«Allons» ramasser des petits pois',
-        '«Allons voir si la rose...» '
+        'Un kaléidoscope pour géants',
+        'Un cours de géométrie (mais tu as tout oublié)',
+        'Un arbre à chat psychédélique'
       ],
+      credits:'',
       points: '15,285 150,285 83,217'
     },
     7: {
-      color: '#8B83D2',
-      rvb: '85, 180, 16',
-      cmjn: '68, 0, 100, 0',
-      color_name: 'Le Petit Trapèze',
-      titre_artwork: 'Pyramide de Khéops - Égypte Antique',
-      artiste: 'MC Mitout',
-      date: 'Juilet 2016',
-      story: 'Cette pièce représente la majestuosité de la pyramide de Khéops...Cette pièce représente la majestuosité de la pyramide de Khéops...Cette pièce représente la majestuosité de la pyramide de Khéops...',
+      color: '#ffe215',
+      rvb: '53, 92, 100',
+      cmjn: '1, 8, 100, 0',
+      color_name: 'Jaune citron néon',
+      titre_artwork: 'Photo-souvenir : La Cabane éclatée aux caissons lumineux colorés',
+      artiste: 'Daniel Buren',
+      date: 'Déc 1999 - Jan 2000',
+      story: 'Cette oeuvre, créée par Daniel Buren, est la star du musée. Ses couleurs et sa lumière attirent immédiatement l’attention. Les nuances de bleu et de vert qui habillent l’extérieur rappellent la nature, le ciel et l’eau, alors que le jaune et le rouge présents à l’intérieur procurent une sensation de chaleur et de confort lorsqu’on se trouve entre les quatre murs de la cabane.',
+      dapres_toi: 'D’après toi, cette cabane est la maison ?',
       dapres: [
-        '«Allons enfants de la patrie» ',
-        '«Allons» ramasser des petits pois',
-        '«Allons voir si la rose...» '
+        'De l’inventeur·ice du Rubik’s Cube',
+        'D’un·e fan de Minecraft',
+        'Du directeur du musée'
       ],
+      credits:'',
       points: '150,285 285,150 285,285'
     }
   };
@@ -296,10 +316,27 @@ $effect(() => {
   });
 </script>
 
+<style>
+.swiper-button-next svg ,.swiper-button-prev svg{
+  width: 15px!important;
+  height: auto!important;
+}
+.swiper-button-prev,
+.swiper-button-next {
+  color: red;        /* Couleur de la flèche (SVG currentColor) */
+  font-size: 15px;   /* Modifie la taille de l'icône flèche */
+  width: 24px;
+  height: 24px;
+}
+
+
+</style>
+
+
 {#if currentPiece}
   <div class="max-w-sm border p-5 pt-0" id="section-0">
     <!-- Header / onglets -->
-    <header class="flex fixed z-10 bg-white top-0 pt-[30px] items-center pb-[5px]">
+    <header class="flex sticky z-10 bg-white top-0 pt-[30px] items-center pb-[5px]">
       {#each LABELS as label, i}
         <button
           type="button"
@@ -323,13 +360,29 @@ $effect(() => {
     </header>
 
     <!-- Visuel -->
-    <div class="mt-[100px] mb-4 h-80 w-full pt-[30px]" style="background-color: {currentPiece.color};">
-      <img src="" alt="" />
+    <div class="mt-[40px] mb-4 w-full" style="background-color: {currentPiece.color};">
+
+        <swiper-container slides-per-view="1" speed="500"  loop="true" 
+          pagination={{ clickable : true }} 
+          style={`
+          --swiper-navigation-color: ${currentPiece.color};
+          --swiper-navigation-size: 20px;
+
+          --swiper-pagination-bullet-inactive-opacity:1;
+          --swiper-pagination-bullet-inactive-color: white;
+          --swiper-pagination-color: black;
+          --swiper-pagination-bullet-size: 10px;
+          `}
+        >
+          <swiper-slide><img class="aspect-3/2 object-cover" src="/images/dd.jpg" /></swiper-slide>
+          <swiper-slide><img class="aspect-3/2 object-cover" src="/images/dd.jpg" /></swiper-slide>
+          <swiper-slide><img class="aspect-3/2 object-cover" src="/images/dd.jpg" /></swiper-slide>
+        </swiper-container>
     </div>
 
     <!-- Infos oeuvre -->
     <div class="flex flex-col">
-      <h2 class="text-titre-alt uppercase">{currentPiece.titre_artwork}</h2>
+      <h2 class="text-titre-alt uppercase italic whitespace-pre-line">{currentPiece.titre_artwork}</h2>
       <p>{currentPiece.artiste} - {currentPiece.date}</p>
       <p class="mt-3">{currentPiece.story}</p>
     </div>
@@ -376,7 +429,7 @@ $effect(() => {
     <!-- Bloc "D'après toi..." -->
     <div class="bg-black text-white px-5 py-6 relative mb-15" id="section-1">
       <img src="/images/fleche_dapres.svg" alt="indic" class="!w-[105px] h-auto absolute right-5 top-3" />
-      <div class="text-titre-alt inf-bold mb-4">D'après toi,</div>
+      <div class="text-titre-alt inf-bold mb-4">{currentPiece.dapres_toi}</div>
 
       {#if Array.isArray(currentPiece?.dapres) && currentPiece.dapres.length}
         {#each currentPiece.dapres as line, i (i)}
@@ -446,23 +499,24 @@ $effect(() => {
           Tu n'as découvert aucune couleur
         {:else if totalPiece === 1}
           Tu as déjà découvert 1 couleur sur 7 !
+        {:else if totalPiece === 7}
+          Bravo, Tu as découvert toutes les couleurs !
         {:else}
           Tu as déjà découvert {totalPiece} couleurs sur 7 !
         {/if}
       </p>
       
     </div>
-
-	<div class="relative flex justify-center items-center">
-		<div class="relative inline-block">
-			<img src="/images/camera.svg" alt="centrée" class="mx-auto !w-[52px] h-auto" />
-			<div class="absolute top-1/2 right-full -translate-y-1/2 pr-2">
-			<img  src="/images/indic_camera_oeuvre.svg" alt="gauche" class="!w-[105.96px] h-auto max-w-none pointer-events-none mr-2" />
-			</div>
-		</div>
-	</div>
-
-
+        {#if totalPiece !== 7}
+        <div class="relative flex justify-center items-center">
+          <div class="relative inline-block">
+            <img src="/images/camera.svg" alt="centrée" class="mx-auto !w-[52px] h-auto" />
+            <div class="absolute top-1/2 right-full -translate-y-1/2 pr-2">
+            <img  src="/images/indic_camera_oeuvre.svg" alt="gauche" class="!w-[105.96px] h-auto max-w-none pointer-events-none mr-2" />
+            </div>
+          </div>
+        </div>
+        {/if}
 
 
 		<div class="mx-auto mt-40 flex flex-col gap-2 border-t border-gray-600 pt-8 text-center">
@@ -498,7 +552,6 @@ $effect(() => {
 				</polygon>
 			{/each}
 		</svg>
-
 
   </div>
 {/if}
