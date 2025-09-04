@@ -32,7 +32,13 @@
 		"tailwindcss": "^4.0.0",
 		"vite": "^6.2.6"
 	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"esbuild"
+		]
+	},
 	"dependencies": {
-		"@kuiper/svelte-scan-qrcode": "^0.0.5"
+		"@kuiper/svelte-scan-qrcode": "^0.0.5",
+		"gsap": "^3.13.0"
 	}
 }
