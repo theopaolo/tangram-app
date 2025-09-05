@@ -1,14 +1,18 @@
 <script>
   import { setShapesLayout } from '$lib/shapesStore.js';
   import { goto } from '$app/navigation';
+<<<<<<< Updated upstream
   import { onMount } from 'svelte';
   import { gsap } from 'gsap';
+=======
+>>>>>>> Stashed changes
 
   function handlePlay(e) {
     e?.preventDefault();
     setShapesLayout('depart');
     setTimeout(() => goto('/depart'), 100);
   }
+<<<<<<< Updated upstream
 
   onMount(() => {
     // Animate shapes to index layout (around content) when page loads directly
@@ -28,6 +32,8 @@
       }
     );
   });
+=======
+>>>>>>> Stashed changes
 </script>
 
 <main class="container max-w-3xl min-h-svh flex flex-col p-6">
@@ -48,5 +54,9 @@
     <p class="animate-text">Il y a 7 QR CODES à  trouver dans le musée.</p>
   </div>
 
+<<<<<<< Updated upstream
   <a class="text-bouton mb-4 uppercase inf-bold w-fit bg-white border py-[7px] px-[15px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)] mx-auto mt-auto" href="/depart" on:click={handlePlay}>jouer</a>
+=======
+  <a class="btn-primary mb-8 mx-auto" href="/depart" on:click={handlePlay}>jouer</a>
+>>>>>>> Stashed changes
 </main>
