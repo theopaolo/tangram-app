@@ -317,6 +317,10 @@ $effect(() => {
 </script>
 
 <style>
+
+.bah::first-line{
+  padding-right: 40px!important;
+}
 .swiper-button-next svg ,.swiper-button-prev svg{
   width: 15px!important;
   height: auto!important;
@@ -429,7 +433,7 @@ $effect(() => {
     <!-- Bloc "D'après toi..." -->
     <div class="bg-black text-white px-5 py-6 relative mb-15" id="section-1">
       <img src="/images/fleche_dapres.svg" alt="indic" class="!w-[105px] h-auto absolute right-5 top-3" />
-      <div class="text-titre-alt inf-bold mb-4">{currentPiece.dapres_toi}</div>
+      <div class="text-titre-alt inf-bold mb-4 bah">{currentPiece.dapres_toi}</div>
 
       {#if Array.isArray(currentPiece?.dapres) && currentPiece.dapres.length}
         {#each currentPiece.dapres as line, i (i)}

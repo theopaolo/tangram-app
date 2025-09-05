@@ -26,7 +26,7 @@
         gsap.set(row, { x: -0.1 });
         gsap.to(row, {
           x: viewW - cols * w - 0.1, // se déplace vers la gauche
-          duration: 10,
+          duration: 13,
           repeat: -1,
           yoyo: true,
           ease: "sine.inOut",
@@ -37,13 +37,26 @@
         gsap.set(row, { x: (viewW + 0.9) - cols * w });
         gsap.to(row, {
           x: 0, // revient vers la gauche
-          duration: 10,
+          duration: 13,
           repeat: -1,
           yoyo: true,
           ease: "sine.inOut",
           delay: i * 0.05
         });
       }
+    });
+
+
+ // rotation au clic sur une pièce
+    document.querySelectorAll(".piece").forEach(polygon => {
+      polygon.addEventListener("click", () => {
+        gsap.to(polygon, {
+          rotation: "+=180",       // tourne de 180° supplémentaire
+          transformOrigin: "50% 50%", // centre de la pièce
+          duration: 1,
+          ease: "power2.inOut"
+        });
+      });
     });
 
 
@@ -88,43 +101,39 @@
 
 </style>
 
-  <div class="h-screen absolute w-screen z-[-1]">
+  <div class="h-screen absolute w-screen z-1">
 
-<div class="h-screen absolute w-screen z-[-1]">
-  <svg
-    viewBox={`0 0 ${viewW} ${viewH}`}
-    width="100%"
-    height="100%"
-    preserveAspectRatio="xMidYMid slice"
-  >
-    {#each Array(rows) as _, r}
-      <g class="row" transform={`translate(0, ${r * h})`}>
-        {#each Array(cols) as _, c}
-          <polygon
-            points="0,10 0,0 5,5"
-            transform={`translate(${c * w}, 0)`}
-            class="p1"
-          />
+    <div class="h-screen absolute w-screen z-1]">
+      <svg
+        viewBox={`0 0 ${viewW} ${viewH}`}
+        width="100%"
+        height="100%"
+        preserveAspectRatio="xMidYMid slice"
+      >
+        {#each Array(rows) as _, r}
+          <g class="row" transform={`translate(0, ${r * h})`}>
+            {#each Array(cols) as _, c}
+              <polygon
+                class="piece"
+                points="0,10 0,0 5,5"
+                transform={`translate(${c * w}, 0)`}
+              />
+            {/each}
+          </g>
         {/each}
-      </g>
-    {/each}
-  </svg>
-</div>
-
-
-
-
+      </svg>
+    </div>
 
   </div>
 
 
-<div class="flex flex-col py-[80px] items-center justify-between min-h-screen text-center">
-  <div class="py-[20px] px-[50px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-nd-drop-shadow)]">
+<div class="relative z-2 flex flex-col py-[80px] items-center justify-between min-h-screen text-center pointer-events-none">
+  <div class="py-[20px] px-[50px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-nd-drop-shadow)] pointer-events-none">
     Bravo tu as découvert :
     <div class="text-titre-alt inf-bold my-5 uppercase">
       LE VERT FORÊT<br/>SCINTILLANTE
     </div>
-    A quelle œuvre penses tu que<br/>cette couleur appartient ?
+    À quelle œuvre penses-tu que<br/>cette couleur appartient ?
   </div>
 
   <div class="text-titre-alt inf-bold uppercase py-[25px] px-[30px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-drop-shadow)]">
