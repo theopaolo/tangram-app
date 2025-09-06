@@ -304,8 +304,8 @@ $effect(() => {
     </div>
 
     <!-- Bloc "D'après toi..." -->
-    <div class="bg-black text-white px-5 py-6 relative mb-15" id="section-1">
-      <img src="/images/fleche_dapres.svg" alt="indic" class="!w-[105px] h-auto absolute right-5 top-3" />
+    <div class="bg-black text-white px-5 py-6 pb-10 relative mb-15" id="section-1">
+      <img src="/images/aro_dapres_bas.svg" alt="indic" class="!w-[105px] h-auto absolute right-5 bottom-2" />
       <div class="text-titre-alt inf-bold mb-4 bah">{currentPiece.dapres_toi}</div>
 
       {#if Array.isArray(currentPiece?.dapres) && currentPiece.dapres.length}

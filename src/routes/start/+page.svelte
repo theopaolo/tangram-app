@@ -298,7 +298,9 @@ onMount(async () => {
 </style>
 
 <div class="">
-  <div class="top-[35px] left-[50%] transform -translate-x-1/2 z-10 fixed title z-10 w-max text-intro inf-bold mx-auto w-fit tracking-[4%] bg-white border py-1 px-[14px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">CHROMOGRAM #1</div>
+    <div class="top-[35px] right-[50%] transform z-10 fixed title w-max text-intro inf-bold mx-auto w-fit tracking-[4%] bg-white border py-1 px-[14px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]"></div><img  src="/images/camera.svg" alt="camera" class="!w-[55px] h-auto " />
+
+  <div class="top-[35px] left-[50%] transform -translate-x-1/2 fixed title z-10 w-max text-intro inf-bold mx-auto w-fit tracking-[4%] bg-white border py-1 px-[14px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">CHROMOGRAM #1</div>
   <div class="controls fixed z-20 left-[50%] right-[initial] bottom-[35px] -translate-x-[50%]">
     <div
       on:click={handleBt1}
@@ -329,7 +331,9 @@ onMount(async () => {
       Pars à la recherche des {totalPiece-1} formes restantes du tangram pour débloquer le CHROMOGRAM !
     {/if}     -->
     </div>
-  <div class="h-[80dvw] bg-transparent"></div>
+  <div class="h-[80dvw] w-[80dvw] bg-transparent">
+    <!-- <img  src="/images/carre.png" alt="camera" class="" /> -->
+  </div>
   <div>
     <img  src="/images/camera.svg" alt="camera" class="!w-[55px] h-auto " />
   </div>
@@ -355,6 +359,7 @@ onMount(async () => {
     <span>JOUER</span>
   </div>
 </div>
+
 
 
 <div class="conta flex justify-around flex-col h-[103dvh] w-[103dvh] absolute top-0 left-0 translate-0">
