@@ -1,11 +1,29 @@
 <script>
   import { onMount } from "svelte";
   let gsap; // SSR-safe
+  let found = $state([]);
+
+  // Tangram pieces data with original colors
+  const PIECES_DATA = {
+    1: { color: '#A9BCC4' }, // Le Grand Triangle
+    2: { color: '#FFF35C' }, // Le Triangle Moyen
+    3: { color: '#2B3B6D' }, // Le Petit Triangle
+    4: { color: '#7AC142' }, // Le Carré
+    5: { color: '#6B8FD6' }, // Le Parallélogramme
+    6: { color: '#3B5D3A' }, // Le Grand Trapèze
+    7: { color: '#8B83D2' }  // Le Petit Trapèze
+  };
 
   // === Router de clic pour .bt1 ===
   const handleBt1 = toLayout3;
 
-  
+  // Reactive function to set CSS custom properties for dynamic coloring (one-liner approach)
+  $effect(() => Object.keys(PIECES_DATA).forEach(id => document.documentElement.style.setProperty(`--c${id}`, found.includes(id) ? PIECES_DATA[id].color : '#E6E6E6')));
+
+  onMount(() => {
+    found = localStorage.getItem('found')?.split(',').filter(Boolean) || [];
+  });
+
   function apply(layout, contaWidth, contaHeight) {
     if (contaWidth || contaHeight) {
       gsap.to(".conta", {
@@ -14,7 +32,7 @@
         duration: 0.6,
         ease: "power2.inOut"
       });
-      
+
     }
     layout.forEach((item, i) => {
       const { cls, ...props } = item;
@@ -55,7 +73,7 @@ function toLayout3(e) {
     duration: 0.6,
     ease: "power2.inOut"
   });
-  
+
   gsap.to(".piece polygon", {
       fill: "#E6E6E6",
       delay:0.4,
@@ -72,13 +90,13 @@ function toLayout3(e) {
     fontSize:"19px",
     duration: 0.6,
     ease: "power2.inOut"
-  }); 
+  });
   // gsap.to(".text-bouton", {
   //   width:"100%",
   //   height:"100%",
   //   duration: 0.6,
   //   ease: "power2.inOut"
-  // }); 
+  // });
   gsap.to(".controls , .intro-intro", {
     opacity:0,
     display:"none",
@@ -89,18 +107,18 @@ function toLayout3(e) {
     // y: 0,
     duration: 0.2,
     ease: "power2.inOut"
-  }); 
+  });
   gsap.to(".bloc_one", {
     opacity:1,
     display:"flex",
     delay:0.4,
     duration: 0.4,
     ease: "power2.inOut"
-  }); 
-  
+  });
+
   // gsap.to(".controls .text-bouton", {
   //   padding:"20px",
-  // }); 
+  // });
   // gsap.to(".text-bouton span", {
   //   opacity:0,
   // });
@@ -129,7 +147,7 @@ function toLayout2Instant() {
   const r = getRects([".p1",".p2",".p3",".p4",".p5",".p6",".p7"]);
 
   const layout2 = [
-    
+
     { cls: ".p1", left: `${-0.15 * r[".p1"].width}px`, bottom: `${0.12 * r[".p1"].height}px`, width:"71%" },
     { cls: ".p2", width:"75%" },
     { cls: ".p3", width:"75%" },
@@ -137,7 +155,7 @@ function toLayout2Instant() {
     { cls: ".p5", rotate: -45, width:"70%" },
     { cls: ".p6", width:"48%" , rotate: 45},
     { cls: ".p7", top: `${-0.5 * r[".p7"].height}px`, rotate: 90,  width:"75%" },
-  
+
   ];
 
   gsap.set(".conta", {
@@ -263,16 +281,10 @@ onMount(async () => {
   .p5 polygon { fill: var(--c5, #1a5435); }
   .p6 polygon { fill: var(--c6, #44a635); }
   .p7 polygon { fill: var(--c7, #1b3c75); }
-
-  
 </style>
 
 <div class="h-screen">
   <div class="top-[35px] left-[50%] transform -translate-x-1/2 z-10 fixed title z-10 w-max text-intro inf-bold mx-auto w-fit tracking-[4%] bg-white border py-1 px-[14px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">CHROMOGRAM #1</div>
-
-
-
-
   <div class="controls fixed z-20 left-[50%] right-[initial] bottom-[35px] -translate-x-[50%]">
     <div
       on:click={handleBt1}
@@ -284,9 +296,9 @@ onMount(async () => {
 </div>
 
 
-<div class="w-[80dvw] bloc_one hidden opacity-0 z-[-1] py-[80px] text-center flex absolute h-screen w-screen top-0 left-0 flex-col z-100 justify-evenly items-center">
+<div class="w-[80dvw] w-screen bloc_one hidden flex opacity-0 z-[-1] z-100 py-[80px] text-center  absolute h-screen top-0 left-0 flex-col justify-evenly items-center">
   <div>
-          Pars à la recherche des 7 formes du tangram pour débloquer le CHROMOGRAM !
+    <p>Pars à la recherche des 7 formes du tangram pour débloquer le CHROMOGRAM !</p>
 
     <!-- {#if totalPiece === 0}
       Pars à la recherche des 7 formes du tangram pour débloquer le CHROMOGRAM !
@@ -295,7 +307,7 @@ onMount(async () => {
       Pars à la recherche des 6 formes restantes du tangram pour débloquer le CHROMOGRAM !
     {:else if totalPiece === 6}
       Tu as déjà découvert 6 couleurs sur 7 !
-      Pars à la recherche de la forme restante du tangram pour débloquer le CHROMOGRAM ! 
+      Pars à la recherche de la forme restante du tangram pour débloquer le CHROMOGRAM !
     {:else if totalPiece === 7}
       Bravo ! Tu as débloqué toutes les couleurs ! Les tangrams sont maintenant disponibles en cliquant en bas de page !
     {:else}
@@ -376,4 +388,4 @@ onMount(async () => {
     </div>
   </div>
 
-</div> 
+</div>
