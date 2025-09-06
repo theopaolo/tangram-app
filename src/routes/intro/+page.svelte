@@ -261,8 +261,6 @@ function toLayout3(e) {
     height: 100%;
     overscroll-behavior: none; /* évite le "rebond" sur mobile */
   }
-
-  /* Une pièce = conteneur absolument positionné + 1 SVG avec viewBox identique */
   .piece {
     position: fixed;
     transform-origin: center; will-change: left, top, width, transform;
@@ -316,19 +314,17 @@ function toLayout3(e) {
     right: 0;
     top: 25%;
     margin: auto;
-    /* transform: translateY(-50%); */
   }
 
   /* Couleurs (optionnel) */
-  .p1 polygon { fill: var(--c1, #1B3C75); }
-  .p2 polygon { fill: var(--c2, #FFE215); }
-  .p3 polygon { fill: var(--c3, #A3CFE6); }
-  .p4 polygon { fill: var(--c4, #0B4ED1); }
-  .p5 polygon { fill: var(--c5, #1A5435); }
-  .p6 polygon { fill: var(--c6, #7B77D4); }
-  .p7 polygon { fill: var(--c7, #44A635); }
+  .p1 polygon { fill: var(--c1, #ccffff); }
+  .p2 polygon { fill: var(--c2, #ffe215); }
+  .p3 polygon { fill: var(--c3, #0b4ed1); }
+  .p4 polygon { fill: var(--c4, #7b77d4); }
+  .p5 polygon { fill: var(--c5, #1a5435); }
+  .p6 polygon { fill: var(--c6, #44a635); }
+  .p7 polygon { fill: var(--c7, #1b3c75); }
 
-  
 </style>
 
 <div class="h-screen">
@@ -362,18 +358,7 @@ function toLayout3(e) {
   </div>
 </div>
 
-<div class="conta h-[103dvh] w-[103dvh] absolute top-1/2 left-1/2 -translate-x-[60%] -translate-y-1/2">
-
-<!-- <svg viewBox="0 0 300 300" width="100%" preserveAspectRatio="xMidYMid meet" class="s-nnIFTLOo8h9y">
-  <polygon stroke="#fff" stroke-width="1" style="cursor: pointer;" class="s-nnIFTLOo8h9y" points="15,15 150,150 285,15" fill="#0b4ed1"><title class="s-nnIFTLOo8h9y">Bleu plus bleu que le ciel bleu</title></polygon>
-  <polygon stroke="#fff" stroke-width="1" style="cursor: pointer;" class="s-nnIFTLOo8h9y" points="15,15 150,150 15,285" fill="#1a5435"><title class="s-nnIFTLOo8h9y">Vert forêt scintillante</title></polygon>
-  <polygon stroke="#fff" stroke-width="1" style="cursor: pointer;" class="s-nnIFTLOo8h9y" points="150,150 217,217 217,83" fill="#1b3c75"><title class="s-nnIFTLOo8h9y">Bleu foncé entre les lignes</title></polygon>
-  <polygon stroke="#fff" stroke-width="1" style="cursor: pointer;" class="s-nnIFTLOo8h9y" points="150,150 217,217 150,285 83,217" fill="#44a635"><title class="s-nnIFTLOo8h9y">Vert pomme tout partout</title></polygon>
-  <polygon stroke="#fff" stroke-width="1" style="cursor: pointer;" class="s-nnIFTLOo8h9y" points="217,83 217,217 285,150 285,15" fill="#a3cfe6"><title class="s-nnIFTLOo8h9y">Bleu pâlichon tout autour</title></polygon>
-  <polygon stroke="#fff" stroke-width="1" style="cursor: pointer;" class="s-nnIFTLOo8h9y" points="15,285 150,285 83,217" fill="#7b77d4"><title class="s-nnIFTLOo8h9y">Violet zigzag</title></polygon>
-  <polygon stroke="#fff" stroke-width="1" style="cursor: pointer;" class="s-nnIFTLOo8h9y" points="150,285 285,150 285,285" fill="#ffe215"><title class="s-nnIFTLOo8h9y">Jaune citron néon</title></polygon>
-</svg> -->
-  
+<div class="conta h-[103dvh] w-[103dvh] absolute top-1/2 left-1/2 -translate-x-[60%] -translate-y-1/2"> 
   <div class="piece p1">
     <svg viewBox="0 0 7.5 2.5">
       <polygon points="7.5,2.5 2.5,2.5 0,0 5,0" />
