@@ -3,9 +3,8 @@
     import { onMount } from 'svelte';
     import Breadcrumb from '$lib/Breadcrumb.svelte';
     import { setShapesLayout } from '$lib/shapesStore.js';
+    import { piecesStore } from '$lib/piecesStore.js';
 
-    /** @type {string[]} */
-    let found = $state([]);
     let showStaticTangram = $state(false);
 
     // Tangram pieces data with original colors
@@ -21,12 +20,13 @@
 
     // Function to get piece color (original if found, green if not)
     function getPieceColor(pieceId) {
-        return found.includes(pieceId.toString()) ? PIECES_DATA[pieceId].color : '#7AC142';
+        return piecesStore.hasPiece(pieceId.toString()) ? PIECES_DATA[pieceId].color : '#7AC142';
     }
 
     onMount(() => {
-        found = localStorage.getItem('found')?.split(',').filter(Boolean)  || [];
-        console.log(found);
+        // Initialize pieces store
+        piecesStore.initialize();
+        console.log(piecesStore.pieces);
 
         // Ensure shapes are set to depart layout (for animation continuity)
         setShapesLayout('depart', { animate: false });

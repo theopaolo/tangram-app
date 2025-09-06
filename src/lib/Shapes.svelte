@@ -8,6 +8,17 @@
   let lastCmd = null;
   let hideShapes = $state(false);
 
+  // Hide shapes on depart page after 600ms delay - must be at top level
+  $effect(() => {
+    if ($page.route.id === '/depart') {
+      setTimeout(() => {
+        hideShapes = true;
+      }, 600);
+    } else {
+      hideShapes = false;
+    }
+  });
+
   onMount(async () => {
     const mod = await import('gsap');
     gsap = mod.gsap;
@@ -22,17 +33,6 @@
       if (!cmd) return;
       lastCmd = cmd;
       handleCommand(cmd);
-    });
-
-    // Hide shapes on depart page after 600ms delay
-    $effect(() => {
-      if ($page.route.id === '/depart') {
-        setTimeout(() => {
-          hideShapes = true;
-        }, 600);
-      } else {
-        hideShapes = false;
-      }
     });
 
     return () => unsubscribe?.();

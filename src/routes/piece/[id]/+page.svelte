@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
+	import { piecesStore } from '$lib/piecesStore.js';
 
 	const PIECES_DATA = {
 		1: {name: 'Le Grand Triangle',color: '#A9BCC4',story: 'Cette pièce représente la majestuosité de la pyramide de Khéops...',artwork: 'Pyramide de Khéops - Égypte Antique',points: '15,15 150,150 285,15' /* Large right triangle*/},
@@ -13,47 +14,22 @@
     	7: {name: 'Le Petit Trapèze', 	color: '#8B83D2', 	story: 'Cette dernière pièce représente les rayons...', 	artwork: 'Impression, soleil levant - Claude Monet', 	points: '150,285 285,150 285,285' /* Triangle (bottom right) */ }
 	};
 
-	// --- STATE ---
-	let hasInitialized = $state(false);
-	let found = $state([]);
-
 	// --- DERIVED STATE --- (Principle 2: DRY)
 	// Let Svelte derive state from the reactive `page` store.
 	let pieceId = $derived(page.params.id);
 	let currentPiece = $derived(PIECES_DATA[pieceId]);
-	let totalPiece = $derived(found.length);
+	let totalPiece = $derived(piecesStore.length);
 
 	// --- LIFECYCLE & EFFECTS ---
 	onMount(() => {
-		// Re-adding try...catch per your excellent suggestion!
-		try {
-			const storedFound = localStorage.getItem('piece');
-			if (storedFound) {
-				found = storedFound.split(',').filter((id) => id);
-			}
-		} catch (e) {
-			console.error('Could not access localStorage:', e);
-		}
-		hasInitialized = true;
-	});
-
-	// --- (Principle 1: Declarative State)
-	// This effect describes a rule, decoupling it from the button click.
-	$effect(() => {
-		if (hasInitialized) {
-			try {
-				localStorage.setItem('piece', found.join(','));
-			} catch (e) {
-				console.error('Could not save to localStorage:', e);
-			}
-		}
+		piecesStore.initialize();
 	});
 
 
 	// --- FUNCTIONS ---
 	function capturePiece() {
-		if (pieceId && !found.includes(pieceId)) {
-			found.push(pieceId); // Just update the state. The effect handles the rest.
+		if (pieceId) {
+			piecesStore.addPiece(pieceId);
 		}
 	}
 
@@ -99,7 +75,7 @@
 				{#each Object.entries(PIECES_DATA) as [id, data]}
 					<span
 						class="rounded-full px-2 py-2"
-						style="background-color: {found.includes(id) ? data.color : '#DDD'}"
+						style="background-color: {piecesStore.hasPiece(id) ? data.color : '#DDD'}"
 						title={data.name}
 					></span>
 				{/each}
@@ -107,7 +83,7 @@
 
 			<button class="cursor-pointer border" onclick={capturePiece}> Captuer la piece </button>
 
-			<p>id: {pieceId} found: {found.join(', ')} total: {totalPiece}</p>
+			<p>id: {pieceId} found: {$piecesStore.join(', ')} total: {totalPiece}</p>
 			<p class="text-xs">Tu as déjà trouvé {totalPiece} couleurs sur 7 !</p>
 		</div>
 	</div>

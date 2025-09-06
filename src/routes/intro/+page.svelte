@@ -1,13 +1,8 @@
 <script>
   import { onMount } from "svelte";
-<<<<<<< Updated upstream
-  import { setShapesLayout, setShapesForeground } from "$lib/shapesStore.js";
-  import { goto } from "$app/navigation";
-=======
   import { startPageTransition } from "$lib/transitionStore.js";
   import { goto } from "$app/navigation";
   import { setShapesLayout, setShapesForeground } from "$lib/shapesStore.js";
->>>>>>> Stashed changes
   let gsap; // SSR-safe
 
   // === Router de clic pour .bt1 ===
@@ -214,8 +209,6 @@ function toLayout3(e) {
     });
   }
 
-<<<<<<< Updated upstream
-=======
   function getRects(selectors) {
     const rects = {};
     selectors.forEach(sel => (rects[sel] = document.querySelector(sel)?.getBoundingClientRect()));
@@ -375,7 +368,6 @@ function toLayout3(e) {
   setTimeout(() => goto('/'), 100);
 }
 
->>>>>>> Stashed changes
   onMount(async () => {
     // no-scroll
     const preventScroll = (e) => e.preventDefault();
@@ -416,8 +408,6 @@ function toLayout3(e) {
     height: 100%;
     overscroll-behavior: none;
   }
-<<<<<<< Updated upstream
-=======
 
   /* Une pièce = conteneur absolument positionné + 1 SVG avec viewBox identique */
   .piece {
@@ -485,7 +475,6 @@ function toLayout3(e) {
   .p6 polygon { fill: var(--c6, #7B77D4); }
   .p7 polygon { fill: var(--c7, #44A635); }
 
->>>>>>> Stashed changes
 </style>
 
 <div class="h-screen">
@@ -502,8 +491,6 @@ function toLayout3(e) {
 
 <div class="d-none absolute inset-x-0 top-0 z-10 h-[100dvh] px-2 flex items-center justify-evenly flex-col pt-[105px] pb-[25px]">
 
-<<<<<<< Updated upstream
-=======
     L'art est habité de mille couleurs. Subtiles, franches, opposées, brutales ou délicates.
     Elles sont partout et toujours précisément choisies par les artistes.
 
@@ -516,5 +503,4 @@ function toLayout3(e) {
   <div class="opacity-0 bt2 z-10 text-bouton inf-bold w-fit bg-white border border-black py-[7px] px-[15px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">
     <span>JOUER</span>
   </div>
->>>>>>> Stashed changes
 </div>
