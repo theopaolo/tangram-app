@@ -6,11 +6,22 @@
   // Tangram pieces data with original colors
   import { PIECES_DATA } from '$lib/piecesData';
 
-  // === Router de clic pour .bt1 ===
-  const handleBt1 = toLayout3;
+ 
+function applyColors() {
+    Object.keys(PIECES_DATA).forEach(id => {
+      document.documentElement.style.setProperty(
+        `--c${id}`,
+        found.includes(id) ? PIECES_DATA[id].color : '#E6E6E6'
+      );
+    });
+  }
 
-  // Reactive function to set CSS custom properties for dynamic coloring (one-liner approach)
-  $effect(() => Object.keys(PIECES_DATA).forEach(id => document.documentElement.style.setProperty(`--c${id}`, found.includes(id) ? PIECES_DATA[id].color : '#E6E6E6')));
+ 
+  
+  // === Router de clic pour .bt1 ===
+  let bt1Mode = 'enter'; // 'enter' -> toLayout3, puis 'play' -> toLayout
+  const handleBt1 = (e) => (bt1Mode === 'enter' ? (toLayout3(e), applyColors()) : '');
+
 
   onMount(() => {
     found = localStorage.getItem('found')?.split(',').filter(Boolean) || [];
@@ -70,6 +81,7 @@ function toLayout3(e) {
   gsap.to(".piece polygon", {
       delay:0.4,
       strokeWidth:4,
+      strokeLinejoin:"bevel",
       duration: 0.2,
       ease: "power2.inOut"
     });
@@ -89,7 +101,7 @@ function toLayout3(e) {
   //   duration: 0.6,
   //   ease: "power2.inOut"
   // });
-  gsap.to(".controls , .intro-intro", {
+  gsap.to(".controls , .meme", {
     opacity:0,
     display:"none",
     // width:"75%",
@@ -192,6 +204,12 @@ onMount(async () => {
 </script>
 
 <style>
+
+  .piece polygon {
+  fill: var(--cMyPiece);
+  transition: fill 0.4s ease-in 0.2s; /* durée 0.2s, delay 0.4s */
+}
+
   body, html{
     overflow: hidden;
     height: 100%;
@@ -275,7 +293,7 @@ onMount(async () => {
   .p7 polygon { fill: var(--c7, #1b3c75); }
 </style>
 
-<div class="h-screen">
+<div class="">
   <div class="top-[35px] left-[50%] transform -translate-x-1/2 z-10 fixed title z-10 w-max text-intro inf-bold mx-auto w-fit tracking-[4%] bg-white border py-1 px-[14px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">CHROMOGRAM #1</div>
   <div class="controls fixed z-20 left-[50%] right-[initial] bottom-[35px] -translate-x-[50%]">
     <div
@@ -288,8 +306,8 @@ onMount(async () => {
 </div>
 
 
-<div class="w-[80dvw] w-screen bloc_one hidden flex opacity-0 z-[-1] z-100 py-[80px] text-center  absolute h-screen top-0 left-0 flex-col justify-evenly items-center">
-  <div>
+<div class="w-screen bloc_one hidden flex opacity-0 z-[-1] z-100 py-[80px] text-center  absolute h-screen top-0 left-0 flex-col justify-evenly items-center">
+  <div class="w-[80dvw]">
     <p>Pars à la recherche des 7 formes du tangram pour débloquer le CHROMOGRAM !</p>
 
     <!-- {#if totalPiece === 0}
@@ -311,10 +329,12 @@ onMount(async () => {
   <div>
     <img  src="/images/camera.svg" alt="camera" class="!w-[55px] h-auto " />
   </div>
+  <div class="z-10 bottom-3.5 left-5 fixed text-mini" >Accueil > Les Couleurs > Les Tangrams</div>
+  <div class="z-10 fixed text-mini bottom-3.5 right-5" >Crédits</div>
 </div>
 
 
-<div class="d-none absolute inset-x-0 top-0 z-10 h-[100dvh] px-2 flex items-center justify-evenly flex-col pt-[105px] pb-[25px]">
+<div class="meme d-none absolute inset-x-0 top-0 z-10 h-[100dvh] px-2 flex items-center justify-evenly flex-col pt-[105px] pb-[25px]">
   <div class="text-bouton intro-intro text-center height-auto max-w-prose whitespace-pre-line">
     CHROMOGRAM ou tangram des couleurs est un jeu proposé par l'artiste Armelle Caron qui se renouvelle à chaque exposition de collection.
 
@@ -326,7 +346,6 @@ onMount(async () => {
 
     Il y a 7 qr codes à trouver dans l'exposition.
   </div>
-
 
   <div class="opacity-0 bt2 z-10 text-bouton inf-bold w-fit bg-white border border-black py-[7px] px-[15px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">
     <span>JOUER</span>

@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 
 @theme {
+  --cMyPiece: #E6E6E6;
   --my-drop-shadow: 10px 10px black;
   --my-nd-drop-shadow: 10px 10px 20px rgba(0, 0, 0, 0.3);
   --text-micro: 0.563rem; /* 9px */

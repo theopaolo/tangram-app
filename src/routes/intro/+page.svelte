@@ -4,7 +4,7 @@
 
   // === Router de clic pour .bt1 ===
   let bt1Mode = 'enter'; // 'enter' -> toLayout2, puis 'play' -> toLayout3
-  const handleBt1 = (e) => (bt1Mode === 'enter' ? toLayout2(e) : toLayout3(e));
+  const handleBt1 = (e) => (bt1Mode === 'enter' ? toLayout2(e) : '');
 
   // === Helpers TITLE (inchangé) ===
   let curAngle = -45;
@@ -114,10 +114,10 @@
       duration: 0.6, ease: "power2.inOut",
       onStart: () => {
         // Effet “slot” puis mot final
-        const finalText = "<span>JOUER</span>";
+        const finalText = "JOUER";
         const len = finalText.length;
         const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        const cycles = 10;
+        const cycles = 5;
         const step = 0.08;
         const randStr = () =>
           Array.from({ length: len }, () => chars[(Math.random() * chars.length) | 0]).join("");
@@ -152,82 +152,7 @@
     fitTitle(0, 1, "topLeft", true);
   }
 
-function toLayout3(e) {
-  e?.preventDefault();
 
-  // Hauteur de référence : même hauteur que .bt2
-  const targetRect = document.querySelector(".bt2").getBoundingClientRect();
-  const targetY = targetRect.top + window.scrollY;
-
-  // 1) .conta : 30dvh × 30dvh, centrée H, et alignée à la hauteur de .bt2
-  gsap.to(".conta", {
-    width: "1dvh",
-    height: "1dvh",
-    left: "50%",
-    xPercent: -50,     // équivaut à translateX(-60%)
-    top: targetY,
-    yPercent: 0,       // on aligne le bord haut sur la hauteur de .bt2
-    x: 0,
-    y: 0,
-    // on n'utilise plus le transform CSS initial ici (géré par xPercent/yPercent)
-    duration: 0.6,
-    ease: "power2.inOut"
-  });
-
-
-  gsap.to(".title", {
-    left: "20px",
-    top:"20px",
-    xPercent: 0,
-    fontSize:"19px",
-    duration: 0.6,
-    ease: "power2.inOut"
-  }); 
-  gsap.to(".text-bouton", {
-    width:"100%",
-    height:"100%",
-    duration: 0.6,
-    ease: "power2.inOut"
-  }); 
-  gsap.to(".controls", {
-    width:"75%",
-    height:"100vh",
-    padding:"130px 0 100px 0",
-    top: "50%",
-    yPercent: -50,
-    x: 0,
-    y: 0,
-    duration: 0.6,
-    ease: "power2.inOut"
-  }); 
-  gsap.to(".controls .text-bouton", {
-    padding:"20px",
-  }); 
-  gsap.to(".text-bouton span , .intro-intro", {
-    opacity:0,
-  });
-
-  // 2) Restaure l'épaisseur de trait (état initial)
-  // gsap.to(".piece polygon", { strokeWidth: 4, duration: 0.3 });
-
-  // 3) Pièces : retour EXACT aux valeurs de ton CSS initial
-  const layoutInitial = [
-    { cls: ".p1", left: 0, top: "initial", right: "initial", bottom: 0, width: "75%", rotate: 0, height:"initial" },
-    { cls: ".p2", left: 0, top: 0, right: 0, bottom: 0, height: "50%", rotate: 0, width:"initial" },
-    { cls: ".p3", left: 0, top: 0, right: 0, bottom: 0, height: "100%", rotate: 0, width:"initial" },
-    { cls: ".p4", left: 0, top: 0, right: "initial", bottom: "initial", height: "50%", rotate: 0, width:"initial" },
-    { cls: ".p5", left: 0, top: 0, right: "initial", bottom: "initial", width: "100%", rotate: 0, height:"initial" },
-    { cls: ".p6", left: 0, top: "initial", right: 0, bottom: 0, width: "50%", rotate: 0, yPercent: -50, height:"initial" },
-    { cls: ".p7", left: 0, right: "initial", top: 0, bottom: "initial", width: "50%", rotate: 0, height:"initial" }
-  ];
-  apply(layoutInitial);
-
-  // 4) Titre : retour à l’état initial
-  // fitTitle(-45, 0.82, "center", true);
-
-  // (Optionnel) si tu veux que bt1 redevienne "enter" après retour :
-  // bt1Mode = 'enter';
-}
 
   onMount(async () => {
     // no-scroll
@@ -335,7 +260,7 @@ function toLayout3(e) {
       on:click={handleBt1}
       on:touchstart={handleBt1}
       class="bt1 z-10 text-bouton inf-bold w-fit bg-white border py-[7px] px-[15px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">
-      <span>ENTRER</span>
+      ENTRER
     </div>
   </div>
 </div>
@@ -354,7 +279,7 @@ function toLayout3(e) {
   </div>
 
   <div class="opacity-0 bt2 z-10 text-bouton inf-bold w-fit bg-white border border-black py-[7px] px-[15px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">
-    <span>JOUER</span>
+    ENTRER
   </div>
 </div>
 
