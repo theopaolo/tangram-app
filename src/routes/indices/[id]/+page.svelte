@@ -2,6 +2,7 @@
   import { goto } from '$app/navigation';
   import { page } from '$app/state'; // SvelteKit (Svelte 5) : store page
   import { onMount } from 'svelte';
+  import { piecesStore } from '$lib/piecesStore.js';
 
 // import function to register Swiper custom elements
   import { register } from 'swiper/element/bundle';
@@ -160,13 +161,9 @@
 onMount(() => {
   gsapReady = import('gsap').then((m) => (gsap = m.gsap ?? m.default ?? m));
 
-  // Hydrate localStorage
-  try {
-    const stored = localStorage.getItem('piece');
-    if (stored) found = stored.split(',').filter(Boolean);
-  } catch (e) {
-    console.error('localStorage read failed:', e);
-  }
+  // Initialize pieces store
+  piecesStore.initialize();
+
   hasInitialized = true;
 
   // — Scroll-Spy listeners
@@ -196,21 +193,10 @@ onMount(() => {
   // ——————————————————
   let active = $state(0);
   let hasInitialized = $state(false);
-  let found = $state([]);
 
   let pieceId = $derived(page.params.id);
   let currentPiece = $derived(PIECES_DATA[pieceId]);
-  let totalPiece = $derived(found.length);
-
-  // Persistance
-  $effect(() => {
-    if (!hasInitialized) return;
-    try {
-      localStorage.setItem('piece', found.join(','));
-    } catch (e) {
-      console.error('localStorage write failed:', e);
-    }
-  });
+  let totalPiece = $derived(piecesStore.length);
 
   // ——————————————————
 // Smooth scroll util
@@ -284,8 +270,8 @@ $effect(() => {
   // CAPTURE
   // ——————————————————
   function capturePiece() {
-    if (pieceId && !found.includes(pieceId)) {
-      found = [...found, pieceId];
+    if (pieceId) {
+      piecesStore.addPiece(pieceId);
     }
   }
 
@@ -362,8 +348,8 @@ $effect(() => {
     <!-- Visuel -->
     <div class="mt-[40px] mb-4 w-full" style="background-color: {currentPiece.color};">
 
-        <swiper-container slides-per-view="1" speed="500"  loop="true" 
-          pagination={{ clickable : true }} 
+        <swiper-container slides-per-view="1" speed="500"  loop="true"
+          pagination={{ clickable : true }}
           style={`
           --swiper-navigation-color: ${currentPiece.color};
           --swiper-navigation-size: 20px;
@@ -486,7 +472,7 @@ $effect(() => {
       {#each PIECES_ENTRIES as [id, data]}
         <span
           class="rounded-full px-[11px] py-[11px]"
-          style="cursor: pointer; background-color: {found.includes(id) ? data.color : '#E3E3E3'}"
+          style="cursor: pointer; background-color: {piecesStore.hasPiece(id) ? data.color : '#E3E3E3'}"
           title={data.color_name}
           on:click={() => navigateToPiece(id)}
         />
@@ -505,7 +491,7 @@ $effect(() => {
           Tu as déjà découvert {totalPiece} couleurs sur 7 !
         {/if}
       </p>
-      
+
     </div>
         {#if totalPiece !== 7}
         <div class="relative flex justify-center items-center">
@@ -524,7 +510,7 @@ $effect(() => {
 				{#each Object.entries(PIECES_DATA) as [id, data]}
 					<span
 						class="rounded-full px-2 py-2"
-						style="cursor: pointer; background-color: {found.includes(id) ? data.color : '#DDD'}"
+						style="cursor: pointer; background-color: {piecesStore.hasPiece(id) ? data.color : '#DDD'}"
 						title={data.color_name}
 						on:click={() => navigateToPiece(id)}
 
@@ -534,7 +520,7 @@ $effect(() => {
 
 			<button class="cursor-pointer border" on:click={capturePiece}>Capturer la piece </button>
 
-			<p>id: {pieceId} found: {found.join(', ')} total: {totalPiece}</p>
+			<p>id: {pieceId} found: {$piecesStore.join(', ')} total: {totalPiece}</p>
 			<p class="text-xs">Tu as déjà trouvé {totalPiece} couleurs sur 7 !</p>
 		</div>
 
