@@ -4,15 +4,7 @@
   let found = $state([]);
 
   // Tangram pieces data with original colors
-  const PIECES_DATA = {
-    1: { color: '#A9BCC4' }, // Le Grand Triangle
-    2: { color: '#FFF35C' }, // Le Triangle Moyen
-    3: { color: '#2B3B6D' }, // Le Petit Triangle
-    4: { color: '#7AC142' }, // Le Carré
-    5: { color: '#6B8FD6' }, // Le Parallélogramme
-    6: { color: '#3B5D3A' }, // Le Grand Trapèze
-    7: { color: '#8B83D2' }  // Le Petit Trapèze
-  };
+  import { PIECES_DATA } from '$lib/piecesData';
 
   // === Router de clic pour .bt1 ===
   const handleBt1 = toLayout3;
@@ -22,6 +14,7 @@
 
   onMount(() => {
     found = localStorage.getItem('found')?.split(',').filter(Boolean) || [];
+    console.log('found', found);
   });
 
   function apply(layout, contaWidth, contaHeight) {
@@ -75,7 +68,6 @@ function toLayout3(e) {
   });
 
   gsap.to(".piece polygon", {
-      fill: "#E6E6E6",
       delay:0.4,
       strokeWidth:4,
       duration: 0.2,
