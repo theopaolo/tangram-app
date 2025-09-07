@@ -298,7 +298,7 @@ onMount(async () => {
 </style>
 
 <div class="">
-  <div class="top-[35px] left-[50%] transform -translate-x-1/2 z-10 fixed title z-10 w-max text-intro inf-bold mx-auto w-fit tracking-[4%] bg-white border py-1 px-[14px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">CHROMOGRAM #1</div>
+  <div class="top-[35px] left-[50%] transform -translate-x-1/2 z-10 fixed title z-10 w-max text-intro inf-bold mx-auto w-fit tracking-[4%] bg-white border py-1 px-[14px] drop-shadow-[var(--my-drop-shadow)]">CHROMOGRAM #1</div>
   <div class="controls fixed z-20 left-[50%] right-[initial] bottom-[35px] -translate-x-[50%]">
     <div
       on:click={handleBt1}
@@ -331,7 +331,7 @@ onMount(async () => {
     </div>
   <div class="h-[80dvw] bg-transparent"></div>
   <div>
-    <img  src="/images/camera.svg" alt="camera" class="!w-[55px] h-auto " />
+    <img  src="/images/camera.svg" alt="camera" class="" />
   </div>
   <div class="z-10 bottom-3.5 left-5 fixed text-mini" >Accueil > Les Couleurs > Les Tangrams</div>
   <div class="z-10 fixed text-mini bottom-3.5 right-5" >Crédits</div>

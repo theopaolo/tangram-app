@@ -253,7 +253,7 @@
 </style>
 
 <div class="h-screen">
-  <div class="z-10 fixed title z-10 w-max text-intro inf-bold mx-auto w-fit tracking-[4%] bg-white border py-1 px-[14px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">CHROMOGRAM #1</div>
+  <div class="z-10 fixed title z-10 w-max text-intro inf-bold mx-auto w-fit bg-white border py-1 px-[14px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">CHROMOGRAM #1</div>
 
   <div class="controls fixed z-20 right-[50px] bottom-[35px]">
     <div

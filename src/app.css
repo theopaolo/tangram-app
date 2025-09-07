@@ -12,6 +12,8 @@
   --text-titre-alt: 1rem; /* 16px */
   --text-title: 1.188rem; /* 19px */
   --text-intro: 1.75rem; /* 28px */
+  --text-inter: 2.50rem; /* 28px */
+
   --c1: #ccffff;
   --c2: #ffe215;
   --c3: #0b4ed1;
@@ -19,6 +21,13 @@
   --c5: #1a5435;
   --c6: #44a635;
   --c7: #1b3c75;
+}
+
+.no-select {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 body{
