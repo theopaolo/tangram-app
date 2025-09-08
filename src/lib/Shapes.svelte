@@ -1,7 +1,7 @@
 <script>
-  import { onMount } from 'svelte';
-  import { shapesCommand, isShapesForeground } from './shapesStore.js';
   import { page } from '$app/stores';
+  import { onMount } from 'svelte';
+  import { shapesCommand } from './shapesStore.js';
 
   let gsap;
   let unsubscribe;

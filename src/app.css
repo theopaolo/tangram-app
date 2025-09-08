@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 
 @theme {
+  --cMyPiece: #E6E6E6;
   --my-drop-shadow: 10px 10px black;
   --my-nd-drop-shadow: 10px 10px 20px rgba(0, 0, 0, 0.3);
   --text-micro: 0.563rem; /* 9px */
@@ -11,19 +12,29 @@
   --text-titre-alt: 1rem; /* 16px */
   --text-title: 1.188rem; /* 19px */
   --text-intro: 1.75rem; /* 28px */
-  --c1: #1B3C75;
-  --c2: #FFE215;
-  --c3: #A3CFE6;
-  --c4: #0B4ED1;
-  --c5: #1A5435;
-  --c6: #7B77D4;
-  --c7: #44A635;
+  --text-inter: 2.50rem; /* 28px */
+
+  --c1: #ccffff;
+  --c2: #ffe215;
+  --c3: #0b4ed1;
+  --c4: #7b77d4;
+  --c5: #1a5435;
+  --c6: #44a635;
+  --c7: #1b3c75;
+}
+
+.no-select {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 body{
   font-family: 'Inf Reg';
   line-height: 1.7;
   font-weight: normal;
+  font-size: 0.813rem;
 }
 
 img{

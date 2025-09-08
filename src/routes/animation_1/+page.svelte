@@ -2,52 +2,81 @@
   import { onMount } from "svelte";
   let gsap;
 
-  const cols = 11;
-  const rows = 11;
-  const w = 5;   // largeur du triangle
-  const h = 10;   // hauteur du triangle
+  const cols = 3;
+  const rows = 20;
+  const w = 7.5;   // largeur du triangle
+  const h = 2.5;   // hauteur du triangle
+
+    // 🔧 espace vertical entre les lignes (même unité que h, le repère du viewBox)
+  const rowGap = 0;      // ⇦ augmente/diminue pour plus/moins d'espacement
+  const rowPitch = h + rowGap; // pas vertical réel (ligne + espace)
 
   const visibleCols = 2.8;
   const viewW = visibleCols * w;
-  const viewH = rows * h;
+   const viewH = rows * rowPitch;
+
+  // centrage vertical (ici = 0 car viewH == rows * rowPitch)
+  const offsetX = (cols * w - viewW) / 2;
+  const offsetY = (rows * rowPitch - viewH) / 2;
+
+
 
   onMount(async () => {
-    const mod = await import("gsap");
-    gsap = mod.gsap;
+      const mod = await import("gsap");
+      gsap = mod.gsap;
 
-    const rowsEls = document.querySelectorAll(".row");
 
-    rowsEls.forEach((row, i) => {
-      const dir = i % 2 === 0 ? 1 : -1; // paire → droite, impaire → gauche
-      const amplitude = w * 2;          // décalage total
 
-      if (dir === -1) {
-        // ligne qui va vers la gauche : démarre avec le bord gauche à -0.1
-        gsap.set(row, { x: -0.1 });
-        gsap.to(row, {
-          x: viewW - cols * w - 0.1, // se déplace vers la gauche
-          duration: 10,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-          delay: i * 0.05
+      // 🔹 au lieu de déplacer les lignes, on fait tourner chaque pièce
+      document.querySelectorAll(".piece").forEach(polygon => {
+        gsap.to(polygon, {
+          rotation: "+=360",
+          transformOrigin: "50% 50%",
+          duration: 16,   // vitesse d'une rotation complète
+          repeat: -1,    // boucle infinie
+          ease: "linear" // rotation constante sans accélération
         });
-      } else {
-        // ligne qui va vers la droite : démarre avec le bord droit à viewW+0.1
-        gsap.set(row, { x: (viewW + 0.9) - cols * w });
-        gsap.to(row, {
-          x: 0, // revient vers la gauche
-          duration: 10,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-          delay: i * 0.05
-        });
-      }
+      });
+  
+    const svg = document.querySelector("svg");
+    // double clic → rotation de toutes les formes
+    svg.addEventListener("dblclick", () => {
+      const randomRotation = gsap.utils.random(-120, 180); 
+      const pieces = document.querySelectorAll("svg");
+      gsap.to(pieces, {
+        rotation: `+=${randomRotation}`,
+        transformOrigin: "50% 50%",
+        duration: 1.2,
+        ease: "power2.inOut",
+      });
+
+      
     });
 
 
+      // ouste au clic sur une pièce
+    document.querySelectorAll(".row").forEach(row => {
+      row.addEventListener("click", () => {
+        // Choisit -10 (gauche) ou +10 (droite) aléatoirement
+        const dir = Math.random() < 0.5 ? -20 : 20;
 
+        // toutes les pièces dans cette ligne
+        const pieces = row.querySelectorAll(".piece");
+
+        gsap.to(pieces, {
+          x: `+=${dir}`,
+          rotate:90,
+          duration: 4,
+          ease: "power2.inOut",
+          yoyo: true,
+          repeat: 1,
+          stagger: {
+            each: 2,       // délai entre chaque pièce
+            from: "center"    // commence par le centre et se propage
+          }
+        });
+      });
+    });
 
     // no-scroll
     const preventScroll = (e) => e.preventDefault();
@@ -57,24 +86,11 @@
     return () => {
       document.body.style.overflow = "";
       document.removeEventListener("touchmove", preventScroll);
-      window.removeEventListener("resize", onRez);
     };
-
-
-
 
   });
 
 
-
-  // onMount(async () => {
-  //   // no-scroll
-  //   const preventScroll = (e) => e.preventDefault();
-  //   document.body.style.overflow = "hidden";
-  //   document.addEventListener("touchmove", preventScroll, { passive: false });
-
-   
-  // });
 </script>
 
 <style>
@@ -88,43 +104,41 @@
 
 </style>
 
-  <div class="h-screen absolute w-screen z-[-1]">
+  <div class="h-screen absolute w-screen z-1">
 
-<div class="h-screen absolute w-screen z-[-1]">
-  <svg
-    viewBox={`0 0 ${viewW} ${viewH}`}
-    width="100%"
-    height="100%"
-    preserveAspectRatio="xMidYMid slice"
-  >
-    {#each Array(rows) as _, r}
-      <g class="row" transform={`translate(0, ${r * h})`}>
-        {#each Array(cols) as _, c}
-          <polygon
-            points="0,10 0,0 5,5"
-            transform={`translate(${c * w}, 0)`}
-            class="p1"
-          />
+    <div class="h-screen absolute w-screen z-1]">
+      <svg
+        overflow="visible"
+        viewBox={`${offsetX} ${offsetY} ${viewW} ${viewH}`}
+        width="100%"
+        height="100%"
+        preserveAspectRatio="xMidYMid slice"
+      >
+        {#each Array(rows) as _, r}
+        <g class="row" transform={`translate(0, ${r * rowPitch})`}>
+            {#each Array(cols) as _, c}
+              <polygon
+                class="piece"
+                points="7.5,2.5 2.5,2.5 0,0 5,0"
+                transform={`translate(${c * w}, 0)`}
+              />
+            {/each}
+          </g>
         {/each}
-      </g>
-    {/each}
-  </svg>
-</div>
-
-
-
-
+      </svg>
+    </div>
 
   </div>
 
 
-<div class="flex flex-col py-[80px] items-center justify-between min-h-screen text-center">
-  <div class="py-[20px] px-[50px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-nd-drop-shadow)]">
+<div class="no-select relative z-2 flex flex-col py-[80px] items-center justify-between min-h-screen text-center pointer-events-none">
+  <div class="py-[20px] px-[50px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-nd-drop-shadow)] pointer-events-none">
     Bravo tu as découvert :
     <div class="text-titre-alt inf-bold my-5 uppercase">
       LE VERT FORÊT<br/>SCINTILLANTE
+      <!-- {currentPiece?.color_name} -->
     </div>
-    A quelle œuvre penses tu que<br/>cette couleur appartient ?
+    À quelle œuvre penses-tu que<br/>cette couleur appartient ?
   </div>
 
   <div class="text-titre-alt inf-bold uppercase py-[25px] px-[30px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-drop-shadow)]">

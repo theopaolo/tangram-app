@@ -1,13 +1,10 @@
 <script>
   import { onMount } from "svelte";
-  import { startPageTransition } from "$lib/transitionStore.js";
-  import { goto } from "$app/navigation";
-  import { setShapesLayout, setShapesForeground } from "$lib/shapesStore.js";
   let gsap; // SSR-safe
 
   // === Router de clic pour .bt1 ===
-  let bt1Mode = 'play'; // trigger final animation directly
-  const handleBt1 = (e) => toLayout3(e);
+  let bt1Mode = 'enter'; // 'enter' -> toLayout2, puis 'play' -> toLayout3
+  const handleBt1 = (e) => (bt1Mode === 'enter' ? toLayout2(e) : '');
 
   // === Helpers TITLE (inchangé) ===
   let curAngle = -45;
@@ -59,135 +56,6 @@
     });
   }
 
-  function toLayout2(e) {
-    e?.preventDefault();
-
-    // Animate shapes to index layout (around content)
-    setShapesLayout('index', { animate: true });
-
-    // Show intro text
-    gsap.to(".intro-intro", { opacity: 1, display: "block", duration: 0.3, delay: 0.4 });
-
-    // Animate controls to center position
-    gsap.to(".controls", {
-      left: "50%", right: "initial", xPercent: -50,
-      bottom: "35px",
-      duration: 0.6, ease: "power2.inOut",
-      onStart: () => {
-        // Text animation effect
-        const finalText = "<span>JOUER</span>";
-        const len = finalText.length;
-        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        const cycles = 10;
-        const step = 0.08;
-        const randStr = () =>
-
-        Array.from({ length: len }, () => chars[(Math.random() * chars.length) | 0]).join("");
-
-        gsap.to({}, {
-          duration: step,
-          repeat: cycles - 1,
-          ease: "none",
-          onRepeat: () => {
-            gsap.to(".bt1", {
-              duration: step,
-              text: { value: randStr(), delimiter: "" },
-              ease: "none"
-            });
-          },
-
-          onComplete: () => {
-            gsap.to(".bt1", {
-              duration: 0.6,
-              text: { value: finalText, delimiter: "" },
-              ease: "none",
-              onComplete: () => {
-                bt1Mode = 'play';
-              }
-            });
-          }
-        });
-      }
-    });
-
-    fitTitle(0, 1, "topLeft", true);
-
-    // Navigate to index page after animation
-    setTimeout(() => goto('/'), 600);
-  }
-
-function toLayout3(e) {
-  e?.preventDefault();
-
-  // Target height reference: align to the current button (bt1), fallback center
-  const btnRect = document.querySelector('.bt1')?.getBoundingClientRect();
-  const targetY = (btnRect ? btnRect.top + window.scrollY : window.scrollY + window.innerHeight * 0.5);
-
-  // 1) .conta : 30dvh × 30dvh, centrée H, et alignée à la hauteur de .bt2
-  gsap.to(".conta", {
-    width: "1dvh",
-    height: "1dvh",
-    left: "50%",
-    xPercent: -50,     // équivaut à translateX(-60%)
-    top: targetY,
-    yPercent: 0,       // on aligne le bord haut sur la hauteur de .bt2
-    x: 0,
-    y: 0,
-    // on n'utilise plus le transform CSS initial ici (géré par xPercent/yPercent)
-    duration: 0.6,
-    ease: "power2.inOut"
-  });
-
-  gsap.to(".title", {
-    left: "20px",
-    top:"20px",
-    xPercent: 0,
-    fontSize:"24px",
-    duration: 0.6,
-    ease: "power2.inOut"
-  });
-
-  gsap.to(".text-bouton", {
-    width:"100%",
-    height:"100%",
-    duration: 0.6,
-    ease: "power2.inOut"
-  });
-
-  gsap.to(".controls", {
-    width:"75%",
-    height:"100vh",
-    padding:"130px 0 100px 0",
-    top: "50%",
-    yPercent: -50,
-    x: 0,
-    y: 0,
-    duration: 0.6,
-    ease: "power2.inOut"
-  });
-
-  gsap.to(".controls .text-bouton", {
-    padding:"20px",
-  });
-
-  gsap.to(".text-bouton span , .intro-intro", {
-    opacity:0,
-  });
-
-  const layoutInitial = [
-    { cls: ".p1", left: 0, top: "initial", right: "initial", bottom: 0, width: "75%", rotate: 0, height:"initial" },
-    { cls: ".p2", left: 0, top: 0, right: 0, bottom: 0, height: "50%", rotate: 0, width:"initial" },
-    { cls: ".p3", left: 0, top: 0, right: 0, bottom: 0, height: "100%", rotate: 0, width:"initial" },
-    { cls: ".p4", left: 0, top: 0, right: "initial", bottom: "initial", height: "50%", rotate: 0, width:"initial" },
-    { cls: ".p5", left: 0, top: 0, right: "initial", bottom: "initial", width: "100%", rotate: 0, height:"initial" },
-    { cls: ".p6", left: 0, top: "initial", right: 0, bottom: 0, width: "50%", rotate: 0, yPercent: -50, height:"initial" },
-    { cls: ".p7", left: 0, right: "initial", top: 0, bottom: "initial", width: "50%", rotate: 0, height:"initial" }
-  ];
-  apply(layoutInitial);
-
-  // Animate shapes to final layout and navigate to depart
-  setTimeout(() => goto('/depart'), 500);
-}
 
   function apply(layout, contaWidth, contaHeight) {
     if (contaWidth || contaHeight) {
@@ -246,10 +114,10 @@ function toLayout3(e) {
       duration: 0.6, ease: "power2.inOut",
       onStart: () => {
         // Effet “slot” puis mot final
-        const finalText = "<span>JOUER</span>";
+        const finalText = "JOUER";
         const len = finalText.length;
         const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        const cycles = 10;
+        const cycles = 5;
         const step = 0.08;
         const randStr = () =>
           Array.from({ length: len }, () => chars[(Math.random() * chars.length) | 0]).join("");
@@ -284,99 +152,12 @@ function toLayout3(e) {
     fitTitle(0, 1, "topLeft", true);
   }
 
-function toLayout3(e) {
-  e?.preventDefault();
-
-  // Target height reference: align to the current button (bt1), fallback center
-  const btnRect = document.querySelector('.bt1')?.getBoundingClientRect();
-  const targetY = (btnRect ? btnRect.top + window.scrollY : window.scrollY + window.innerHeight * 0.5);
-
-  // 1) .conta : 30dvh × 30dvh, centrée H, et alignée à la hauteur de .bt2
-  gsap.to(".conta", {
-    width: "1dvh",
-    height: "1dvh",
-    left: "50%",
-    xPercent: -50,     // équivaut à translateX(-60%)
-    top: targetY,
-    yPercent: 0,       // on aligne le bord haut sur la hauteur de .bt2
-    x: 0,
-    y: 0,
-    // on n'utilise plus le transform CSS initial ici (géré par xPercent/yPercent)
-    duration: 0.6,
-    ease: "power2.inOut"
-  });
-
-  gsap.to(".title", {
-    left: "20px",
-    top:"20px",
-    xPercent: 0,
-    fontSize:"19px",
-    duration: 0.6,
-    ease: "power2.inOut"
-  });
-
-  gsap.to(".text-bouton", {
-    width:"100%",
-    height:"100%",
-    duration: 0.6,
-    ease: "power2.inOut"
-  });
-
-  gsap.to(".controls", {
-    width:"75%",
-    height:"100vh",
-    padding:"130px 0 100px 0",
-    top: "50%",
-    yPercent: -50,
-    x: 0,
-    y: 0,
-    duration: 0.6,
-    ease: "power2.inOut"
-  });
-
-  gsap.to(".controls .text-bouton", {
-    padding:"20px",
-  });
-
-  gsap.to(".text-bouton span , .intro-intro", {
-    opacity:0,
-  });
-
-  // 2) Restaure l'épaisseur de trait (état initial)
-  // gsap.to(".piece polygon", { strokeWidth: 4, duration: 0.3 });
-
-  // 3) Pièces : retour EXACT aux valeurs de ton CSS initial
-  const layoutInitial = [
-    { cls: ".p1", left: 0, top: "initial", right: "initial", bottom: 0, width: "75%", rotate: 0, height:"initial" },
-    { cls: ".p2", left: 0, top: 0, right: 0, bottom: 0, height: "50%", rotate: 0, width:"initial" },
-    { cls: ".p3", left: 0, top: 0, right: 0, bottom: 0, height: "100%", rotate: 0, width:"initial" },
-    { cls: ".p4", left: 0, top: 0, right: "initial", bottom: "initial", height: "50%", rotate: 0, width:"initial" },
-    { cls: ".p5", left: 0, top: 0, right: "initial", bottom: "initial", width: "100%", rotate: 0, height:"initial" },
-    { cls: ".p6", left: 0, top: "initial", right: 0, bottom: 0, width: "50%", rotate: 0, yPercent: -50, height:"initial" },
-    { cls: ".p7", left: 0, right: "initial", top: 0, bottom: "initial", width: "50%", rotate: 0, height:"initial" }
-  ];
-  apply(layoutInitial);
-
-  // 4) Titre : retour à l’état initial
-  // fitTitle(-45, 0.82, "center", true);
-
-  // (Optionnel) si tu veux que bt1 redevienne "enter" après retour :
-  // bt1Mode = 'enter';
-
-  // Animate shapes to index layout and navigate
-  setShapesLayout('index', { animate: true });
-  setTimeout(() => goto('/'), 100);
-}
 
   onMount(async () => {
     // no-scroll
     const preventScroll = (e) => e.preventDefault();
     document.body.style.overflow = "hidden";
     document.addEventListener("touchmove", preventScroll, { passive: false });
-
-    // Set shapes to intro layout immediately (before GSAP loads)
-    setShapesLayout('intro', { animate: false });
-    setShapesForeground(true);
 
     // GSAP + TextPlugin (SSR-safe)
     const mod = await import("gsap");
@@ -397,7 +178,6 @@ function toLayout3(e) {
       document.body.style.overflow = "";
       document.removeEventListener("touchmove", preventScroll);
       window.removeEventListener("resize", onRez);
-      setShapesForeground(false);
     };
   });
 </script>
@@ -406,10 +186,8 @@ function toLayout3(e) {
   body, html{
     overflow: hidden;
     height: 100%;
-    overscroll-behavior: none;
+    overscroll-behavior: none; /* évite le "rebond" sur mobile */
   }
-
-  /* Une pièce = conteneur absolument positionné + 1 SVG avec viewBox identique */
   .piece {
     position: fixed;
     transform-origin: center; will-change: left, top, width, transform;
@@ -463,33 +241,35 @@ function toLayout3(e) {
     right: 0;
     top: 25%;
     margin: auto;
-    /* transform: translateY(-50%); */
   }
 
   /* Couleurs (optionnel) */
-  .p1 polygon { fill: var(--c1, #1B3C75); }
-  .p2 polygon { fill: var(--c2, #FFE215); }
-  .p3 polygon { fill: var(--c3, #A3CFE6); }
-  .p4 polygon { fill: var(--c4, #0B4ED1); }
-  .p5 polygon { fill: var(--c5, #1A5435); }
-  .p6 polygon { fill: var(--c6, #7B77D4); }
-  .p7 polygon { fill: var(--c7, #44A635); }
+  .p1 polygon { fill: var(--c1, #ccffff); }
+  .p2 polygon { fill: var(--c2, #ffe215); }
+  .p3 polygon { fill: var(--c3, #0b4ed1); }
+  .p4 polygon { fill: var(--c4, #7b77d4); }
+  .p5 polygon { fill: var(--c5, #1a5435); }
+  .p6 polygon { fill: var(--c6, #44a635); }
+  .p7 polygon { fill: var(--c7, #1b3c75); }
 
 </style>
 
 <div class="h-screen">
-  <div class="z-10 fixed title w-max text-intro inf-bold mx-auto bg-white border py-1 px-[14px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">CHROMOGRAM #1</div>
+  <div class="z-10 fixed title z-10 w-max text-intro inf-bold mx-auto w-fit bg-white border py-1 px-[14px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">CHROMOGRAM #1</div>
+
   <div class="controls fixed z-20 right-[50px] bottom-[35px]">
     <div
       on:click={handleBt1}
       on:touchstart={handleBt1}
       class="bt1 z-10 text-bouton inf-bold w-fit bg-white border py-[7px] px-[15px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">
-      <span>ENTRER</span>
+      ENTRER
     </div>
   </div>
 </div>
 
 <div class="d-none absolute inset-x-0 top-0 z-10 h-[100dvh] px-2 flex items-center justify-evenly flex-col pt-[105px] pb-[25px]">
+  <div class="text-bouton intro-intro opacity-0 text-center height-auto max-w-prose whitespace-pre-line">
+    CHROMOGRAM ou tangram des couleurs est un jeu proposé par l'artiste Armelle Caron qui se renouvelle à chaque exposition de collection.
 
     L'art est habité de mille couleurs. Subtiles, franches, opposées, brutales ou délicates.
     Elles sont partout et toujours précisément choisies par les artistes.
@@ -501,6 +281,50 @@ function toLayout3(e) {
   </div>
 
   <div class="opacity-0 bt2 z-10 text-bouton inf-bold w-fit bg-white border border-black py-[7px] px-[15px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">
-    <span>JOUER</span>
+    ENTRER
+  </div>
+</div>
+
+<div class="conta h-[103dvh] w-[103dvh] absolute top-1/2 left-1/2 -translate-x-[60%] -translate-y-1/2">
+  <div class="piece p1">
+    <svg viewBox="0 0 7.5 2.5">
+      <polygon points="7.5,2.5 2.5,2.5 0,0 5,0" />
+    </svg>
+  </div>
+
+  <div class="piece p2">
+    <svg viewBox="0 0 5 5">
+      <polygon points="0,0 5,0 5,5" />
+    </svg>
+  </div>
+
+  <div class="piece p3">
+    <svg viewBox="0 0 5 10">
+      <polygon points="0,10 0,0 5,5" />
+    </svg>
+  </div>
+
+  <div class="piece p4">
+    <svg viewBox="0 0 2.5 5">
+      <polygon points="2.5,5 2.5,0 0,2.5" />
+    </svg>
+  </div>
+
+  <div class="piece p5">
+    <svg viewBox="0 0 10 5">
+      <polygon points="0,5 10,5 5,0" />
+    </svg>
+  </div>
+
+  <div class="piece p6">
+    <svg viewBox="0 0 5 5">
+      <polygon points="0,2.5 2.5,0 5,2.5 2.5,5" />
+    </svg>
+  </div>
+
+  <div class="piece p7">
+    <svg viewBox="0 0 5 2.5">
+      <polygon points="5,0 0,0 2.5,2.5" />
+    </svg>
   </div>
 </div>
