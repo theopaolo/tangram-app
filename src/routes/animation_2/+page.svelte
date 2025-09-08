@@ -8,7 +8,7 @@
   const w = 5;
   const h = 5;
 
-  const visibleCols = 2.8;
+  const visibleCols = 2.2;
   const viewW = visibleCols * w;
   const viewH = rows * h;
 
@@ -28,11 +28,12 @@
     if (tween) tween.kill();
 
     tween = gsap.to(tiles, {
-      x: `+=${dir.dx * cols * w}`,
-      y: `+=${dir.dy * rows * h}`,
+      x: `+=${dir.dx * cols * w/2}`,
+      y: `+=${dir.dy * rows * h/2}`,
       duration: 40,
       ease: "linear",
-      repeat: -1,
+      repeat: 1,
+      yoyo: true,
       modifiers: {
         x: gsap.utils.unitize(x => parseFloat(x) % (cols * w)),
         y: gsap.utils.unitize(y => parseFloat(y) % (rows * h))
@@ -46,21 +47,23 @@
 
     const tiles = document.querySelectorAll(".tile");
     const svg = document.querySelector("svg");
+    const whole = document.querySelector(".whole");
+    const pieces = document.querySelectorAll(".piece");
+    const randomRotation = gsap.utils.random(-90, 180); 
 
     // démarre en ↘
     startTween(tiles, directions[currentDir]);
 
     // clic simple → change de direction
-    svg.addEventListener("click", () => {
+    whole.addEventListener("click", () => {
       currentDir = (currentDir + 1) % directions.length;
       startTween(tiles, directions[currentDir]);
     });
 
     // double clic → rotation de toutes les formes
-    svg.addEventListener("dblclick", () => {
-      const pieces = document.querySelectorAll(".piece");
+    whole.addEventListener("dblclick", () => {
       gsap.to(pieces, {
-        rotation: "+=180",
+        rotation: `+=${randomRotation}`,
         transformOrigin: "50% 50%",
         duration: 1.2,
         ease: "power2.inOut",
@@ -80,6 +83,16 @@
     //   });
     // });
 
+    // no-scroll
+    const preventScroll = (e) => e.preventDefault();
+    document.body.style.overflow = "hidden";
+    document.addEventListener("touchmove", preventScroll, { passive: false });
+
+    return () => {
+      document.body.style.overflow = "";
+      document.removeEventListener("touchmove", preventScroll);
+    };
+
   });
 </script>
 
@@ -95,7 +108,7 @@
 </style>
 
   <div class="h-screen absolute w-screen z-1">
-    <div class="h-screen absolute w-screen z-1]">
+    <div class="whole h-screen absolute w-screen z-1]">
       <svg
   viewBox={`${offsetX} ${offsetY} ${viewW} ${viewH}`}
   width="100%"

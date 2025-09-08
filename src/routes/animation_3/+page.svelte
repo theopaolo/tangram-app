@@ -2,12 +2,12 @@
   import { onMount } from "svelte";
   let gsap;
 
-  const cols = 11;
-  const rows = 11;
+  const cols = 55;
+  const rows = 55;
   const w = 5;   // largeur du triangle
   const h = 10;   // hauteur du triangle
 
-  const visibleCols = 2.8;
+  const visibleCols = 2.2;
   const viewW = visibleCols * w;
   const viewH = rows * h;
 
@@ -17,7 +17,6 @@
 
     const rowsEls = document.querySelectorAll(".row");
 
-    const svg = document.querySelector("svg");
 
 
     rowsEls.forEach((row, i) => {
@@ -29,71 +28,85 @@
         gsap.set(row, { x: -0.1 });
         gsap.to(row, {
           x: viewW - cols * w - 0.1, // se déplace vers la gauche
-          duration: 13,
+          duration: 52,
           repeat: -1,
           yoyo: true,
           ease: "sine.inOut",
-          delay: i * 0.05
         });
       } else {
         // ligne qui va vers la droite : démarre avec le bord droit à viewW+0.1
         gsap.set(row, { x: (viewW + 0.9) - cols * w });
         gsap.to(row, {
           x: 0, // revient vers la gauche
-          duration: 13,
+          duration: 52,
           repeat: -1,
           yoyo: true,
           ease: "sine.inOut",
-          delay: i * 0.05
         });
       }
     });
 
 
 
-    svg.addEventListener("dblclick", () => {
-      const pieces = document.querySelectorAll("svg");
-      gsap.to(pieces, {
-        rotation: "+=180",
-        transformOrigin: "50% 50%",
-        duration: 1.2,
-        ease: "power2.inOut",
-      });
+          const svg = document.querySelector("svg");
+          const whole = document.querySelector(".whole");
+
+          
+          let zoomed = false;
+
+          whole.addEventListener("dblclick", (e) => {
+            const pieces = document.querySelectorAll("svg");
+            const randomRotation = gsap.utils.random(-120, 200); 
+            const pt = svg.createSVGPoint();
+                pt.x = e.clientX;
+                pt.y = e.clientY;
+            const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
+            gsap.to(pieces, {
+              scale: zoomed ? 1 : 0.7,
+              rotation: `+=${randomRotation}`,
+              duration: 1.2,
+              ease: "power2.inOut",
+            });
+                zoomed = !zoomed;
+
+
+          });
+
+    
+
+
+    // rotation continue tant qu'on laisse appuyé
+    document.querySelectorAll(".piece").forEach(polygon => {
+      let rotateTween;
+
+      const startRotate = () => {
+        if (rotateTween) return; // déjà en train de tourner
+        rotateTween = gsap.to(polygon, {
+          rotation: "+=360",            // un tour complet
+          transformOrigin: "50% 50%",   // centre
+          duration: 2,                  // vitesse d’un tour
+          ease: "linear",
+          repeat: -1                    // boucle infinie
+        });
+      };
+
+      const stopRotate = () => {
+        if (rotateTween) {
+          rotateTween.kill(); // stoppe l’animation
+          rotateTween = null;
+        }
+      };
+
+      // desktop
+      polygon.addEventListener("mousedown", startRotate);
+      polygon.addEventListener("mouseup", stopRotate);
+      polygon.addEventListener("mouseleave", stopRotate);
+
+      // mobile
+      polygon.addEventListener("touchstart", startRotate);
+      polygon.addEventListener("touchend", stopRotate);
+      polygon.addEventListener("touchcancel", stopRotate);
     });
-
-
-// rotation continue tant qu'on laisse appuyé
-document.querySelectorAll(".piece").forEach(polygon => {
-  let rotateTween;
-
-  const startRotate = () => {
-    if (rotateTween) return; // déjà en train de tourner
-    rotateTween = gsap.to(polygon, {
-      rotation: "+=360",            // un tour complet
-      transformOrigin: "50% 50%",   // centre
-      duration: 2,                  // vitesse d’un tour
-      ease: "linear",
-      repeat: -1                    // boucle infinie
-    });
-  };
-
-  const stopRotate = () => {
-    if (rotateTween) {
-      rotateTween.kill(); // stoppe l’animation
-      rotateTween = null;
-    }
-  };
-
-  // desktop
-  polygon.addEventListener("mousedown", startRotate);
-  polygon.addEventListener("mouseup", stopRotate);
-  polygon.addEventListener("mouseleave", stopRotate);
-
-  // mobile
-  polygon.addEventListener("touchstart", startRotate);
-  polygon.addEventListener("touchend", stopRotate);
-  polygon.addEventListener("touchcancel", stopRotate);
-});
 
     // no-scroll
     const preventScroll = (e) => e.preventDefault();
@@ -103,17 +116,10 @@ document.querySelectorAll(".piece").forEach(polygon => {
     return () => {
       document.body.style.overflow = "";
       document.removeEventListener("touchmove", preventScroll);
-      window.removeEventListener("resize", onRez);
     };
 
   });
 
-  // onMount(async () => {
-  //   // no-scroll
-  //   const preventScroll = (e) => e.preventDefault();
-  //   document.body.style.overflow = "hidden";
-  //   document.addEventListener("touchmove", preventScroll, { passive: false }); 
-  // });
 </script>
 
 <style>
@@ -128,8 +134,9 @@ document.querySelectorAll(".piece").forEach(polygon => {
 </style>
 
   <div class="h-screen absolute w-screen z-1">
-    <div class="h-screen absolute w-screen z-1]">
+    <div class="whole h-screen absolute w-screen z-1]">
       <svg
+        overflow="visible"
         viewBox={`0 0 ${viewW} ${viewH}`}
         width="100%"
         height="100%"
