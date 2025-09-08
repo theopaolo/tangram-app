@@ -259,7 +259,7 @@ onMount(async () => {
     bottom:initial;
     right:initial;
     top:initial;
-    left: initial;;
+    left: initial;
     top: 16%;
     rotate: 0;
   }
