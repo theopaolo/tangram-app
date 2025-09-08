@@ -164,9 +164,6 @@
     const TextPlugin = (await import("gsap/TextPlugin")).TextPlugin;
     mod.gsap.registerPlugin(TextPlugin);
     gsap = mod.gsap;
-    // Set shapes to intro layout instantly (no animation on load)
-    setShapesLayout('intro', { animate: false });
-    setShapesForeground(true);
 
     // init title
     fitTitle(-45, 0.82, "center", false);
