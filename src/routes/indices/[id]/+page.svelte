@@ -1,45 +1,44 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state'; // SvelteKit (Svelte 5) : store page
 	import { onMount } from 'svelte';
 	import { piecesStore } from '$lib/piecesStore.js';
 
-  // `Object.entries` reste pareil
-  import { PIECES_DATA } from '$lib/piecesData';
-  const PIECES_ENTRIES = Object.entries(PIECES_DATA);
+	// `Object.entries` reste pareil
+	import { PIECES_DATA } from '$lib/piecesData';
+	const PIECES_ENTRIES = Object.entries(PIECES_DATA);
 
-  // Si tu veux dériver une version réactive du store
-  let foundPieces = $derived($piecesStore);
+	// Si tu veux dériver une version réactive du store
+	let foundPieces = $derived($piecesStore);
 
-  // import function to register Swiper custom elements
-  // import { Pagination } from 'swiper/modules';
-  // register Swiper custom elements
-   import { register } from 'swiper/element/bundle';
-  register();
-  let swiperEl;
-  onMount(() => {
-    if (swiperEl) {
-      Object.assign(swiperEl, {
-        slidesPerView: 1,
-        speed: 500,
-        loop: true,
-        pagination: {
-          clickable: true
-        },
-        navigation: true
-      });
-       // Appliquer les variables CSS
-      swiperEl.style.setProperty('--swiper-navigation-color', currentPiece.color);
-      swiperEl.style.setProperty('--swiper-navigation-size', '0');
-      swiperEl.style.setProperty('--swiper-pagination-bullet-inactive-opacity', '1');
-      swiperEl.style.setProperty('--swiper-pagination-bullet-inactive-color', 'white');
-      swiperEl.style.setProperty('--swiper-pagination-color', 'black');
-      swiperEl.style.setProperty('--swiper-pagination-bullet-size', '10px');
+	// import function to register Swiper custom elements
+	// import { Pagination } from 'swiper/modules';
+	// register Swiper custom elements
+	import { register } from 'swiper/element/bundle';
+	register();
+	let swiperEl;
+	onMount(() => {
+		if (swiperEl) {
+			Object.assign(swiperEl, {
+				slidesPerView: 1,
+				speed: 500,
+				loop: true,
+				pagination: {
+					clickable: true
+				},
+				navigation: true
+			});
+			// Appliquer les variables CSS
+			swiperEl.style.setProperty('--swiper-navigation-color', currentPiece.color);
+			swiperEl.style.setProperty('--swiper-navigation-size', '0');
+			swiperEl.style.setProperty('--swiper-pagination-bullet-inactive-opacity', '1');
+			swiperEl.style.setProperty('--swiper-pagination-bullet-inactive-color', 'white');
+			swiperEl.style.setProperty('--swiper-pagination-color', 'black');
+			swiperEl.style.setProperty('--swiper-pagination-bullet-size', '10px');
 
-
-      swiperEl.initialize();
-    }
-  });
+			swiperEl.initialize();
+		}
+	});
 
 	// ——————————————————
 	// CONSTANTES
@@ -48,24 +47,24 @@
 	const OFFSET = 90; // px à laisser au-dessus (navbar, marge…)
 	const SCROLL_MS = 800; // durée pour la version polyfill (fallback)
 
-  // ——————————————————
-  // DONNÉES
-  // ——————————————————
- 
-
+	// ——————————————————
+	// DONNÉES
+	// ——————————————————
 
 	// ——————————————————
 	// GSAP (import dynamique côté client)
 	// ——————————————————
 	let gsap;
 	let gsapReady;
-	let circleEl = $state();
+	let circleEl;
 
 	onMount(() => {
 		gsapReady = import('gsap').then((m) => (gsap = m.gsap ?? m.default ?? m));
 
 		// Initialize pieces store
 		piecesStore.initialize();
+
+		hasInitialized = true;
 
 		// — Scroll-Spy listeners
 		window.addEventListener('scroll', onScrollThrottled, { passive: true });
@@ -90,12 +89,14 @@
 	}
 
 	// ——————————————————
-	// ETAT
+	// ETAT (runes Svelte 5)
 	// ——————————————————
 	let active = $state(0);
-	let pieceId = $derived($page.params.id);
+	let hasInitialized = $state(false);
+
+	let pieceId = $derived(page.params.id);
 	let currentPiece = $derived(PIECES_DATA[pieceId]);
-	let totalPiece = $derived(piecesStore.count);
+	let totalPiece = $derived(Number($piecesStore?.length ?? 0));
 
 	// ——————————————————
 	// Smooth scroll util
@@ -106,10 +107,13 @@
 		const t0 = performance.now();
 		const ease = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
 
-  let pieceId = $derived(page.params.id);
-  let currentPiece = $derived(PIECES_DATA[pieceId]);
-  let totalPiece = $derived( Number($piecesStore?.length ?? 0) );
-
+		function step(now) {
+			const p = Math.min((now - t0) / duration, 1);
+			window.scrollTo(0, start + delta * ease(p));
+			if (p < 1) requestAnimationFrame(step);
+		}
+		requestAnimationFrame(step);
+	}
 
 	function setActiveAndScroll(i) {
 		//   active = i;
@@ -196,40 +200,51 @@
 </script>
 
 {#if currentPiece}
-  <div class="p-5 pt-0" id="section-0">
-    <!-- Header / onglets -->
-    <header class="flex sticky z-10 bg-white top-0 pt-[30px] items-center pb-[5px]">
-      {#each LABELS as label, i}
-        <button
-          type="button"
-          on:click={() => setActiveAndScroll(i)}
-          class="mr-[20px] text-11 w-fit tracking-[4%] border py-1 px-[11px] transition-colors"
-          class:bg-black={active === i}
-          class:bg-white={active !== i}
-          class:text-white={active === i}
-          class:text-black={active !== i}
-          class:border-black={active === i}
-        >
-          {label}
-        </button>
-      {/each}
-	  <div class="absolute right-0">
-		<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-			<path d="M17.1421 15.1421L15.0208 17.2635L0.87868 3.12132L3 1L17.1421 15.1421Z" fill="black"/>
-			<path d="M2.85786 17.1421L0.736544 15.0208L14.8787 0.87868L17 3L2.85786 17.1421Z" fill="black"/>
-		</svg>
-	  </div>
-    </header>
+	<div class="p-5 pt-0" id="section-0">
+		<!-- Header / onglets -->
+		<header class="sticky top-0 z-10 flex items-center bg-white pt-[30px] pb-[5px]">
+			{#each LABELS as label, i}
+				<button
+					type="button"
+					on:click={() => setActiveAndScroll(i)}
+					class="text-11 mr-[20px] w-fit border px-[11px] py-1 tracking-[4%] transition-colors"
+					class:bg-black={active === i}
+					class:bg-white={active !== i}
+					class:text-white={active === i}
+					class:text-black={active !== i}
+					class:border-black={active === i}
+				>
+					{label}
+				</button>
+			{/each}
+			<div class="absolute right-0">
+				<svg
+					width="18"
+					height="18"
+					viewBox="0 0 18 18"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						d="M17.1421 15.1421L15.0208 17.2635L0.87868 3.12132L3 1L17.1421 15.1421Z"
+						fill="black"
+					/>
+					<path
+						d="M2.85786 17.1421L0.736544 15.0208L14.8787 0.87868L17 3L2.85786 17.1421Z"
+						fill="black"
+					/>
+				</svg>
+			</div>
+		</header>
 
-    <!-- Visuel -->
-    <div class="mt-[40px] mb-4 w-full" style="background-color: {currentPiece.color};">
-
-        <swiper-container bind:this={swiperEl}>
-          <swiper-slide><img class="aspect-3/2 object-cover" src="/images/dd.jpg" /></swiper-slide>
-          <swiper-slide><img class="aspect-3/2 object-cover" src="/images/dd.jpg" /></swiper-slide>
-          <swiper-slide><img class="aspect-3/2 object-cover" src="/images/dd.jpg" /></swiper-slide>
-        </swiper-container>
-    </div>
+		<!-- Visuel -->
+		<div class="mt-[40px] mb-4 w-full" style="background-color: {currentPiece.color};">
+			<swiper-container bind:this={swiperEl}>
+				<swiper-slide><img class="aspect-3/2 object-cover" src="/images/dd.jpg" /></swiper-slide>
+				<swiper-slide><img class="aspect-3/2 object-cover" src="/images/dd.jpg" /></swiper-slide>
+				<swiper-slide><img class="aspect-3/2 object-cover" src="/images/dd.jpg" /></swiper-slide>
+			</swiper-container>
+		</div>
 
 		<!-- Infos oeuvre -->
 		<div class="flex flex-col">
@@ -248,7 +263,7 @@
 			<div
 				class="flex w-max cursor-pointer touch-none items-center space-x-2 select-none"
 				class:selected={selectedAnswer === 0}
-				onclick={() => toggleAnswer(0)}
+				on:click={() => toggleAnswer(0)}
 			>
 				<svg width="11" height="6" viewBox="0 0 11 6" class="shrink-0" fill="currentColor">
 					<path d="M11 3 6 .113v5.774L11 3ZM0 3v.5h6.5V3H0Zm0-1v.5h6.5V2H0Z" />
@@ -273,7 +288,7 @@
 			<div
 				class="flex w-max cursor-pointer touch-none items-center space-x-2 select-none"
 				class:selected={selectedAnswer === 1}
-				onclick={() => toggleAnswer(1)}
+				on:click={() => toggleAnswer(1)}
 			>
 				<svg width="11" height="6" viewBox="0 0 11 6" class="shrink-0" fill="currentColor">
 					<path d="M11 3 6 .113v5.774L11 3ZM0 3v.5h6.5V3H0Zm0-1v.5h6.5V2H0Z" />
@@ -309,7 +324,7 @@
 					<div
 						class="flex cursor-pointer touch-none items-center gap-2 select-none"
 						class:selected={selected.has(i)}
-						onclick={() => toggle(i)}
+						on:click={() => toggle(i)}
 					>
 						<svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor">
 							<rect x="4" width="5" height="5" transform="rotate(45 4 0)" />
@@ -337,13 +352,10 @@
 		<div
 			id="section-2"
 			class="relative overflow-hidden border px-5 py-4"
-			onpointerdown={(e) => {
-				e.preventDefault();
-				expand();
-			}}
-			onpointerup={shrink}
-			onpointerleave={shrink}
-			onpointercancel={shrink}
+			on:pointerdown|preventDefault={expand}
+			on:pointerup={shrink}
+			on:pointerleave={shrink}
+			on:pointercancel={shrink}
 		>
 			<div class="text-titre-alt inf-bold relative z-[1] mb-5 uppercase">
 				{currentPiece?.color_name}
@@ -366,42 +378,18 @@
 		<!-- Progress / navigation par couleurs -->
 		<div class="m-auto mt-17 mb-10 h-px w-2/3 bg-black"></div>
 
-    <div class="flex justify-center gap-5">
-   
-{#each PIECES_ENTRIES as [id, data] (id)}
-  <span
-    class="rounded-full px-[11px] py-[11px]"
-    style="cursor: pointer; background-color: {foundPieces.includes(id) ? data.color : '#E3E3E3'}"
-    title={data.color_name}
-    on:click={() => navigateToPiece(id)}
-  />
-{/each}
-    </div>
-
-    <div class="mt-5 mb-15 text-center">
-      <p>
-        {#if totalPiece === 0}
-          Tu n'as découvert aucune couleur
-        {:else if totalPiece === 1}
-          Tu as déjà découvert 1 couleur sur 7 !
-        {:else if totalPiece === 7}
-          Bravo, Tu as découvert toutes les couleurs !
-        {:else}
-          Tu as déjà découvert {totalPiece} couleurs sur 7 !
-        {/if}
-      </p>
-
-    </div>
-        {#if totalPiece !== 7}
-        <div class="relative flex justify-center items-center mb-100">
-          <div class="relative inline-block">
-            <img src="/images/camera.svg" alt="centrée" class="mx-auto !w-[52px] h-auto" />
-            <div class="absolute top-1/2 right-full -translate-y-1/2 pr-2">
-            <img  src="/images/indic_camera_oeuvre.svg" alt="gauche" class="!w-[105.96px] h-auto max-w-none pointer-events-none mr-2" />
-            </div>
-          </div>
-        </div>
-        {/if}
+		<div class="flex justify-center gap-5">
+			{#each PIECES_ENTRIES as [id, data] (id)}
+				<span
+					class="rounded-full px-[11px] py-[11px]"
+					style="cursor: pointer; background-color: {foundPieces.includes(id)
+						? data.color
+						: '#E3E3E3'}"
+					title={data.color_name}
+					on:click={() => navigateToPiece(id)}
+				/>
+			{/each}
+		</div>
 
 		<div class="mt-5 mb-15 text-center">
 			<p>
@@ -417,7 +405,7 @@
 			</p>
 		</div>
 		{#if totalPiece !== 7}
-			<div class="relative flex items-center justify-center">
+			<div class="relative mb-100 flex items-center justify-center">
 				<div class="relative inline-block">
 					<img src="/images/camera.svg" alt="centrée" class="mx-auto h-auto !w-[52px]" />
 					<div class="absolute top-1/2 right-full -translate-y-1/2 pr-2">
@@ -430,7 +418,8 @@
 				</div>
 			</div>
 		{/if}
-
+	</div>
+{/if}
 
 <style>
 	.bah::first-line {
