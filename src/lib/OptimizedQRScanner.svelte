@@ -3,7 +3,13 @@
 	import { createEventDispatcher } from 'svelte';
 
 	// Props
-	let { isActive = false, scanAreaSize = 250, targetFPS = 30, enableMultiScale = true, fullscreen = false } = $props();
+	let {
+		isActive = false,
+		scanAreaSize = 250,
+		targetFPS = 30,
+		enableMultiScale = true,
+		fullscreen = false
+	} = $props();
 
 	// Event dispatcher
 	const dispatch = createEventDispatcher();
@@ -31,7 +37,7 @@
 				type: 'module'
 			});
 
-			worker.onmessage = function(e) {
+			worker.onmessage = function (e) {
 				const { success, data, location, error } = e.data;
 				isProcessing = false;
 
@@ -50,7 +56,7 @@
 				}
 			};
 
-			worker.onerror = function(error) {
+			worker.onerror = function (error) {
 				console.error('QR Worker error:', error);
 				isProcessing = false;
 				hasQRCode = false;
@@ -98,11 +104,11 @@
 	function scanMultipleAreas(ctx, videoWidth, videoHeight) {
 		// Define scan areas from large to small (close to far range)
 		const scanScales = [
-			0.9,  // Very close range - QR fills most of frame
+			0.9, // Very close range - QR fills most of frame
 			0.75, // Close range
-			0.6,  // Normal range (original)
+			0.6, // Normal range (original)
 			0.45, // Far range
-			0.3   // Very far range
+			0.3 // Very far range
 		];
 
 		let currentScaleIndex = 0;
@@ -140,7 +146,7 @@
 		// Override worker message handler for multi-scale
 		const originalHandler = worker.onmessage;
 
-		worker.onmessage = function(e) {
+		worker.onmessage = function (e) {
 			const { success, data, location, error } = e.data;
 
 			if (success && data) {
@@ -212,7 +218,7 @@
 	// Stop camera stream
 	function stopCamera() {
 		if (stream) {
-			stream.getTracks().forEach(track => track.stop());
+			stream.getTracks().forEach((track) => track.stop());
 			stream = null;
 		}
 
@@ -292,21 +298,12 @@
 	});
 </script>
 
-<div class="qr-scanner-container" class:active={isActive} class:fullscreen={fullscreen}>
+<div class="qr-scanner-container" class:active={isActive} class:fullscreen>
 	<!-- Video element (hidden, used for capturing frames) -->
-	<video
-		bind:this={videoElement}
-		class="qr-video"
-		autoplay
-		muted
-		playsinline
-	></video>
+	<video bind:this={videoElement} class="qr-video" autoplay muted playsinline></video>
 
 	<!-- Canvas element (hidden, used for image processing) -->
-	<canvas
-		bind:this={canvasElement}
-		class="qr-canvas"
-	></canvas>
+	<canvas bind:this={canvasElement} class="qr-canvas"></canvas>
 
 	<!-- Visual overlay with scan area -->
 	<div class="scan-overlay">
@@ -315,7 +312,9 @@
 			bind:this={scanAreaElement}
 			class="scan-area"
 			class:fullscreen-area={fullscreen}
-			style="width: {fullscreen ? '80vmin' : scanAreaSize + 'px'}; height: {fullscreen ? '80vmin' : scanAreaSize + 'px'}; opacity: {scanIndicatorOpacity}"
+			style="width: {fullscreen ? '80vmin' : scanAreaSize + 'px'}; height: {fullscreen
+				? '80vmin'
+				: scanAreaSize + 'px'}; opacity: {scanIndicatorOpacity}"
 		>
 			<!-- Corner brackets -->
 			<div class="scan-corners">
@@ -403,6 +402,7 @@
 	.close-button {
 		z-index: 20;
 		margin-top: 2rem;
+		pointer-events: auto;
 	}
 
 	.scan-overlay {
@@ -488,7 +488,7 @@
 
 	.fullscreen .scan-status {
 		margin-top: 4rem;
-		padding: .5rem 1rem;
+		padding: 0.5rem 1rem;
 		font-size: 16px;
 	}
 
