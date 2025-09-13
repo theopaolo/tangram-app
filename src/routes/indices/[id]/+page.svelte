@@ -4,9 +4,42 @@
 	import { onMount } from 'svelte';
 	import { piecesStore } from '$lib/piecesStore.js';
 
-	// import function to register Swiper custom elements
-	import { register } from 'swiper/element/bundle';
-	register();
+  // `Object.entries` reste pareil
+  import { PIECES_DATA } from '$lib/piecesData';
+  const PIECES_ENTRIES = Object.entries(PIECES_DATA);
+
+  // Si tu veux dériver une version réactive du store
+  let foundPieces = $derived($piecesStore);
+
+  // import function to register Swiper custom elements
+  // import { Pagination } from 'swiper/modules';
+  // register Swiper custom elements
+   import { register } from 'swiper/element/bundle';
+  register();
+  let swiperEl;
+  onMount(() => {
+    if (swiperEl) {
+      Object.assign(swiperEl, {
+        slidesPerView: 1,
+        speed: 500,
+        loop: true,
+        pagination: {
+          clickable: true
+        },
+        navigation: true
+      });
+       // Appliquer les variables CSS
+      swiperEl.style.setProperty('--swiper-navigation-color', currentPiece.color);
+      swiperEl.style.setProperty('--swiper-navigation-size', '0');
+      swiperEl.style.setProperty('--swiper-pagination-bullet-inactive-opacity', '1');
+      swiperEl.style.setProperty('--swiper-pagination-bullet-inactive-color', 'white');
+      swiperEl.style.setProperty('--swiper-pagination-color', 'black');
+      swiperEl.style.setProperty('--swiper-pagination-bullet-size', '10px');
+
+
+      swiperEl.initialize();
+    }
+  });
 
 	// ——————————————————
 	// CONSTANTES
@@ -15,12 +48,11 @@
 	const OFFSET = 90; // px à laisser au-dessus (navbar, marge…)
 	const SCROLL_MS = 800; // durée pour la version polyfill (fallback)
 
-	// ——————————————————
-	// DONNÉES
-	// ——————————————————
-	import { PIECES_DATA } from '$lib/piecesData';
+  // ——————————————————
+  // DONNÉES
+  // ——————————————————
+ 
 
-	const PIECES_ENTRIES = Object.entries(PIECES_DATA);
 
 	// ——————————————————
 	// GSAP (import dynamique côté client)
@@ -74,13 +106,10 @@
 		const t0 = performance.now();
 		const ease = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
 
-		function step(now) {
-			const p = Math.min((now - t0) / duration, 1);
-			window.scrollTo(0, start + delta * ease(p));
-			if (p < 1) requestAnimationFrame(step);
-		}
-		requestAnimationFrame(step);
-	}
+  let pieceId = $derived(page.params.id);
+  let currentPiece = $derived(PIECES_DATA[pieceId]);
+  let totalPiece = $derived( Number($piecesStore?.length ?? 0) );
+
 
 	function setActiveAndScroll(i) {
 		//   active = i;
@@ -167,65 +196,40 @@
 </script>
 
 {#if currentPiece}
-	<div class="max-w-sm border p-5 pt-0" id="section-0">
-		<!-- Header / onglets -->
-		<header class="sticky top-0 z-10 flex items-center bg-white pt-[30px] pb-[5px]">
-			{#each LABELS as label, i}
-				<button
-					type="button"
-					onclick={() => setActiveAndScroll(i)}
-					class="text-11 mr-[20px] w-fit border px-[11px] py-1 tracking-[4%] transition-colors"
-					class:bg-black={active === i}
-					class:bg-white={active !== i}
-					class:text-white={active === i}
-					class:text-black={active !== i}
-					class:border-black={active === i}
-				>
-					{label}
-				</button>
-			{/each}
-			<div class="absolute right-0">
-				<svg
-					width="18"
-					height="18"
-					viewBox="0 0 18 18"
-					fill="none"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<path
-						d="M17.1421 15.1421L15.0208 17.2635L0.87868 3.12132L3 1L17.1421 15.1421Z"
-						fill="black"
-					/>
-					<path
-						d="M2.85786 17.1421L0.736544 15.0208L14.8787 0.87868L17 3L2.85786 17.1421Z"
-						fill="black"
-					/>
-				</svg>
-			</div>
-		</header>
+  <div class="p-5 pt-0" id="section-0">
+    <!-- Header / onglets -->
+    <header class="flex sticky z-10 bg-white top-0 pt-[30px] items-center pb-[5px]">
+      {#each LABELS as label, i}
+        <button
+          type="button"
+          on:click={() => setActiveAndScroll(i)}
+          class="mr-[20px] text-11 w-fit tracking-[4%] border py-1 px-[11px] transition-colors"
+          class:bg-black={active === i}
+          class:bg-white={active !== i}
+          class:text-white={active === i}
+          class:text-black={active !== i}
+          class:border-black={active === i}
+        >
+          {label}
+        </button>
+      {/each}
+	  <div class="absolute right-0">
+		<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<path d="M17.1421 15.1421L15.0208 17.2635L0.87868 3.12132L3 1L17.1421 15.1421Z" fill="black"/>
+			<path d="M2.85786 17.1421L0.736544 15.0208L14.8787 0.87868L17 3L2.85786 17.1421Z" fill="black"/>
+		</svg>
+	  </div>
+    </header>
 
-		<!-- Visuel -->
-		<div class="mt-[40px] mb-4 w-full" style="background-color: {currentPiece.color};">
-			<swiper-container
-				slides-per-view="1"
-				speed="500"
-				loop="true"
-				pagination={{ clickable: true }}
-				style={`
-          --swiper-navigation-color: ${currentPiece.color};
-          --swiper-navigation-size: 20px;
+    <!-- Visuel -->
+    <div class="mt-[40px] mb-4 w-full" style="background-color: {currentPiece.color};">
 
-          --swiper-pagination-bullet-inactive-opacity:1;
-          --swiper-pagination-bullet-inactive-color: white;
-          --swiper-pagination-color: black;
-          --swiper-pagination-bullet-size: 10px;
-          `}
-			>
-				<swiper-slide><img class="aspect-3/2 object-cover" src="/images/dd.jpg" /></swiper-slide>
-				<swiper-slide><img class="aspect-3/2 object-cover" src="/images/dd.jpg" /></swiper-slide>
-				<swiper-slide><img class="aspect-3/2 object-cover" src="/images/dd.jpg" /></swiper-slide>
-			</swiper-container>
-		</div>
+        <swiper-container bind:this={swiperEl}>
+          <swiper-slide><img class="aspect-3/2 object-cover" src="/images/dd.jpg" /></swiper-slide>
+          <swiper-slide><img class="aspect-3/2 object-cover" src="/images/dd.jpg" /></swiper-slide>
+          <swiper-slide><img class="aspect-3/2 object-cover" src="/images/dd.jpg" /></swiper-slide>
+        </swiper-container>
+    </div>
 
 		<!-- Infos oeuvre -->
 		<div class="flex flex-col">
@@ -362,18 +366,42 @@
 		<!-- Progress / navigation par couleurs -->
 		<div class="m-auto mt-17 mb-10 h-px w-2/3 bg-black"></div>
 
-		<div class="flex justify-center gap-5">
-			{#each PIECES_ENTRIES as [id, data]}
-				<span
-					class="rounded-full px-[11px] py-[11px]"
-					style="cursor: pointer; background-color: {piecesStore.hasPiece(id)
-						? data.color
-						: '#E3E3E3'}"
-					title={data.color_name}
-					onclick={() => navigateToPiece(id)}
-				/>
-			{/each}
-		</div>
+    <div class="flex justify-center gap-5">
+   
+{#each PIECES_ENTRIES as [id, data] (id)}
+  <span
+    class="rounded-full px-[11px] py-[11px]"
+    style="cursor: pointer; background-color: {foundPieces.includes(id) ? data.color : '#E3E3E3'}"
+    title={data.color_name}
+    on:click={() => navigateToPiece(id)}
+  />
+{/each}
+    </div>
+
+    <div class="mt-5 mb-15 text-center">
+      <p>
+        {#if totalPiece === 0}
+          Tu n'as découvert aucune couleur
+        {:else if totalPiece === 1}
+          Tu as déjà découvert 1 couleur sur 7 !
+        {:else if totalPiece === 7}
+          Bravo, Tu as découvert toutes les couleurs !
+        {:else}
+          Tu as déjà découvert {totalPiece} couleurs sur 7 !
+        {/if}
+      </p>
+
+    </div>
+        {#if totalPiece !== 7}
+        <div class="relative flex justify-center items-center mb-100">
+          <div class="relative inline-block">
+            <img src="/images/camera.svg" alt="centrée" class="mx-auto !w-[52px] h-auto" />
+            <div class="absolute top-1/2 right-full -translate-y-1/2 pr-2">
+            <img  src="/images/indic_camera_oeuvre.svg" alt="gauche" class="!w-[105.96px] h-auto max-w-none pointer-events-none mr-2" />
+            </div>
+          </div>
+        </div>
+        {/if}
 
 		<div class="mt-5 mb-15 text-center">
 			<p>
@@ -403,42 +431,6 @@
 			</div>
 		{/if}
 
-		<div class="mx-auto mt-40 flex flex-col gap-2 border-t border-gray-600 pt-8 text-center">
-			<div class="mb-2 flex justify-center gap-4 align-middle">
-				{#each Object.entries(PIECES_DATA) as [id, data]}
-					<span
-						class="rounded-full px-2 py-2"
-						style="cursor: pointer; background-color: {piecesStore.hasPiece(id)
-							? data.color
-							: '#DDD'}"
-						title={data.color_name}
-						onclick={() => navigateToPiece(id)}
-					></span>
-				{/each}
-			</div>
-
-			<button class="cursor-pointer border" onclick={capturePiece}>Capturer la piece </button>
-
-			<p>id: {pieceId} found: {$piecesStore.join(', ')} total: {totalPiece}</p>
-			<p class="text-xs">Tu as déjà trouvé {totalPiece} couleurs sur 7 !</p>
-		</div>
-
-		<svg viewBox="0 0 300 300" width="100%" preserveAspectRatio="xMidYMid meet">
-			{#each Object.entries(PIECES_DATA) as [id, piece]}
-				<polygon
-					points={piece.points}
-					fill={piece.color}
-					stroke="#fff"
-					stroke-width="1"
-					style="cursor: pointer;"
-					onclick={() => navigateToPiece(id)}
-				>
-					<title>{piece.color_name}</title>
-				</polygon>
-			{/each}
-		</svg>
-	</div>
-{/if}
 
 <style>
 	.bah::first-line {

@@ -26,7 +26,6 @@
       gsap = mod.gsap;
 
 
-
       // 🔹 au lieu de déplacer les lignes, on fait tourner chaque pièce
       document.querySelectorAll(".piece").forEach(polygon => {
         gsap.to(polygon, {
@@ -104,9 +103,9 @@
 
 </style>
 
-  <div class="h-screen absolute w-screen z-1">
+  <div class="h-svh absolute w-screen z-1">
 
-    <div class="h-screen absolute w-screen z-1]">
+    <div class="h-svh absolute w-screen z-1]">
       <svg
         overflow="visible"
         viewBox={`${offsetX} ${offsetY} ${viewW} ${viewH}`}
@@ -131,7 +130,7 @@
   </div>
 
 
-<div class="no-select relative z-2 flex flex-col py-[80px] items-center justify-between min-h-screen text-center pointer-events-none">
+<div class="no-select relative z-2 flex flex-col py-[80px] items-center justify-between min-h-svh text-center pointer-events-none">
   <div class="py-[20px] px-[50px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-nd-drop-shadow)] pointer-events-none">
     Bravo tu as découvert :
     <div class="text-titre-alt inf-bold my-5 uppercase">

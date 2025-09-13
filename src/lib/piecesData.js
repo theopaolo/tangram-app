@@ -14,8 +14,17 @@ export const PIECES_DATA = {
         'Réclamer des bonbons pour halloween',
         'Jouer dans un film d’horreur'
       ],
-      credits:'',
-      points: '217,83 217,217 285,150 285,15'
+      images: [
+        {
+          src: "/images/dd.jpg",
+          credits: "© Stefan Rinck, « M. Flamboyant » (vue de face), 2018"
+        },
+        {
+          src: "/images/dd.jpg",
+          credits: "© Stefan Rinck, « M. Flamboyant » (profil), 2018"
+        }
+      ],
+      points: '7.5,2.5 2.5,2.5 0,0 5,0'
     },
     2: {
       color: '#ffe215',
@@ -32,8 +41,17 @@ export const PIECES_DATA = {
         'D’un·e fan de Minecraft',
         'Du directeur du musée'
       ],
-      credits:'',
-      points: '150,285 285,150 285,285'
+      images: [
+        {
+          src: "/images/dd.jpg",
+          credits: "© Stefan Rinck, « M. Flamboyant » (vue de face), 2018"
+        },
+        {
+          src: "/images/dd.jpg",
+          credits: "© Stefan Rinck, « M. Flamboyant » (profil), 2018"
+        }
+      ],
+      points: '0,0 5,0 5,5'
     },
     3: {
       color: '#0b4ed1',
@@ -50,8 +68,17 @@ export const PIECES_DATA = {
         'Un fan de K-pop',
         'Une collectionneuse de mues de serpent'
       ],
-      credits:'',
-      points: '15,15 150,150 285,15'
+      images: [
+        {
+          src: "/images/dd.jpg",
+          credits: "© Stefan Rinck, « M. Flamboyant » (vue de face), 2018"
+        },
+        {
+          src: "/images/dd.jpg",
+          credits: "© Stefan Rinck, « M. Flamboyant » (profil), 2018"
+        }
+      ],
+      points: '0,10 0,0 5,5'
     },
     4: {
       color: '#7b77d4',
@@ -68,8 +95,17 @@ export const PIECES_DATA = {
         'Un cours de géométrie (mais tu as tout oublié)',
         'Un arbre à chat psychédélique'
       ],
-      credits:'',
-      points: '15,285 150,285 83,217'
+      images: [
+        {
+          src: "/images/dd.jpg",
+          credits: "© Stefan Rinck, « M. Flamboyant » (vue de face), 2018"
+        },
+        {
+          src: "/images/dd.jpg",
+          credits: "© Stefan Rinck, « M. Flamboyant » (profil), 2018"
+        }
+      ],
+      points: '2.5,5 2.5,0 0,2.5'
     },
     5: {
       color: '#1a5435',
@@ -86,8 +122,17 @@ export const PIECES_DATA = {
         'Une scène de bataille au magasin de jouet',
         'Un rêve de Drag Queen'
       ],
-      credits:'',
-      points: '15,15 150,150 15,285'
+      images: [
+        {
+          src: "/images/dd.jpg",
+          credits: "© Stefan Rinck, « M. Flamboyant » (vue de face), 2018"
+        },
+        {
+          src: "/images/dd.jpg",
+          credits: "© Stefan Rinck, « M. Flamboyant » (profil), 2018"
+        }
+      ],
+      points: '0,5 10,5 5,0'
     },
      6: {
       color: '#44a635',
@@ -104,8 +149,17 @@ export const PIECES_DATA = {
         '« Allons» ramasser des petits pois »',
         '« Allons voir si la rose... » '
       ],
-      credits:'',
-      points: '150,150 217,217 150,285 83,217'
+      images: [
+        {
+          src: "/images/dd.jpg",
+          credits: "© Stefan Rinck, « M. Flamboyant » (vue de face), 2018"
+        },
+        {
+          src: "/images/dd.jpg",
+          credits: "© Stefan Rinck, « M. Flamboyant » (profil), 2018"
+        }
+      ],
+      points: '0,2.5 2.5,0 5,2.5 2.5,5'
     },
     7: {
       color: '#1b3c75',
@@ -122,7 +176,16 @@ export const PIECES_DATA = {
         'Un mobilhome',
         'Une piscine'
       ],
-      credits:'',
-      points: '150,150 217,217 217,83'
+      images: [
+        {
+          src: "/images/dd.jpg",
+          credits: "© Stefan Rinck, « M. Flamboyant » (vue de face), 2018"
+        },
+        {
+          src: "/images/dd.jpg",
+          credits: "© Stefan Rinck, « M. Flamboyant » (profil), 2018"
+        }
+      ],
+      points: '5,0 0,0 2.5,2.5'
     },
   };

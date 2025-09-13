@@ -4,17 +4,29 @@
   let found = $state([]);
 
   // Tangram pieces data with original colors
+  // Tangram pieces data with original colors
   import { PIECES_DATA } from '$lib/piecesData';
+	import { piecesStore } from '$lib/piecesStore.js';
 
+
+  let totalFound = $state(0);
+	let foundPieces = $state([]);
+// --- FUNCTIONS ---
+	onMount(() => {
+		piecesStore.initialize();
+		totalFound = piecesStore.count;
+		foundPieces = piecesStore.pieces;
+	});
  
 function applyColors() {
-    Object.keys(PIECES_DATA).forEach(id => {
-      document.documentElement.style.setProperty(
-        `--c${id}`,
-        found.includes(id) ? PIECES_DATA[id].color : '#E6E6E6'
-      );
-    });
-  }
+  Object.keys(PIECES_DATA).forEach(id => {
+    const isFound = foundPieces.includes(id);
+    document.documentElement.style.setProperty(
+      `--c${id}`,
+      isFound ? PIECES_DATA[id].color : '#E6E6E6'
+    );
+  });
+}
 
  
   
@@ -310,9 +322,20 @@ onMount(async () => {
 </div>
 
 
-<div class="w-screen bloc_one hidden flex opacity-0 z-100 py-[80px] text-center  absolute h-screen top-0 left-0 flex-col justify-evenly items-center">
+<div class="w-screen bloc_one hidden flex opacity-0 z-100 py-[80px] text-center  absolute h-svh top-0 left-0 flex-col justify-evenly items-center">
   <div class="w-[80dvw]">
-    <p>Pars à la recherche des 7 formes du tangram pour débloquer le CHROMOGRAM !</p>
+     <p>
+     {#if totalFound === 0}
+          Pars à la recherche des 7 formes du tangram pour débloquer le CHROMOGRAM !
+        {:else if totalFound === 7}
+          Bravo ! Tu as débloqué toutes les couleurs ! 
+          Les puzzles sont maintenant disponibles en cliquant en bas de page !
+        {:else if totalFound === 1}
+        Tu as déjà découvert {totalFound} forme.<br/>Rassemble les 7 formes pour débloquer le CHROMOGRAM !
+        {:else}
+        Tu as déjà découvert {totalFound} formes.<br/>Rassemble les 7 formes pour débloquer le CHROMOGRAM !
+      {/if}
+      </p>
 
     <!-- {#if totalPiece === 0}
       Pars à la recherche des 7 formes du tangram pour débloquer le CHROMOGRAM !
