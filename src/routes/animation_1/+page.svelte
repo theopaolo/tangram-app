@@ -26,7 +26,6 @@
       gsap = mod.gsap;
 
 
-
       // 🔹 au lieu de déplacer les lignes, on fait tourner chaque pièce
       document.querySelectorAll(".piece").forEach(polygon => {
         gsap.to(polygon, {

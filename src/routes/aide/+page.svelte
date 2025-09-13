@@ -2,8 +2,12 @@
   import { onMount, onDestroy, tick } from "svelte";
   import { gsap } from "gsap";
 
+  import { PIECES_DATA } from '$lib/piecesData';
+
+
+
   const TOTAL_BARS = 51;
-  const COLORS = ["#FF5733", "#33FF57", "#3357FF", "#FF33A8", "#A833FF", "#33FFF5", "#FFC733"];
+  const COLORS = [PIECES_DATA[1].color, PIECES_DATA[2].color, PIECES_DATA[3].color, PIECES_DATA[4].color, PIECES_DATA[5].color, PIECES_DATA[6].color, PIECES_DATA[7].color];
   const EFFECT_RADIUS = 200;
 
   let container;   // stripes
