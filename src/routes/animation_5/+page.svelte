@@ -1,6 +1,7 @@
 <script>
   import { onMount } from "svelte";
   let gsap, Draggable, InertiaPlugin;
+  import { PIECES_DATA } from '$lib/piecesData';
 
   let container;
   let grid;
@@ -10,7 +11,7 @@
   const rows = 20;
   const size = 50; // taille polygone en px
 
-    const svgW = cols * size;
+  const svgW = cols * size;
   const svgH = rows * size;
   onMount(async () => {
     const mod = await import("gsap/all");
@@ -67,7 +68,6 @@
     
   }
   polygon {
-    fill: #4fa;
     stroke-width: 1;
     scale:4
   }
@@ -88,6 +88,7 @@
     {#each Array(rows) as _, r}
       {#each Array(cols) as _, c}
         <polygon
+          fill={PIECES_DATA[1].color}
           points="0,0 50,0 50,50"
           transform="translate({c * size}, {r * size})"
         />

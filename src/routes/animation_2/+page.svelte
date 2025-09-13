@@ -1,6 +1,8 @@
 <script>
   import { onMount } from "svelte";
   let gsap;
+  import { PIECES_DATA } from '$lib/piecesData';
+
   let tween;
 
   const cols = 7;
@@ -139,7 +141,6 @@ startTween(tiles, currentDir, 1, false);
     overscroll-behavior: none; /* évite le "rebond" sur mobile */
   }
   polygon {
-    fill: var(--c2, #1B3C75);
   }
 </style>
 
@@ -158,6 +159,7 @@ startTween(tiles, currentDir, 1, false);
           <g transform={`translate(0, ${r * h})`}>
             {#each Array(cols) as _, c}
               <polygon
+                fill={PIECES_DATA[2].color}     
                 class="piece"
                 points="0,0 5,0 5,5"
                 transform={`translate(${c * w}, 0)`}
@@ -176,7 +178,7 @@ startTween(tiles, currentDir, 1, false);
     <div class="py-[20px] px-[50px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-nd-drop-shadow)] pointer-events-none">
       Bravo tu as découvert :
       <div class="text-titre-alt inf-bold my-5 uppercase">
-        LE VERT FORÊT<br/>SCINTILLANTE
+         {PIECES_DATA[2].color_name}
         <!-- {currentPiece?.color_name} -->
       </div>
       À quelle œuvre penses-tu que<br/>cette couleur appartient ?
