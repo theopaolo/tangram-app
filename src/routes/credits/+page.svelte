@@ -1,8 +1,17 @@
 <script>
   import { onMount } from "svelte";
   let gsap;
+  import { PIECES_DATA } from '$lib/piecesData';
 
-  const VARS = ["--c1", "--c2", "--c3", "--c4", "--c5", "--c6", "--c7"];
+  const VARS = [
+    PIECES_DATA[1].color,
+    PIECES_DATA[2].color,
+    PIECES_DATA[3].color,
+    PIECES_DATA[4].color,
+    PIECES_DATA[5].color,
+    PIECES_DATA[6].color,
+    PIECES_DATA[7].color
+  ];
   let COLORS = [];
   let currentIndex = 0;
   let tl;
@@ -13,7 +22,8 @@
 
     // Récupération des valeurs CSS
     const rootStyle = getComputedStyle(document.documentElement);
-    COLORS = VARS.map(v => rootStyle.getPropertyValue(v).trim());
+    COLORS = VARS;
+    // COLORS = VARS.map(v => rootStyle.getPropertyValue(v).trim());
 
     // couleur initiale
     gsap.set("#bg", { backgroundColor: COLORS[0] });
