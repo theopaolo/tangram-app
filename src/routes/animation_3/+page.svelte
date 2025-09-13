@@ -2,10 +2,10 @@
   import { onMount } from "svelte";
   let gsap;
 
-  const cols = 55;
-  const rows = 55;
-  const w = 5;   // largeur du triangle
-  const h = 10;   // hauteur du triangle
+  const cols = 11;
+  const rows = 5;
+  const w = 5;   // largeur triangle
+  const h = 10;  // hauteur triangle
 
   const visibleCols = 2.2;
   const viewW = visibleCols * w;
@@ -15,159 +15,140 @@
     const mod = await import("gsap");
     gsap = mod.gsap;
 
+    // Sélections uniques
     const rowsEls = document.querySelectorAll(".row");
+    const svg = document.querySelector("svg");
+    const whole = document.querySelector(".whole");
+    const pieces = document.querySelectorAll(".piece");
 
+      // Durée totale d’un aller-retour (en secondes ici)
+      const cycleDuration = 60; 
 
+      gsap.ticker.add(() => {
+        const now = performance.now() / 1000; // secondes
+        const cycle = now % cycleDuration;    // 0 → cycleDuration
+        const t = cycle / cycleDuration;      // 0 → 1 normalisé
 
-    rowsEls.forEach((row, i) => {
-      const dir = i % 2 === 0 ? 1 : -1; // paire → droite, impaire → gauche
-      const amplitude = w * 2;          // décalage total
+        // onde triangulaire limitée à 0.7
+        let progress;
+        if (t < 0.5) {
+          // phase aller : 0 → 0.7
+          progress = (t / 0.5) * 0.7;
+        } else {
+          // phase retour : 0.7 → 0
+          progress = 0.7 * (1 - (t - 0.5) / 0.5);
+        }
 
-      if (dir === -1) {
-        // ligne qui va vers la gauche : démarre avec le bord gauche à -0.1
-        gsap.set(row, { x: -0.1 });
-        gsap.to(row, {
-          x: viewW - cols * w - 0.1, // se déplace vers la gauche
-          duration: 52,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
+        rowsEls.forEach((row, i) => {
+          const dir = i % 2 === 0 ? 1 : -1;
+          const x = (dir === -1 ? progress : 0.7 - progress) * (viewW - cols * w);
+          row.setAttribute("transform", `translate(${x}, ${i * h})`);
         });
-      } else {
-        // ligne qui va vers la droite : démarre avec le bord droit à viewW+0.1
-        gsap.set(row, { x: (viewW + 0.9) - cols * w });
-        gsap.to(row, {
-          x: 0, // revient vers la gauche
-          duration: 52,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-        });
-      }
+      });
+
+
+
+
+    // --- Zoom + rotation aléatoire au double tap ---
+    let zoomed = false;
+    whole.addEventListener("dblclick", (e) => {
+      const randomRotation = gsap.utils.random(-120, 200);
+      gsap.to(svg, {
+        scale: zoomed ? 1 : 0.7,
+        rotation: `+=${randomRotation}`,
+        transformOrigin: "50% 50%",
+        duration: 1.2,
+        ease: "power2.inOut"
+      });
+      zoomed = !zoomed;
     });
 
-
-
-          const svg = document.querySelector("svg");
-          const whole = document.querySelector(".whole");
-
-          
-          let zoomed = false;
-
-          whole.addEventListener("dblclick", (e) => {
-            const pieces = document.querySelectorAll("svg");
-            const randomRotation = gsap.utils.random(-120, 200); 
-            const pt = svg.createSVGPoint();
-                pt.x = e.clientX;
-                pt.y = e.clientY;
-            const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
-            gsap.to(pieces, {
-              scale: zoomed ? 1 : 0.7,
-              rotation: `+=${randomRotation}`,
-              duration: 1.2,
-              ease: "power2.inOut",
-            });
-                zoomed = !zoomed;
-
-
-          });
-
-    
-
-
-    // rotation continue tant qu'on laisse appuyé
-    document.querySelectorAll(".piece").forEach(polygon => {
-      let rotateTween;
-
-      const startRotate = () => {
-        if (rotateTween) return; // déjà en train de tourner
-        rotateTween = gsap.to(polygon, {
-          rotation: "+=360",            // un tour complet
-          transformOrigin: "50% 50%",   // centre
-          duration: 2,                  // vitesse d’un tour
-          ease: "linear",
-          repeat: -1                    // boucle infinie
-        });
-      };
-
-      const stopRotate = () => {
-        if (rotateTween) {
-          rotateTween.kill(); // stoppe l’animation
-          rotateTween = null;
-        }
-      };
+    // --- Rotation continue au clic maintenu ---
+    pieces.forEach((polygon) => {
+      const rotateTween = gsap.to(polygon, {
+        rotation: "+=360",
+        transformOrigin: "50% 50%",
+        duration: 2,
+        ease: "linear",
+        repeat: -1,
+        paused: true
+      });
 
       // desktop
-      polygon.addEventListener("mousedown", startRotate);
-      polygon.addEventListener("mouseup", stopRotate);
-      polygon.addEventListener("mouseleave", stopRotate);
+      polygon.addEventListener("mousedown", () => rotateTween.play());
+      polygon.addEventListener("mouseup", () => rotateTween.pause());
+      polygon.addEventListener("mouseleave", () => rotateTween.pause());
 
       // mobile
-      polygon.addEventListener("touchstart", startRotate);
-      polygon.addEventListener("touchend", stopRotate);
-      polygon.addEventListener("touchcancel", stopRotate);
+      polygon.addEventListener("touchstart", () => rotateTween.play());
+      polygon.addEventListener("touchend", () => rotateTween.pause());
+      polygon.addEventListener("touchcancel", () => rotateTween.pause());
     });
 
-    // no-scroll
+    // --- Pas de scroll sur mobile ---
     const preventScroll = (e) => e.preventDefault();
     document.body.style.overflow = "hidden";
     document.addEventListener("touchmove", preventScroll, { passive: false });
 
+    // --- Cleanup quand le composant est démonté ---
     return () => {
       document.body.style.overflow = "";
       document.removeEventListener("touchmove", preventScroll);
+      gsap.globalTimeline.clear();
+      gsap.ticker.remove();
     };
-
   });
-
 </script>
 
 <style>
-  body, html{
+  body, html {
     overflow: hidden;
     height: 100%;
-    overscroll-behavior: none; /* évite le "rebond" sur mobile */
+    overscroll-behavior: none;
   }
   polygon {
     fill: var(--c3, #1B3C75);
+    will-change: transform;
+  }
+  .row, .whole {
+    will-change: transform;
   }
 </style>
 
-  <div class="h-screen absolute w-screen z-1">
-    <div class="whole h-screen absolute w-screen z-1]">
-      <svg
-        overflow="visible"
-        viewBox={`0 0 ${viewW} ${viewH}`}
-        width="100%"
-        height="100%"
-        preserveAspectRatio="xMidYMid slice"
-      >
-        {#each Array(rows) as _, r}
-          <g class="row" transform={`translate(0, ${r * h})`}>
-            {#each Array(cols) as _, c}
-              <polygon
-                class="piece"
-                points="0,10 0,0 5,5"
-                transform={`translate(${c * w}, 0)`}
-              />
-            {/each}
-          </g>
-        {/each}
-      </svg>
+<div class="h-svh absolute w-screen z-1">
+  <div class="whole h-svh absolute w-screen z-1">
+    <svg
+      overflow="visible"
+      viewBox={`0 0 ${viewW} ${viewH}`}
+      width="100%"
+      height="100%"
+      preserveAspectRatio="xMidYMid slice"
+    >
+      {#each Array(rows) as _, r}
+        <g class="row" transform={`translate(0, ${r * h})`}>
+          {#each Array(cols) as _, c}
+            <polygon
+              class="piece"
+              points="0,10 0,0 5,5"
+              transform={`translate(${c * w}, 0)`}
+            />
+          {/each}
+        </g>
+      {/each}
+    </svg>
+  </div>
+</div>
+
+<div class="no-select relative z-2 flex flex-col py-[80px] items-center justify-between min-h-svh text-center pointer-events-none">
+  <div class="py-[20px] px-[50px] w-fit text-center bg-white border border-black drop-shadow pointer-events-none">
+    Bravo tu as découvert :
+    <div class="text-titre-alt inf-bold my-5 uppercase">
+      LE VERT FORÊT<br/>SCINTILLANTE
     </div>
+    À quelle œuvre penses-tu que<br/>cette couleur appartient ?
   </div>
 
-  <div class="no-select relative z-2 flex flex-col py-[80px] items-center justify-between min-h-screen text-center pointer-events-none">
-    <div class="py-[20px] px-[50px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-nd-drop-shadow)] pointer-events-none">
-      Bravo tu as découvert :
-      <div class="text-titre-alt inf-bold my-5 uppercase">
-        LE VERT FORÊT<br/>SCINTILLANTE
-        <!-- {currentPiece?.color_name} -->
-      </div>
-      À quelle œuvre penses-tu que<br/>cette couleur appartient ?
-    </div>
-
-    <div class="text-titre-alt inf-bold uppercase py-[25px] px-[30px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-drop-shadow)]">
-        VERIFIE TON HYPOTHÈSE<br/>EN APPUYANT ICI
-    </div>
+  <div class="text-titre-alt inf-bold uppercase py-[25px] px-[30px] w-fit text-center bg-white border border-black drop-shadow">
+    VERIFIE TON HYPOTHÈSE<br/>EN APPUYANT ICI
   </div>
+</div>

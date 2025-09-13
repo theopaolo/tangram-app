@@ -60,7 +60,7 @@
   function playSound(audio) {
     if (!audio) return;
     audio.currentTime = 0;
-    audio.play();
+    // audio.play();
   }
 
   function calculateViewBox(pointsStr) {
@@ -236,7 +236,7 @@
     const handlePointerDown = createInteractionHandler({
       onDown: (e) => {
         activePieceId = params.pieceId;
-        playSound(pickupSound);
+        // playSound(pickupSound);
         unlockAudio();
 
         const piece = pieces.find(p => p.id === params.pieceId);
@@ -302,7 +302,7 @@
           piece.rotation = (piece.rotation + 45) % 360;
           piece.animationKey += 1;
         } else if (wasDrag) {
-          playSound(dropSound);
+          // playSound(dropSound);
 
           // If near a valid target, snap perfectly into place and override rotation
           const target = findMagneticTarget(piece);
@@ -492,16 +492,19 @@
 </script>
 
 <style>
+  
   .puzzle-wrapper {
+    position: relative;
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 90%;
     height: 100dvh;
+    padding: auto;
+    margin:auto;
   }
 
   .puzzle-container {
     height: 100%;
-    background: hsl(0, 0%, 96%);
     border-radius: 8px;
     /* Prevent scrolling/zooming when interacting with pieces */
     touch-action: pan-x pan-y;
@@ -509,6 +512,10 @@
     user-select: none;
     -webkit-user-select: none;
     -webkit-touch-callout: none;
+     touch-action: none;       /* bloque le scroll natif */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
   }
 
   .puzzle-solved {
@@ -590,10 +597,9 @@
   }
 
   .tangram-piece.active .tangram-piece-svg polygon {
-    stroke: #ffb3e6;
-    stroke-width: 1px;
-    filter: drop-shadow(0 0 2px #ffd6f5) drop-shadow(0 0 1px #ffb3e6);
-    transition: filter 0.2s, stroke 0.2s, stroke-width 0.2s;
+    stroke: rgba(0, 0, 0, 0.2);
+    stroke-width: 1;
+    filter: drop-shadow(10px 10px 10px rgba(0, 0, 0, 0.9));
     will-change: transform;
   }
 
@@ -601,11 +607,10 @@
     display: flex;
     padding: 1rem;
     position: absolute;
-    bottom: 0;
+    bottom: 45px;
     left: 0;
     right: 0;
     height: 100px;
-    background: hsl(0, 0%, 69%, 0.5);
     gap: .5rem;
   }
 
@@ -713,11 +718,26 @@
   }
 </style>
 
+<div class="top-5 left-5  fixed title z-10 w-max text-title inf-bold mx-auto w-fit bg-white border py-1 px-[14px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">CHROMOGRAM #1</div>
+<div class="top-2 right-5 fixed z-10 text-inter inf-bold">?</div>
+
+  <div class="z-10 bottom-3.5 left-5 fixed text-mini" >Accueil > Les Couleurs > Les Tangrams</div>
+  <div class="z-10 fixed text-mini bottom-3.5 right-5" >Crédits</div>
+
+  <div class="z-10 top-25 left-5 fixed text-11" >
+    1. Fais glisser une des formes du bas vers le tangram.<br/>
+    2. Appuie sur la forme pour la faire pivoter.<br/>
+    3. Dépose la forme à son emplacement.<br/>
+</div>
+
+
+
+
 <div class="puzzle-wrapper" onpointerdown={unlockAudio}>
 
   <!-- Puzzle area with padding -->
-  <div class="p-4 h-full">
-    <div class="puzzle-container {puzzleSolved ? 'puzzle-solved' : ''}"
+  <div class="h-full">
+    <div class="pt-[80px] puzzle-container {puzzleSolved ? 'puzzle-solved' : ''}"
           bind:this={puzzleContainer}
           use:observeResize
           role="main"
@@ -780,13 +800,15 @@
   <div class="pieces-container" bind:this={piecesContainer}>
     {#each pieces.filter(p => p.inContainer) as piece (piece.id)}
       {@const pieceData = PIECES_DATA_WITH_VIEWBOX[piece.id]}
-      <div class="container-piece">
-        <svg viewBox={pieceData.viewBox}>
-          <polygon use:draggable={{ pieceId: piece.id }} points={pieceData.points} fill={pieceData.color} />
-        </svg>
-      </div>
+        <div class="container-piece relative z-1">
+          <svg viewBox={pieceData.viewBox}>
+            <polygon use:draggable={{ pieceId: piece.id }} points={pieceData.points} fill={pieceData.color} />
+          </svg>
+        </div>
+      
     {/each}
   </div>
+
 
   {#if puzzleSolved}
     <div class="success-message"> 🎉 Puzzle Solved! 🎉</div>

@@ -45,7 +45,7 @@
     ];
 </script>
 
-<div class="whole px-[20px] h-screen flex flex-col items-center justify-evenly py-[70px] text-corps text-center">
+<div class="whole px-[20px] h-svh flex flex-col items-center justify-evenly py-[70px] text-corps text-center">
 
     <div class="text-title inf-bold fixed left-[20px] top-[20px] margin-auto w-fit bg-white border py-1 px-[14px] drop-shadow-(--my-drop-shadow) tracking-[4%]">
         CHROMOGRAM #1

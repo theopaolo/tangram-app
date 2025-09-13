@@ -3,8 +3,8 @@
   let gsap;
   let tween;
 
-  const cols = 21;
-  const rows = 21;
+  const cols = 7;
+  const rows = 7;
   const w = 5;
   const h = 5;
 
@@ -16,73 +16,110 @@
   const offsetY = (rows * h - viewH) / 2;
 
   // directions : ↘, ↗, ↖, ↙
-  const directions = [
-    { dx: 1, dy: 1 },   // ↘
-    { dx: 1, dy: -1 },  // ↗
-    { dx: -1, dy: -1 }, // ↖
-    { dx: -1, dy: 1 }   // ↙
-  ];
-  let currentDir = 0;
+  const directions = {
+    rightdown: { dx: 1, dy: 1 },
+    rightup: { dx: 1, dy: -1 },
+    leftup: { dx: -1, dy: -1 },
+    leftdown: { dx: -1, dy: 1 }
+  };
+  let currentDir = directions.rightdown;
 
-  function startTween(tiles, dir) {
-    if (tween) tween.kill();
+function startTween(tiles, dir, speedFactor = 1, inertial = false) {
+  tween?.kill();
 
-    tween = gsap.to(tiles, {
-      x: `+=${dir.dx * cols * w/2}`,
-      y: `+=${dir.dy * rows * h/2}`,
-      duration: 40,
-      ease: "linear",
-      repeat: 1,
-      yoyo: true,
-      modifiers: {
-        x: gsap.utils.unitize(x => parseFloat(x) % (cols * w)),
-        y: gsap.utils.unitize(y => parseFloat(y) % (rows * h))
-      }
-    });
-  }
+  tween = gsap.to(tiles, {
+    x: `+=${dir.dx * cols * w * 0.5 * speedFactor}`,
+    y: `+=${dir.dy * rows * h * 0.5 * speedFactor}`,
+    duration: inertial 
+      ? gsap.utils.clamp(2, 10, 8 / speedFactor) // swipe rapide → court
+      : 40,                                      // load → très lent
+    ease: inertial ? "power3.out" : "linear",
+    repeat: inertial ? 0 : -1, // en boucle au load, une seule fois au swipe
+    yoyo: inertial ? false : true,
+    modifiers: {
+      x: gsap.utils.unitize(x => parseFloat(x) % (cols * w)),
+      y: gsap.utils.unitize(y => parseFloat(y) % (rows * h))
+    }
+  });
+}
 
   onMount(async () => {
     const mod = await import("gsap");
     gsap = mod.gsap;
 
     const tiles = document.querySelectorAll(".tile");
-    const svg = document.querySelector("svg");
     const whole = document.querySelector(".whole");
     const pieces = document.querySelectorAll(".piece");
-    const randomRotation = gsap.utils.random(-90, 180); 
 
     // démarre en ↘
-    startTween(tiles, directions[currentDir]);
-
-    // clic simple → change de direction
-    whole.addEventListener("click", () => {
-      currentDir = (currentDir + 1) % directions.length;
-      startTween(tiles, directions[currentDir]);
+startTween(tiles, currentDir, 1, false);
+    // --- Swipe detection avec inertie ---
+    let startX = 0, startY = 0, startTime = 0;
+    whole.addEventListener("touchstart", (e) => {
+      const touch = e.changedTouches[0];
+      startX = touch.clientX;
+      startY = touch.clientY;
+      startTime = Date.now();
     });
 
-    // double clic → rotation de toutes les formes
-    whole.addEventListener("dblclick", () => {
-      gsap.to(pieces, {
-        rotation: `+=${randomRotation}`,
-        transformOrigin: "50% 50%",
-        duration: 1.2,
-        ease: "power2.inOut",
+    whole.addEventListener("touchend", (e) => {
+      const touch = e.changedTouches[0];
+      const dx = touch.clientX - startX;
+      const dy = touch.clientY - startY;
+      const dt = Date.now() - startTime;
+
+      if (Math.abs(dx) < 30 && Math.abs(dy) < 30) return; // seuil
+
+      // direction principale
+      const horiz = dx > 0 ? "right" : "left";
+      const vert = dy > 0 ? "down" : "up";
+      const key = horiz + vert;
+
+      if (directions[key]) {
+        currentDir = directions[key];
+
+        // vitesse = distance / temps
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        const speed = dist / dt;
+        const speedFactor = gsap.utils.clamp(0.5, 3, speed * 0.5);
+
+        // swipe → inertiel
+        startTween(tiles, currentDir, speedFactor, true);
+      }
+    });
+
+    // double clic → rotation de toutes les pièces
+      let clickTimeout;
+
+      whole.addEventListener("click", () => {
+        // attend pour voir si un deuxième clic arrive
+        clearTimeout(clickTimeout);
+        clickTimeout = setTimeout(() => {
+          // 👉 Action du simple clic
+          gsap.to(pieces, {
+            rotation: "+=45",
+            transformOrigin: "50% 50%",
+            duration: 0.4,
+            ease: "power2.inOut"
+          });
+        }, 250); // délai max avant qu’on considère que c’est un "vrai" simple clic
       });
-    });
 
-    // clic sur une seule pièce → rotation individuelle
-    // document.querySelectorAll(".piece").forEach(polygon => {
-    //   polygon.addEventListener("click", e => {
-    //     e.stopPropagation();
-    //     gsap.to(polygon, {
-    //       rotation: "+=180",
-    //       transformOrigin: "50% 50%",
-    //       duration: 1,
-    //       ease: "power2.inOut"
-    //     });
-    //   });
-    // });
+      whole.addEventListener("dblclick", () => {
+        clearTimeout(clickTimeout); // empêche l’action du clic simple
+        // 👉 Action du double-clic
+        const randomRotation = gsap.utils.random(-90, 180);
+        gsap.to(pieces, {
+          rotation: `+=${randomRotation}`,
+          transformOrigin: "50% 50%",
+          duration: 0.6,
+          ease: "power2.inOut"
+        });
+      });
 
+
+
+    
     // no-scroll
     const preventScroll = (e) => e.preventDefault();
     document.body.style.overflow = "hidden";
@@ -92,7 +129,6 @@
       document.body.style.overflow = "";
       document.removeEventListener("touchmove", preventScroll);
     };
-
   });
 </script>
 
@@ -107,8 +143,8 @@
   }
 </style>
 
-  <div class="h-screen absolute w-screen z-1">
-    <div class="whole h-screen absolute w-screen z-1]">
+  <div class="h-svh absolute w-screen z-1">
+    <div class="whole h-svh absolute w-screen z-1]">
       <svg
   viewBox={`${offsetX} ${offsetY} ${viewW} ${viewH}`}
   width="100%"
@@ -136,7 +172,7 @@
     </div>
   </div>
 
-  <div class="no-select relative z-2 flex flex-col py-[80px] items-center justify-between min-h-screen text-center pointer-events-none">
+  <div class="no-select relative z-2 flex flex-col py-[80px] items-center justify-between min-h-svh text-center pointer-events-none">
     <div class="py-[20px] px-[50px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-nd-drop-shadow)] pointer-events-none">
       Bravo tu as découvert :
       <div class="text-titre-alt inf-bold my-5 uppercase">

@@ -5,25 +5,34 @@
 
   // Tangram pieces data with original colors
   import { PIECES_DATA } from '$lib/piecesData';
+	import { piecesStore } from '$lib/piecesStore.js';
 
+
+  let totalFound = $state(0);
+	let foundPieces = $state([]);
+// --- FUNCTIONS ---
+	onMount(() => {
+		piecesStore.initialize();
+		totalFound = piecesStore.count;
+		foundPieces = piecesStore.pieces;
+	});
  
 function applyColors() {
-    Object.keys(PIECES_DATA).forEach(id => {
-      document.documentElement.style.setProperty(
-        `--c${id}`,
-        found.includes(id) ? PIECES_DATA[id].color : '#E6E6E6'
-      );
-    });
-  }
-
- 
-
-
-  onMount(() => {
-    found = localStorage.getItem('found')?.split(',').filter(Boolean) || [];
-    console.log('found', found);
-    
+  Object.keys(PIECES_DATA).forEach(id => {
+    const isFound = foundPieces.includes(id);
+    document.documentElement.style.setProperty(
+      `--c${id}`,
+      isFound ? PIECES_DATA[id].color : '#E6E6E6'
+    );
   });
+}
+
+
+  // onMount(() => {
+  //   found = localStorage.getItem('found')?.split(',').filter(Boolean) || [];
+  //   console.log('found', found);
+    
+  // });
 
   
 // function apply(layout) {
@@ -36,7 +45,6 @@ function applyColors() {
 //       duration: 0,
 //     });
 //   }
-
 
 
 onMount(async () => {
@@ -143,57 +151,27 @@ onMount(async () => {
 <div class="top-2 right-5 fixed z-10 text-inter inf-bold">?</div>
 <div class="top-3 right-13 fixed z-10"><img  src="/images/quoi.svg" alt="camera" class="" /></div>
 
-
-<!-- <div class="w-screen bloc_one flex z-100 py-[80px] text-center  absolute h-screen top-0 left-0 flex-col justify-evenly items-center">
+<div class="w-screen bloc_one  flex  z-100 pt-[80px] pb-[80px] text-center  absolute h-svh top-0 left-0 flex-col justify-evenly items-center">
   <div class="w-[80dvw]">
-    <p>Pars à la recherche des 7 formes du tangram pour débloquer le CHROMOGRAM !</p> -->
+    <p>
+     {#if totalFound === 0}
+          Pars à la recherche des 7 formes du tangram pour débloquer le CHROMOGRAM !
+        {:else if totalFound === 7}
+          Bravo ! Tu as débloqué toutes les couleurs ! 
+          Les puzzles sont maintenant disponibles en cliquant en bas de page !
+        {:else if totalFound === 1}
+        Tu as déjà découvert {totalFound} forme.<br/>Rassemble les 7 formes pour débloquer le CHROMOGRAM !
+        {:else}
+        Tu as déjà découvert {totalFound} formes.<br/>Rassemble les 7 formes pour débloquer le CHROMOGRAM !
+      {/if}
+        <!-- {#each Object.entries(PIECES_DATA) as [id, data]}
 
-    <!-- {#if totalPiece === 0}
-      Pars à la recherche des 7 formes du tangram pour débloquer le CHROMOGRAM !
-    {:else if totalPiece === 1}
-      Tu as déjà découvert 1 couleur !
-      Pars à la recherche des 6 formes restantes du tangram pour débloquer le CHROMOGRAM !
-    {:else if totalPiece === 6}
-      Tu as déjà découvert 6 couleurs sur 7 !
-      Pars à la recherche de la forme restante du tangram pour débloquer le CHROMOGRAM !
-    {:else if totalPiece === 7}
-      Bravo ! Tu as débloqué toutes les couleurs ! Les tangrams sont maintenant disponibles en cliquant en bas de page !
-    {:else}
-      Tu as déjà découvert {totalPiece} couleurs sur 7 !
-      Pars à la recherche des {totalPiece-1} formes restantes du tangram pour débloquer le CHROMOGRAM !
-    {/if}     -->
-  <!-- </div>
-  <div class="h-[80dvw] w-[80dvw] bg-transparent relative">
-    <div class="absolute left-0 top-[100%] !w-[101px]"><img  src="/images/couleur.png" alt="couleur" class="" /></div>
-  </div>
-  <div class="relative">
-    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 !w-[55px]"><img  src="/images/camera.svg" alt="camera" class="" /></div>
-    <div class="absolute left-10 top-1/2 translate-y-[-50%] !w-[108.3px]"><img  src="/images/arrow_cam.png" alt="camera" class="" /></div>
-  </div>
-  <div class="z-10 bottom-3.5 left-5 fixed text-mini" >Accueil > Les Couleurs > Les Tangrams</div>
-  <div class="z-10 fixed text-mini bottom-3.5 right-5" >Crédits</div>
+				<span class="px-2 py-1 text-xs"  style="background-color: {foundPieces.includes(id) ? data.color : '#DDD'}">
+					{data.color_name}
+				</span>
 
-</div> -->
-
-
-<div class="w-screen bloc_one  flex  z-100 pt-[80px] pb-[80px] text-center  absolute h-screen top-0 left-0 flex-col justify-evenly items-center">
-  <div class="w-[80dvw]">
-    <p>Pars à la recherche des 7 formes du tangram pour débloquer le CHROMOGRAM !</p>
-
-    <!-- {#if totalPiece === 0}
-      Pars à la recherche des 7 formes du tangram pour débloquer le CHROMOGRAM !
-    {:else if totalPiece === 1}
-      Tu as déjà découvert 1 couleur !
-      Pars à la recherche des 6 formes restantes du tangram pour débloquer le CHROMOGRAM !
-    {:else if totalPiece === 6}
-      Tu as déjà découvert 6 couleurs sur 7 !
-      Pars à la recherche de la forme restante du tangram pour débloquer le CHROMOGRAM !
-    {:else if totalPiece === 7}
-      Bravo ! Tu as débloqué toutes les couleurs ! Les tangrams sont maintenant disponibles en cliquant en bas de page !
-    {:else}
-      Tu as déjà découvert {totalPiece} couleurs sur 7 !
-      Pars à la recherche des {totalPiece-1} formes restantes du tangram pour débloquer le CHROMOGRAM !
-    {/if}     -->
+				{/each} -->
+      </p>
     </div>
   <div class="h-[80dvw] w-[80dvw] relative">
         <div class="absolute left-0 top-full !w-[101px]"><img  src="/images/couleur.png" alt="couleur" class="" /></div>
@@ -205,10 +183,6 @@ onMount(async () => {
   <div class="z-10 bottom-3.5 left-5 fixed text-mini" >Accueil > Les Couleurs > Les Tangrams</div>
   <div class="z-10 fixed text-mini bottom-3.5 right-5" >Crédits</div>
 </div>
-
-
-
-
 
 <div class="conta flex h-[80dvw] w-[80dvw] absolute top-[50%] left-[50%] -translate-[50%]">
   <div>
