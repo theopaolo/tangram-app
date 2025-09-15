@@ -638,7 +638,7 @@
     touch-action: none;
   }
   .success-message {
-    position: fixed;
+    /* position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -646,9 +646,7 @@
     color: white;
     padding: 2rem;
     border-radius: 8px;
-    font-size: 1.5rem;
-    z-index: 2000;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    z-index: 2000; */
   }
 
   .action-buttons {
@@ -811,7 +809,7 @@
 
 
   {#if puzzleSolved}
-    <div class="success-message"> 🎉 Puzzle Solved! 🎉</div>
+    <div class="success-message">Super ! Tu as complété ce tangram !</div>
   {/if}
 
     <!-- Debug Panel - Only shown when DEBUG_MODE is true -->

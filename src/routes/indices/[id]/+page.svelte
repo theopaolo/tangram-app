@@ -348,78 +348,94 @@
 			{/if}
 		</div>
 
-		<!-- Bloc Couleur (GSAP press & hold) -->
-		<div
-			id="section-2"
-			class="relative overflow-hidden border px-5 py-4"
-			on:pointerdown|preventDefault={expand}
-			on:pointerup={shrink}
-			on:pointerleave={shrink}
-			on:pointercancel={shrink}
-		>
-			<div class="text-titre-alt inf-bold relative z-[1] mb-5 uppercase">
-				{currentPiece?.color_name}
-			</div>
 
-			<div class="flex items-center gap-5">
-				<div
-					bind:this={circleEl}
-					class="relative z-0 h-20 w-20 origin-center touch-none rounded-full select-none"
-					style="background-color: {currentPiece?.color};"
-				/>
-				<div class="relative z-[1] leading-6">
-					<span class="inf-bold">hexadécimale</span> : {currentPiece?.color}<br /><br />
-					<span class="inf-bold">rvb</span> : {currentPiece?.rvb}<br /><br />
-					<span class="inf-bold">cmjn</span> : {currentPiece?.cmjn}
-				</div>
-			</div>
-		</div>
+    <div class="min-h-svh">   
+      <!-- Bloc Couleur (GSAP press & hold) -->
+      <div
+        id="section-2"
+        class="relative overflow-hidden border px-5 py-4"
+        on:pointerdown|preventDefault={expand}
+        on:pointerup={shrink}
+        on:pointerleave={shrink}
+        on:pointercancel={shrink}
+      >
+        <div class="text-titre-alt inf-bold relative z-[1] mb-5 uppercase">
+          {currentPiece?.color_name}
+        </div>
 
-		<!-- Progress / navigation par couleurs -->
-		<div class="m-auto mt-17 mb-10 h-px w-2/3 bg-black"></div>
+        <div class="flex items-center gap-5">
+          <div
+            bind:this={circleEl}
+            class="relative z-0 h-20 w-20 origin-center touch-none rounded-full select-none"
+            style="background-color: {currentPiece?.color};"
+          />
+          <div class="relative z-[1] leading-6">
+            <span class="inf-bold">hexadécimale</span> : {currentPiece?.color}<br /><br />
+            <span class="inf-bold">rvb</span> : {currentPiece?.rvb}<br /><br />
+            <span class="inf-bold">cmjn</span> : {currentPiece?.cmjn}
+          </div>
+        </div>
+      </div>
 
-		<div class="flex justify-center gap-5">
-			{#each PIECES_ENTRIES as [id, data] (id)}
-				<span
-					class="rounded-full px-[11px] py-[11px]"
-					style="cursor: pointer; background-color: {foundPieces.includes(id)
-						? data.color
-						: '#E3E3E3'}"
-					title={data.color_name}
-					on:click={() => navigateToPiece(id)}
-				/>
-			{/each}
-		</div>
+      <!-- Progress / navigation par couleurs -->
+      <div class="m-auto mt-17 mb-10 h-px w-2/3 bg-black"></div>
 
-		<div class="mt-5 mb-15 text-center">
-			<p>
-				{#if totalPiece === 0}
-					Tu n'as découvert aucune couleur
-				{:else if totalPiece === 1}
-					Tu as déjà découvert 1 couleur sur 7 !
-				{:else if totalPiece === 7}
-					Bravo, Tu as découvert toutes les couleurs !
-				{:else}
-					Tu as déjà découvert {totalPiece} couleurs sur 7 !
-				{/if}
-			</p>
-		</div>
-		{#if totalPiece !== 7}
-			<div class="relative mb-100 flex items-center justify-center">
-				<div class="relative inline-block">
-					<img src="/images/camera.svg" alt="centrée" class="mx-auto h-auto !w-[52px]" />
-					<div class="absolute top-1/2 right-full -translate-y-1/2 pr-2">
-						<img
-							src="/images/indic_camera_oeuvre.svg"
-							alt="gauche"
-							class="pointer-events-none mr-2 h-auto !w-[105.96px] max-w-none"
-						/>
-					</div>
-				</div>
-			</div>
-		{/if}
-	</div>
+      <div class="flex justify-center gap-5">
+        {#each PIECES_ENTRIES as [id, data] (id)}
+          <span
+            class="rounded-full px-[11px] py-[11px]"
+            style="cursor: pointer; background-color: {foundPieces.includes(id) ? data.color : '#E3E3E3'}"
+            title={data.color_name}
+            on:click={() => {
+              if (foundPieces.includes(id)) {
+                navigateToPiece(id);
+              } else {
+                goto('/start');
+              }
+            }}
+          />
+        {/each}
+      </div>
+
+      <div class="mt-5 mb-15 text-center">
+        <p>
+          {#if totalPiece === 0}
+            Tu n'as découvert aucune couleur
+          {:else if totalPiece === 1}
+            Tu as déjà découvert 1 couleur sur 7 !
+          {:else if totalPiece === 7}
+            Bravo, Tu as découvert toutes les couleurs !
+          {:else}
+            Tu as déjà découvert {totalPiece} couleurs sur 7 !
+          {/if}
+        </p>
+      </div>
+
+      {#if totalPiece !== 7}
+        <div class="relative flex items-center justify-center">
+          <div class="relative inline-block">
+            <a href="/scanner" class="block">
+              <img src="/images/camera.svg" alt="camera" class="mx-auto h-auto !w-[52px]" />
+            </a>
+            <div class="absolute top-1/2 right-full -translate-y-1/2 pr-2">
+              <img
+                src="/images/indic_camera_oeuvre.svg"
+                alt="gauche"
+                class="pointer-events-none mr-2 h-auto !w-[105.96px] max-w-none"
+              />
+            </div>
+          </div>
+        </div>
+      {:else}
+        <div class="m-auto text-bouton inf-bold z-10 w-fit border bg-white px-[15px] py-[7px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]" >
+          ACCÉDER AUX PUZZLES
+        </div>
+      {/if}
+
+    </div>
+  </div>
 {/if}
+
 
 <style>
 	.bah::first-line {

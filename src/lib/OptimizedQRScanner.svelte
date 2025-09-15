@@ -298,12 +298,12 @@
 	});
 </script>
 
-<div class="qr-scanner-container" class:active={isActive} class:fullscreen>
+<div class="qr-scanner-container border-2 drop-shadow-[var(--my-drop-shadow)]" class:active={isActive} class:fullscreen>
 	<!-- Video element (hidden, used for capturing frames) -->
-	<video bind:this={videoElement} class="qr-video" autoplay muted playsinline></video>
+	<video bind:this={videoElement} class="qr-video " autoplay muted playsinline></video>
 
 	<!-- Canvas element (hidden, used for image processing) -->
-	<canvas bind:this={canvasElement} class="qr-canvas"></canvas>
+	<canvas bind:this={canvasElement} class="qr-canvas "></canvas>
 
 	<!-- Visual overlay with scan area -->
 	<div class="scan-overlay">
@@ -338,20 +338,20 @@
 		</div>
 
 		<!-- Status text -->
-		<div class="scan-status">
+		<div class="scan-status absolute bottom-0 left-0">
 			{#if hasQRCode}
 				<span class="status-success">QR Code détecté !</span>
 			{:else if isDetecting}
 				<span class="status-scanning">Recherche en cours...</span>
 			{:else}
-				<span class="status-idle">Positionnez le QR code dans le cadre</span>
+				<span class="status-idle">Positionne le QR code dans le cadre</span>
 			{/if}
 		</div>
 
 		<!-- Fullscreen close button -->
 		{#if fullscreen}
 			<button
-				class="close-button btn-primary"
+				class="close-button top-[100%] absolute right-0"
 				onclick={() => dispatch('close')}
 				aria-label="Fermer le scanner"
 			>
@@ -367,7 +367,7 @@
 		width: 100%;
 		height: 400px;
 		overflow: hidden;
-		background: #000;
+		background: #fff;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -377,13 +377,14 @@
 
 	.qr-scanner-container.fullscreen {
 		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100vw;
-		height: 100vh;
+		top: 100px;
+		left: 10vw;
+		width: 80vw;
+		height: calc(100vh - 250px);
 		border-radius: 0;
 		z-index: 50;
-		background: #000;
+		background: #fff;
+		overflow: visible;
 	}
 
 	.qr-video {
@@ -477,31 +478,27 @@
 
 	.scan-status {
 		margin-top: 20px;
-		padding: 4px 16px;
-		background: rgba(0, 0, 0, 0.9);
+		padding: 5px;
 		color: white;
-		font-size: 12px;
 		text-align: center;
 		transition: all 0.3s ease;
 		font-family: 'Inf Reg';
 	}
 
 	.fullscreen .scan-status {
-		margin-top: 4rem;
-		padding: 0.5rem 1rem;
-		font-size: 16px;
+		
 	}
 
 	.status-success {
-		color: #10b981;
+		color: #fb4af8;
 	}
 
 	.status-scanning {
-		color: #85b4ff;
+		color: #01a707;
 	}
 
 	.status-idle {
-		color: #9ca3af;
+		color: #9a5499;
 	}
 
 	@keyframes scan {

@@ -37,6 +37,20 @@
 	}
 </script>
 
+<div
+	class="title text-title inf-bold fixed top-5 left-5 z-100 mx-auto w-fit w-max bg-white px-[14px] py-1 tracking-[4%] "
+>
+	CHROMOGRAM #1
+</div>
+<div class="text-inter inf-bold fixed top-2 right-5 z-100">?</div>
+
+<div class="fixed top-3 right-13 z-100">
+	<img src="/images/quoi.svg" alt="camera" class="" />
+</div>
+
+	<div class="text-mini fixed bottom-3.5 left-5 z-100">Accueil > Les Couleurs > Les Tangrams</div>
+	<div class="text-mini fixed right-5 bottom-3.5 z-100">Crédits</div>
+
 <div class="scanner-fullscreen">
 	<OptimizedQRScanner
 		isActive={isScanning}
@@ -51,6 +65,9 @@
 </div>
 
 <style>
+	.qr-scanner-container{
+		border: 2px solid;
+	}
 	.scanner-fullscreen {
 		position: fixed;
 		top: 0;
@@ -58,6 +75,6 @@
 		width: 100vw;
 		height: 100vh;
 		z-index: 50;
-		background: #000;
+		background: #fff;
 	}
 </style>

@@ -1,7 +1,25 @@
 <script>
   import { onMount } from "svelte";
   let gsap;
+  
+  import { goto } from '$app/navigation';
   import { PIECES_DATA } from '$lib/piecesData';
+	import { piecesStore } from '$lib/piecesStore.js';
+
+	let totalFound = $state(0);
+	let foundPieces = $state([]);
+	// --- FUNCTIONS ---
+	onMount(() => {
+		piecesStore.initialize();
+		totalFound = piecesStore.count;
+		foundPieces = piecesStore.pieces;
+	});
+
+  	function handleCC(id) {
+		if (foundPieces.includes(id)) {
+			goto(`/indices/${id}`);
+		} 
+	}
 
   const cols = 3;
   const rows = 20;
@@ -19,6 +37,9 @@
   // centrage vertical (ici = 0 car viewH == rows * rowPitch)
   const offsetX = (cols * w - viewW) / 2;
   const offsetY = (rows * rowPitch - viewH) / 2;
+
+
+
 
 
 
@@ -141,7 +162,7 @@
     À quelle œuvre penses-tu que<br/>cette couleur appartient ?
   </div>
 
-  <div class="text-titre-alt inf-bold uppercase py-[25px] px-[30px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-drop-shadow)]">
+  <div class="pointer-events-auto text-titre-alt inf-bold uppercase py-[25px] px-[30px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-drop-shadow)]" on:click={() => handleCC('1')}>
       VERIFIE TON HYPOTHÈSE<br/>EN APPUYANT ICI
   </div>
 </div>

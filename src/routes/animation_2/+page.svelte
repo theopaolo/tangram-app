@@ -1,7 +1,25 @@
 <script>
   import { onMount } from "svelte";
   let gsap;
+  
+  import { goto } from '$app/navigation';
   import { PIECES_DATA } from '$lib/piecesData';
+	import { piecesStore } from '$lib/piecesStore.js';
+
+	let totalFound = $state(0);
+	let foundPieces = $state([]);
+	// --- FUNCTIONS ---
+	onMount(() => {
+		piecesStore.initialize();
+		totalFound = piecesStore.count;
+		foundPieces = piecesStore.pieces;
+	});
+
+  	function handleCC(id) {
+		if (foundPieces.includes(id)) {
+			goto(`/indices/${id}`);
+		} 
+	}
 
   let tween;
 
@@ -184,7 +202,7 @@ startTween(tiles, currentDir, 1, false);
       À quelle œuvre penses-tu que<br/>cette couleur appartient ?
     </div>
 
-    <div class="text-titre-alt inf-bold uppercase py-[25px] px-[30px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-drop-shadow)]">
-        VERIFIE TON HYPOTHÈSE<br/>EN APPUYANT ICI
-    </div>
+  <div class="pointer-events-auto text-titre-alt inf-bold uppercase py-[25px] px-[30px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-drop-shadow)]" on:click={() => handleCC('2')}>
+      VERIFIE TON HYPOTHÈSE<br/>EN APPUYANT ICI
   </div>
+</div>
