@@ -14,7 +14,7 @@
 	// --- FUNCTIONS ---
 	onMount(() => {
 		if (!browser) return;
-		
+
 		piecesStore.initialize();
 		totalFound = piecesStore.count;
 		foundPieces = piecesStore.pieces;
@@ -48,7 +48,7 @@
 
 	onMount(async () => {
 		if (!browser) return;
-		
+
 		const preventScroll = (e) => e.preventDefault();
 		document.body.style.overflow = 'hidden';
 		document.addEventListener('touchmove', preventScroll, { passive: false });
@@ -64,7 +64,7 @@
 	CHROMOGRAM #1
 </div>
 
-<div class="fixed top-3 right-13 z-30">
+<div class="fixed top-3 right-5 z-30">
 	<button onclick={() => isAideOpen.open()} aria-label="Aide" class="flex bg-transparent border-none cursor-pointer">
 		<img src="/images/quoi.svg" alt="camera" />
 		<div class="text-inter inf-bold text-white drop-shadow-[var(--my-drop-shadow)]">?</div>
