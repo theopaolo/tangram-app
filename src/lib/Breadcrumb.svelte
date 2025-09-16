@@ -1,46 +1,41 @@
 <script>
-  /**
-   * Reusable Breadcrumb Component
-   *
-   * @typedef {Object} BreadcrumbItem
-   * @property {string} label - The text to display
-   * @property {string} [href] - Optional link URL, if provided the item becomes clickable
-   * @property {boolean} [current] - If true, marks this item as current (underlined)
-   * @property {boolean} [disabled] - If true, marks this item as disabled (low opacity)
-   */
+  import CreditsContent from '$lib/CreditsContent.svelte';
+  import { isCreditsOpen } from '$lib/stores/creditsStore.js';
 
-  /**
-   * @type {{ items: BreadcrumbItem[] }}
-   */
   let { items = [] } = $props();
 </script>
 
-<div class="bread fixed left-[20px] bottom-[8px] text-mini tracking-[5%]">
-  {#each items as item, index}
-    {#if index > 0}
-      <span class="separator"> > </span>
-    {/if}
+<div class="flex w-full items-center justify-between text-mini">
+  <div class="tracking-[5%]">
+    {#each items as item, index}
+      {#if index > 0}
+        <span class="separator"> > </span>
+      {/if}
 
-    {#if item.href}
-      <a
-        href={item.href}
-        class="breadcrumb-item"
-        class:current={item.current}
-        class:desactivate={item.disabled}
-      >
-        {item.label}
-      </a>
-    {:else}
-      <span
-        class="breadcrumb-item"
-        class:current={item.current}
-        class:desactivate={item.disabled}
-      >
-        {item.label}
-      </span>
-    {/if}
-  {/each}
+      {#if item.href}
+        <a
+          href={item.href}
+          class="breadcrumb-item"
+          class:current={item.current}
+          class:desactivate={item.disabled}
+        >
+          {item.label}
+        </a>
+      {:else}
+        <span
+          class="breadcrumb-item"
+          class:current={item.current}
+          class:desactivate={item.disabled}
+        >
+          {item.label}
+        </span>
+      {/if}
+    {/each}
+  </div>
+ <button onclick={() => isCreditsOpen.open()} class="bg-transparent border-none cursor-pointer">Crédits</button>
 </div>
+
+<CreditsContent />
 
 <style>
   .breadcrumb-item {
@@ -48,7 +43,7 @@
     text-decoration: none;
   }
 
-  .breadcrumb-item:hover:not(.desactivate) {
-    opacity: 0.8;
+  .breadcrumb-item:hover, a:hover {
+    color: inherit;
   }
 </style>
