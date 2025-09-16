@@ -16,13 +16,9 @@ export const PIECES_DATA = {
       ],
       images: [
         {
-          src: "/images/dd.jpg",
+          src: "/images/chromo_1.jpg",
           credits: "© Stefan Rinck, « M. Flamboyant » (vue de face), 2018"
         },
-        {
-          src: "/images/dd.jpg",
-          credits: "© Stefan Rinck, « M. Flamboyant » (profil), 2018"
-        }
       ],
       points: '7.5,2.5 2.5,2.5 0,0 5,0'
     },
@@ -43,13 +39,9 @@ export const PIECES_DATA = {
       ],
       images: [
         {
-          src: "/images/dd.jpg",
+          src: "/images/chromo_2.jpg",
           credits: "© Stefan Rinck, « M. Flamboyant » (vue de face), 2018"
         },
-        {
-          src: "/images/dd.jpg",
-          credits: "© Stefan Rinck, « M. Flamboyant » (profil), 2018"
-        }
       ],
       points: '0,0 5,0 5,5'
     },
@@ -70,13 +62,9 @@ export const PIECES_DATA = {
       ],
       images: [
         {
-          src: "/images/dd.jpg",
+          src: "/images/chromo_3.jpg",
           credits: "© Stefan Rinck, « M. Flamboyant » (vue de face), 2018"
         },
-        {
-          src: "/images/dd.jpg",
-          credits: "© Stefan Rinck, « M. Flamboyant » (profil), 2018"
-        }
       ],
       points: '0,10 0,0 5,5'
     },
@@ -97,13 +85,9 @@ export const PIECES_DATA = {
       ],
       images: [
         {
-          src: "/images/dd.jpg",
+          src: "/images/chromo_4.jpg",
           credits: "© Stefan Rinck, « M. Flamboyant » (vue de face), 2018"
         },
-        {
-          src: "/images/dd.jpg",
-          credits: "© Stefan Rinck, « M. Flamboyant » (profil), 2018"
-        }
       ],
       points: '2.5,5 2.5,0 0,2.5'
     },
@@ -124,13 +108,9 @@ export const PIECES_DATA = {
       ],
       images: [
         {
-          src: "/images/dd.jpg",
+          src: "/images/chromo_5.jpg",
           credits: "© Stefan Rinck, « M. Flamboyant » (vue de face), 2018"
         },
-        {
-          src: "/images/dd.jpg",
-          credits: "© Stefan Rinck, « M. Flamboyant » (profil), 2018"
-        }
       ],
       points: '0,5 10,5 5,0'
     },
@@ -151,13 +131,9 @@ export const PIECES_DATA = {
       ],
       images: [
         {
-          src: "/images/dd.jpg",
+          src: "/images/chromo_6.jpg",
           credits: "© Stefan Rinck, « M. Flamboyant » (vue de face), 2018"
         },
-        {
-          src: "/images/dd.jpg",
-          credits: "© Stefan Rinck, « M. Flamboyant » (profil), 2018"
-        }
       ],
       points: '0,2.5 2.5,0 5,2.5 2.5,5'
     },
@@ -178,13 +154,9 @@ export const PIECES_DATA = {
       ],
       images: [
         {
-          src: "/images/dd.jpg",
+          src: "/images/chromo_7.jpg",
           credits: "© Stefan Rinck, « M. Flamboyant » (vue de face), 2018"
         },
-        {
-          src: "/images/dd.jpg",
-          credits: "© Stefan Rinck, « M. Flamboyant » (profil), 2018"
-        }
       ],
       points: '5,0 0,0 2.5,2.5'
     },
