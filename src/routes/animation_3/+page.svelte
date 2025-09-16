@@ -167,7 +167,7 @@
     À quelle œuvre penses-tu que<br/>cette couleur appartient ?
   </div>
 
-  <div class="pointer-events-auto text-titre-alt inf-bold uppercase py-[25px] px-[30px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-drop-shadow)]" on:click={() => handleCC('3')}>
+  <div class="pointer-events-auto text-titre-alt inf-bold uppercase py-[25px] px-[30px] max-w-4/5 text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-drop-shadow)]" on:click={() => handleCC('3')}>
       VERIFIE TON HYPOTHÈSE<br/>EN APPUYANT ICI
   </div>
 </div>

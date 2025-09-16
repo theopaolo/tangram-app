@@ -1,19 +1,16 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { page } from '$app/state'; // SvelteKit (Svelte 5) : store page
+	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 	import { piecesStore } from '$lib/piecesStore.js';
-
-	// `Object.entries` reste pareil
 	import { PIECES_DATA } from '$lib/piecesData';
+
 	const PIECES_ENTRIES = Object.entries(PIECES_DATA);
 
-	// Si tu veux dériver une version réactive du store
 	let foundPieces = $derived($piecesStore);
 
-	// import function to register Swiper custom elements
-	// import { Pagination } from 'swiper/modules';
-	// register Swiper custom elements
+	let scrollContainer; // ✅ conteneur scrollable
+
 	import { register } from 'swiper/element/bundle';
 	register();
 	let swiperEl;
@@ -38,45 +35,37 @@
 
 			swiperEl.initialize();
 		}
+		// Scroll spy
+		scrollContainer.addEventListener('scroll', onScrollThrottled, { passive: true });
+		scrollContainer.addEventListener('resize', onScrollThrottled);
+
+		updateActiveOnScroll();
+
+		return () => {
+			scrollContainer.removeEventListener('scroll', onScrollThrottled);
+			scrollContainer.removeEventListener('resize', onScrollThrottled);
+		};
+
+
 	});
+
+
 
 	// ——————————————————
 	// CONSTANTES
 	// ——————————————————
 	const LABELS = ["L'oeuvre", "D'après toi...", 'La Couleur'];
-	const OFFSET = 90; // px à laisser au-dessus (navbar, marge…)
-	const SCROLL_MS = 800; // durée pour la version polyfill (fallback)
+	const OFFSET = 90;
+	const SCROLL_MS = 800;
 
-	// ——————————————————
-	// DONNÉES
-	// ——————————————————
-
-	// ——————————————————
-	// GSAP (import dynamique côté client)
-	// ——————————————————
 	let gsap;
 	let gsapReady;
 	let circleEl;
 
 	onMount(() => {
 		gsapReady = import('gsap').then((m) => (gsap = m.gsap ?? m.default ?? m));
-
-		// Initialize pieces store
 		piecesStore.initialize();
-
 		hasInitialized = true;
-
-		// — Scroll-Spy listeners
-		window.addEventListener('scroll', onScrollThrottled, { passive: true });
-		window.addEventListener('resize', onScrollThrottled);
-		// Calcul initial (au cas où on n'est pas en haut de page)
-		updateActiveOnScroll();
-
-		// Cleanup
-		return () => {
-			window.removeEventListener('scroll', onScrollThrottled);
-			window.removeEventListener('resize', onScrollThrottled);
-		};
 	});
 
 	async function expand() {
@@ -88,9 +77,6 @@
 		if (circleEl) gsap.to(circleEl, { scale: 1, duration: 4, ease: 'elastic.out(1, 0.3)' });
 	}
 
-	// ——————————————————
-	// ETAT (runes Svelte 5)
-	// ——————————————————
 	let active = $state(0);
 	let hasInitialized = $state(false);
 
@@ -99,45 +85,47 @@
 	let totalPiece = $derived(Number($piecesStore?.length ?? 0));
 
 	// ——————————————————
-	// Smooth scroll util
+	// Smooth scroll dans le container
 	// ——————————————————
 	function smoothScrollTo(to, duration = SCROLL_MS) {
-		const start = window.scrollY;
+		const start = scrollContainer.scrollTop;
 		const delta = to - start;
 		const t0 = performance.now();
 		const ease = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
 
 		function step(now) {
 			const p = Math.min((now - t0) / duration, 1);
-			window.scrollTo(0, start + delta * ease(p));
+			scrollContainer.scrollTo(0, start + delta * ease(p));
 			if (p < 1) requestAnimationFrame(step);
 		}
 		requestAnimationFrame(step);
 	}
 
 	function setActiveAndScroll(i) {
-		//   active = i;
 		const el = document.getElementById(`section-${i}`);
 		if (!el) return;
 
-		const top = el.getBoundingClientRect().top + window.pageYOffset - OFFSET;
-		smoothScrollTo(top, 800); // toujours 800 ms
+		const top =
+			el.getBoundingClientRect().top -
+			scrollContainer.getBoundingClientRect().top +
+			scrollContainer.scrollTop -
+			OFFSET;
+
+		smoothScrollTo(top, 800);
 	}
 
 	// ——————————————————
-	// Scroll-Spy : met à jour `active` selon la position scroll
+	// Scroll spy
 	// ——————————————————
 	let _raf = 0;
 
 	function updateActiveOnScroll() {
-		// Ligne de référence = haut de la fenêtre + OFFSET
-		const y = window.scrollY + OFFSET + 1;
+		const y = scrollContainer.scrollTop + OFFSET + 1;
 		let nextActive = 0;
 
 		for (let i = 0; i < LABELS.length; i++) {
 			const el = document.getElementById(`section-${i}`);
 			if (!el) continue;
-			// offsetTop = position absolue du haut de la section
 			const top = el.offsetTop;
 			if (y >= top) nextActive = i;
 		}
@@ -151,45 +139,32 @@
 			updateActiveOnScroll();
 		});
 	}
+
 	$effect(() => {
-		pieceId; // réagit au changement de pièce
+		pieceId;
 		requestAnimationFrame(updateActiveOnScroll);
 	});
 
-	// ——————————————————
-	// ROUTING
-	// ——————————————————
 	function navigateToPiece(id) {
 		goto(`/indices/${id}`);
 	}
 
-	// ——————————————————
-	// CAPTURE
-	// ——————————————————
 	function capturePiece() {
-		if (pieceId) {
-			piecesStore.addPiece(pieceId);
-		}
+		if (pieceId) piecesStore.addPiece(pieceId);
 	}
 
-	// ——————————————————
-	// SÉLECTIONS
-	// ——————————————————
-	// Multi-sélection (liste "D’après toi")
 	let selected = $state(new Set());
 	function toggle(i) {
 		const s = new Set(selected);
 		s.has(i) ? s.delete(i) : s.add(i);
 		selected = s;
 	}
-	// Reset quand on change de pièce
 	$effect(() => {
 		pieceId;
 		selected = new Set();
 	});
 
-	// Sélection unique (Bah oui / Et nan…)
-	let selectedAnswer = $state(null); // 0 | 1 | null
+	let selectedAnswer = $state(null);
 	function toggleAnswer(i) {
 		selectedAnswer = selectedAnswer === i ? null : i;
 	}
@@ -200,6 +175,7 @@
 </script>
 
 {#if currentPiece}
+<div bind:this={scrollContainer} class="scroll-container">
 	<div class="p-5 pt-0" id="section-0">
 		<!-- Header / onglets -->
 		<header class="sticky top-0 z-10 flex items-center bg-white pt-[30px] pb-[5px]">
@@ -237,12 +213,21 @@
 			</div>
 		</header>
 
-		<!-- Visuel -->
-		<div class="mt-[40px] mb-4 w-full" style="background-color: {currentPiece.color};">
+		<!-- Swiper -->
+		<div class="mt-[40px] mb-4 w-full" style="">
 			<swiper-container bind:this={swiperEl}>
-				<swiper-slide><img class="aspect-3/2 object-cover" src="/images/dd.jpg" /></swiper-slide>
-				<swiper-slide><img class="aspect-3/2 object-cover" src="/images/dd.jpg" /></swiper-slide>
-				<swiper-slide><img class="aspect-3/2 object-cover" src="/images/dd.jpg" /></swiper-slide>
+				{#each currentPiece.images as img, i (i)}
+					<swiper-slide>
+						<img
+							class="aspect-3/2 object-cover"
+							src={img.src}
+							alt={img.credits ?? `image ${i + 1}`}
+						/>
+						{#if img.credits}
+							<p class="text-mini text-black text-right italic pt-1 py-0 px-1">{img.credits}</p>
+						{/if}
+					</swiper-slide>
+				{/each}
 			</swiper-container>
 		</div>
 
@@ -434,10 +419,17 @@
 
     </div>
   </div>
+</div>
 {/if}
 
 
 <style>
+		.scroll-container {
+		height: 100vh;
+		overflow-y: auto;
+		overflow-x: hidden;
+		scroll-behavior: auto; /* on gère le smoothScroll manuellement */
+	}
 	.bah::first-line {
 		padding-right: 40px !important;
 	}

@@ -298,12 +298,12 @@
 	});
 </script>
 
-<div class="qr-scanner-container border-2 drop-shadow-[var(--my-drop-shadow)]" class:active={isActive} class:fullscreen>
+<div class="qr-scanner-container bg-black" class:active={isActive} class:fullscreen>
 	<!-- Video element (hidden, used for capturing frames) -->
-	<video bind:this={videoElement} class="qr-video " autoplay muted playsinline></video>
+	<video bind:this={videoElement} class="bg-[#ccc] qr-video border-2 drop-shadow-[var(--my-drop-shadow)]" autoplay muted playsinline></video>
 
 	<!-- Canvas element (hidden, used for image processing) -->
-	<canvas bind:this={canvasElement} class="qr-canvas "></canvas>
+	<canvas bind:this={canvasElement} class="qr-canvas"></canvas>
 
 	<!-- Visual overlay with scan area -->
 	<div class="scan-overlay">
@@ -338,24 +338,29 @@
 		</div>
 
 		<!-- Status text -->
-		<div class="scan-status absolute bottom-0 left-0">
+		<div class="scan-status absolute bottom-0 left-2">
 			{#if hasQRCode}
-				<span class="status-success">QR Code détecté !</span>
+				<span class="status-success">QR-Code détecté</span>
 			{:else if isDetecting}
-				<span class="status-scanning">Recherche en cours...</span>
+				<span class="status-scanning">Attente QR-Code</span>
 			{:else}
-				<span class="status-idle">Positionne le QR code dans le cadre</span>
+				<span class="status-idle">...</span>
 			{/if}
 		</div>
 
 		<!-- Fullscreen close button -->
 		{#if fullscreen}
 			<button
-				class="close-button top-[100%] absolute right-0"
+				class="close-button top-[100%] absolute right-[-10px] !mt-5 flex items-center"
 				onclick={() => dispatch('close')}
 				aria-label="Fermer le scanner"
 			>
-				Fermer le scanner
+			
+			 <svg width="30" height="30" fill="black" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+				<path d="M17.1421 15.1421L15.0208 17.2635L0.87868 3.12132L3 1L17.1421 15.1421Z"/>
+				<path d="M2.85786 17.1421L0.736544 15.0208L14.8787 0.87868L17 3L2.85786 17.1421Z"/>
+			</svg>
+			
 			</button>
 		{/if}
 	</div>
@@ -377,10 +382,10 @@
 
 	.qr-scanner-container.fullscreen {
 		position: fixed;
-		top: 100px;
+		top: 85px;
 		left: 10vw;
 		width: 80vw;
-		height: calc(100vh - 250px);
+		height: calc(100vh - 280px);
 		border-radius: 0;
 		z-index: 50;
 		background: #fff;

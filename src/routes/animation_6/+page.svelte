@@ -23,10 +23,10 @@
 
   const cols = 9;
   const rows = 9;
-  const w = 2.5;
+  const w = 5;
   const h = 5;
 
-  const visibleCols = 4.3;
+  const visibleCols = 2.3;
   const viewW = visibleCols * w;
   const viewH = rows * h;
 
@@ -45,9 +45,10 @@
 
     // Rotation infinie du SVG entier
     const svgRotation = gsap.to(svg, {
-      rotation: 360,
+      x: 100,
       transformOrigin: "50% 50%",
-      duration: 120,
+      duration: 10,
+      yoyo:true,
       ease: "linear",
       repeat: -1
     });
@@ -61,7 +62,7 @@
       const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
 
       gsap.to(wrapper, {
-        scale: zoomed ? 1 : 4,
+        scale: zoomed ? 1 : 0.5,
         svgOrigin: `${svgP.x} ${svgP.y}`,
         duration: 1.2,
         ease: "power2.inOut"
@@ -73,7 +74,9 @@
     // Rotation aléatoire de toutes les pièces au clic
     whole.addEventListener("click", () => {
       gsap.to(pieces, {
-        rotation: () => `+=${gsap.utils.random(-360, 360)}`,
+        rotation: () => `+=${gsap.utils.random(-180, 120)}`,
+        scale: () => `+${gsap.utils.random(1.5, 0.7)}`,
+
         transformOrigin: "50% 50%",
         duration: 2,
         ease: "power2.inOut"
@@ -125,7 +128,7 @@
               <polygon
                 fill={PIECES_DATA[6].color}
                 class="piece"
-                points="2.5,5 2.5,0 0,2.5"
+                points="0,2.5 2.5,0 5,2.5 2.5,5"
                 transform={`translate(${c * w}, 0)`}
               />
             {/each}
@@ -145,7 +148,7 @@
     À quelle œuvre penses-tu que<br/>cette couleur appartient ?
   </div>
 
-  <div class="pointer-events-auto text-titre-alt inf-bold uppercase py-[25px] px-[30px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-drop-shadow)]" on:click={() => handleCC('6')}>
+  <div class="pointer-events-auto text-titre-alt inf-bold uppercase py-[25px] px-[30px] max-w-4/5 text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-drop-shadow)]" on:click={() => handleCC('6')}>
       VERIFIE TON HYPOTHÈSE<br/>EN APPUYANT ICI
   </div>
 </div>

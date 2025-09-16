@@ -21,7 +21,7 @@
 		} 
 	}
 
-  const cols = 3;
+  const cols = 5;
   const rows = 20;
   const w = 7.5;   // largeur du triangle
   const h = 2.5;   // hauteur du triangle
@@ -53,48 +53,50 @@
         gsap.to(polygon, {
           rotation: "+=360",
           transformOrigin: "50% 50%",
-          duration: 16,   // vitesse d'une rotation complète
+          duration: 20,   // vitesse d'une rotation complète
           repeat: -1,    // boucle infinie
           ease: "linear" // rotation constante sans accélération
         });
       });
   
+       let zoomed = false;
+
     const svg = document.querySelector("svg");
     // double clic → rotation de toutes les formes
     svg.addEventListener("dblclick", () => {
       const randomRotation = gsap.utils.random(-120, 180); 
       const pieces = document.querySelectorAll("svg");
       gsap.to(pieces, {
+        scale: zoomed ? 1 : 2,
         rotation: `+=${randomRotation}`,
-        transformOrigin: "50% 50%",
+        transformOrigin: "40% 55%",
         duration: 1.2,
         ease: "power2.inOut",
       });
-
-      
+      zoomed = !zoomed;
     });
 
 
       // ouste au clic sur une pièce
-    document.querySelectorAll(".row").forEach(row => {
+    document.querySelectorAll(".piece").forEach(row => {
       row.addEventListener("click", () => {
         // Choisit -10 (gauche) ou +10 (droite) aléatoirement
         const dir = Math.random() < 0.5 ? -20 : 20;
 
+        const diro = Math.random() < 0.5 ? -10 : 10;
+
         // toutes les pièces dans cette ligne
         const pieces = row.querySelectorAll(".piece");
 
-        gsap.to(pieces, {
+        gsap.to(row, {
           x: `+=${dir}`,
+          y: `+=${diro}`,
           rotate:90,
-          duration: 4,
+          duration: 5,
           ease: "power2.inOut",
           yoyo: true,
           repeat: 1,
-          stagger: {
-            each: 2,       // délai entre chaque pièce
-            from: "center"    // commence par le centre et se propage
-          }
+          
         });
       });
     });
@@ -153,7 +155,7 @@
 
 
 <div class="no-select relative z-2 flex flex-col py-[80px] items-center justify-between min-h-svh text-center pointer-events-none">
-  <div class="py-[20px] px-[50px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-nd-drop-shadow)] pointer-events-none">
+  <div class="py-[20px] px-[50px] w-fit max-w-4/5 text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-nd-drop-shadow)] pointer-events-none">
     Bravo tu as découvert :
     <div class="text-titre-alt inf-bold my-5 uppercase">
       {PIECES_DATA[1].color_name}

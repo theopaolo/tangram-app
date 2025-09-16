@@ -16,10 +16,10 @@
 	});
 
   	function handleCC(id) {
-		if (foundPieces.includes(id)) {
-			goto(`/indices/${id}`);
-		} 
-	}
+      if (foundPieces.includes(id)) {
+        goto(`/indices/${id}`);
+      } 
+    };
 
   let tween;
 
@@ -110,6 +110,7 @@ startTween(tiles, currentDir, 1, false);
 
     // double clic → rotation de toutes les pièces
       let clickTimeout;
+    let zoomed = false;
 
       whole.addEventListener("click", () => {
         // attend pour voir si un deuxième clic arrive
@@ -128,13 +129,16 @@ startTween(tiles, currentDir, 1, false);
       whole.addEventListener("dblclick", () => {
         clearTimeout(clickTimeout); // empêche l’action du clic simple
         // 👉 Action du double-clic
-        const randomRotation = gsap.utils.random(-90, 180);
+        const randomRotation = gsap.utils.random(-120, 10);
         gsap.to(pieces, {
+          scale: zoomed ? 1 : 1.2,
           rotation: `+=${randomRotation}`,
           transformOrigin: "50% 50%",
           duration: 0.6,
           ease: "power2.inOut"
         });
+              zoomed = !zoomed;
+
       });
 
 
@@ -193,7 +197,7 @@ startTween(tiles, currentDir, 1, false);
   </div>
 
   <div class="no-select relative z-2 flex flex-col py-[80px] items-center justify-between min-h-svh text-center pointer-events-none">
-    <div class="py-[20px] px-[50px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-nd-drop-shadow)] pointer-events-none">
+    <div class="py-[20px] px-[50px] max-w-4/5 text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-nd-drop-shadow)] pointer-events-none">
       Bravo tu as découvert :
       <div class="text-titre-alt inf-bold my-5 uppercase">
          {PIECES_DATA[2].color_name}
