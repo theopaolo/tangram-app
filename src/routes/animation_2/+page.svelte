@@ -1,10 +1,10 @@
 <script>
   import { onMount } from "svelte";
   let gsap;
-  
+
   import { goto } from '$app/navigation';
   import { PIECES_DATA } from '$lib/piecesData';
-	import { piecesStore } from '$lib/piecesStore.js';
+  import { piecesStore } from '$lib/piecesStore.js';
 
 	let totalFound = $state(0);
 	let foundPieces = $state([]);
@@ -18,7 +18,7 @@
   	function handleCC(id) {
       if (foundPieces.includes(id)) {
         goto(`/indices/${id}`);
-      } 
+      }
     };
 
   let tween;
@@ -50,7 +50,7 @@ function startTween(tiles, dir, speedFactor = 1, inertial = false) {
   tween = gsap.to(tiles, {
     x: `+=${dir.dx * cols * w * 0.5 * speedFactor}`,
     y: `+=${dir.dy * rows * h * 0.5 * speedFactor}`,
-    duration: inertial 
+    duration: inertial
       ? gsap.utils.clamp(2, 10, 8 / speedFactor) // swipe rapide → court
       : 40,                                      // load → très lent
     ease: inertial ? "power3.out" : "linear",
@@ -143,7 +143,7 @@ startTween(tiles, currentDir, 1, false);
 
 
 
-    
+
     // no-scroll
     const preventScroll = (e) => e.preventDefault();
     document.body.style.overflow = "hidden";
@@ -181,7 +181,7 @@ startTween(tiles, currentDir, 1, false);
           <g transform={`translate(0, ${r * h})`}>
             {#each Array(cols) as _, c}
               <polygon
-                fill={PIECES_DATA[2].color}     
+                fill={PIECES_DATA[2].color}
                 class="piece"
                 points="0,0 5,0 5,5"
                 transform={`translate(${c * w}, 0)`}
@@ -206,7 +206,10 @@ startTween(tiles, currentDir, 1, false);
       À quelle œuvre penses-tu que<br/>cette couleur appartient ?
     </div>
 
-  <div class="pointer-events-auto text-titre-alt inf-bold uppercase py-[25px] px-[30px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-drop-shadow)]" on:click={() => handleCC('2')}>
+  <div
+    class="pointer-events-auto text-titre-alt inf-bold uppercase py-[25px] px-[30px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-drop-shadow)]"
+    onclick={() => handleCC('2')}
+    >
       VERIFIE TON HYPOTHÈSE<br/>EN APPUYANT ICI
   </div>
 </div>

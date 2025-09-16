@@ -1,10 +1,10 @@
 <script>
   import { onMount } from "svelte";
   let gsap;
-  
+
   import { goto } from '$app/navigation';
   import { PIECES_DATA } from '$lib/piecesData';
-	import { piecesStore } from '$lib/piecesStore.js';
+  import { piecesStore } from '$lib/piecesStore.js';
 
 	let totalFound = $state(0);
 	let foundPieces = $state([]);
@@ -18,7 +18,7 @@
   	function handleCC(id) {
 		if (foundPieces.includes(id)) {
 			goto(`/indices/${id}`);
-		} 
+		}
 	}
 
   const cols = 5;
@@ -58,13 +58,13 @@
           ease: "linear" // rotation constante sans accélération
         });
       });
-  
+
        let zoomed = false;
 
     const svg = document.querySelector("svg");
     // double clic → rotation de toutes les formes
     svg.addEventListener("dblclick", () => {
-      const randomRotation = gsap.utils.random(-120, 180); 
+      const randomRotation = gsap.utils.random(-120, 180);
       const pieces = document.querySelectorAll("svg");
       gsap.to(pieces, {
         scale: zoomed ? 1 : 2,
@@ -96,7 +96,7 @@
           ease: "power2.inOut",
           yoyo: true,
           repeat: 1,
-          
+
         });
       });
     });
@@ -164,7 +164,10 @@
     À quelle œuvre penses-tu que<br/>cette couleur appartient ?
   </div>
 
-  <div class="pointer-events-auto text-titre-alt inf-bold uppercase py-[25px] px-[30px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-drop-shadow)]" on:click={() => handleCC('1')}>
+  <div
+    class="pointer-events-auto text-titre-alt inf-bold uppercase py-[25px] px-[30px] w-fit text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-drop-shadow)]"
+    onclick={() => handleCC('1')}
+    >
       VERIFIE TON HYPOTHÈSE<br/>EN APPUYANT ICI
   </div>
 </div>
