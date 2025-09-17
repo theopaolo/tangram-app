@@ -52,8 +52,8 @@
         };
       case '5':
         return {
-          cols: 10, rows: 6, w: 6, h: 8, rowGap: 0,
-          visibleCols: 2.2, shape: '0,0 6,0 6,8 0,8'
+          cols: 11, rows: 11, w: 10, h: 5, rowGap: 0,
+          visibleCols: 1.4, shape: '0,5 10,5 5,0'
         };
       case '6':
         return {
@@ -347,6 +347,8 @@
         whole?.addEventListener("click", () => {
           gsap.to(pieces, {
             rotate: 30,
+            y: () => `+=${gsap.utils.random(-10, 10)}`,
+            x: () => `+=${gsap.utils.random(-10, 10)}`,
             transformOrigin: "50% 50%",
             duration: 2,
             ease: "power2.inOut"
