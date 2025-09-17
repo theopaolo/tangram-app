@@ -494,15 +494,15 @@
     user-select: none;
     -webkit-user-select: none;
     -webkit-touch-callout: none;
-    touch-action: none;       /* bloque le scroll natif */
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-touch-callout: none;
+     touch-action: none;       /* bloque le scroll natif */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
   }
 
   .puzzle-solved {
-    border-color: #4CAF50;
-    box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+    /* border-color: #4CAF50;
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.3); */
   }
 
   .target-outline, .tangram-piece {
@@ -527,7 +527,6 @@
       filter: drop-shadow(0 0 15px rgba(76, 175, 80, 0.9));
     }
   }
-  
   .tangram-piece {
      transition: transform 0.2s;
      will-change: transform;
@@ -537,7 +536,6 @@
      -webkit-user-select: none;
      -webkit-touch-callout: none;
   }
-  
   .tangram-piece-svg polygon {
     pointer-events: auto;
   }
@@ -621,51 +619,42 @@
     /* Prevent default touch behaviors during drag */
     touch-action: none;
   }
-
   .success-message {
-    position: fixed;
+    /* position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: white;
-    color: black;
-    padding: 2rem;
-    border: 2px solid #4CAF50;
-    border-radius: 8px;
-    z-index: 2000;
-    text-align: center;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-    max-width: 90vw;
-    min-width: 300px;
-  }
-
-  .success-message h3 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    color: #4CAF50;
-  }
-
-  .success-message button {
-    margin-top: 1rem;
-    padding: 0.75rem 1.5rem;
     background: #4CAF50;
     color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    z-index: 2000; */
+  }
+
+  .action-buttons {
+    position: absolute;
+    top: var(--y);
+    left: var(--x);
+    transform: translate(-50%, -150%);
+    display: flex;
+    gap: 4px;
+    z-index: 200;
+  }
+
+  .action-buttons button {
+    pointer-events: auto;
+    background: rgba(0,0,0,0.8);
+    color: white;
     border: none;
+    padding: 8px;
     border-radius: 4px;
     cursor: pointer;
-    font-weight: bold;
-    transition: background 0.2s;
+    font-size: 16px;
   }
 
-  .success-message button:hover {
-    background: #45a049;
-  }
-
-  /* Title positioning */
-  .title {
-    left: 50%;
-    top: 35px;
-    transform: translateX(-50%);
+  .action-buttons button:hover {
+    transform: scale(1.1);
+    background: rgba(0,0,0,0.9);
   }
 
   .debug-panel {
@@ -709,38 +698,23 @@
   }
 </style>
 
-<!-- Title showing current puzzle name -->
-<div class="title text-intro inf-bold fixed z-10 mx-auto w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">
-  {#if currentPuzzle}
-    {currentPuzzle.name}
-  {:else}
-    CHROMOGRAM #1
-  {/if}
+<div class="top-5 left-5  fixed title z-10 w-max text-title inf-bold mx-auto w-fit bg-white border py-1 px-[14px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">CHROMOGRAM #1</div>
+<div class="top-2 right-5 fixed z-10 text-inter inf-bold">?</div>
+
+  <div class="z-10 bottom-3.5 left-5 fixed text-mini" >Accueil > Les Couleurs > Les Tangrams</div>
+  <div class="z-10 fixed text-mini bottom-3.5 right-5" >Crédits</div>
+
+  <div class="z-10 top-25 left-5 fixed text-11" >
+    1. Fais glisser une des formes du bas vers le tangram.<br/>
+    2. Appuie sur la forme pour la faire pivoter.<br/>
+    3. Dépose la forme à son emplacement.<br/>
 </div>
 
-<!-- Help button -->
-<div class="top-2 right-5 fixed z-10 text-inter inf-bold cursor-pointer">?</div>
 
-<!-- Back button -->
-<div class="top-2 left-5 fixed z-10 text-inter inf-bold cursor-pointer" onclick={backToPuzzleList}>
-  ← Retour
-</div>
 
-<!-- Navigation breadcrumb -->
-<div class="z-10 bottom-3.5 left-5 fixed text-mini cursor-pointer" onclick={backToPuzzleList}>
-  Accueil > Les Couleurs > Les Tangrams
-</div>
-<div class="z-10 fixed text-mini bottom-3.5 right-5 cursor-pointer">Crédits</div>
 
-<!-- Instructions -->
-<div class="z-10 top-25 left-5 fixed text-11">
-  1. Fais glisser une des formes du bas vers le tangram.<br/>
-  2. Appuie sur la forme pour la faire pivoter.<br/>
-  3. Dépose la forme à son emplacement.<br/>
-</div>
-
-{#if currentPuzzle}
 <div class="puzzle-wrapper" onpointerdown={unlockAudio}>
+
   <!-- Puzzle area with padding -->
   <div class="h-full">
     <div class="pt-[80px] puzzle-container {puzzleSolved ? 'puzzle-solved' : ''}"
@@ -794,6 +768,15 @@
     </div>
   </div>
 
+  {#if activePiece && !activePiece.inContainer}
+    <div
+      class="action-buttons"
+      style="--x: {activePiece.x}px; --y: {activePiece.y}px;"
+      onpointerdown={(e) => e.stopPropagation()}
+    >
+    </div>
+  {/if}
+
   <div class="pieces-container" bind:this={piecesContainer}>
     {#each pieces.filter(p => p.inContainer) as piece (piece.id)}
       {@const pieceData = PIECES_DATA_WITH_VIEWBOX[piece.id]}
@@ -802,19 +785,16 @@
             <polygon use:draggable={{ pieceId: piece.id }} points={pieceData.points} fill={pieceData.color} />
           </svg>
         </div>
+      
     {/each}
   </div>
 
+
   {#if puzzleSolved}
-    <div class="success-message">
-      <h3>BRAVO !</h3>
-      <p>Tu as complété ce Tangram : <strong>{currentPuzzle.name}</strong></p>
-      <p>Ce Tangram est complet !</p>
-      <button onclick={backToPuzzleList}>Continuer</button>
-    </div>
+    <div class="success-message absolute bottom-5">Super ! Tu as complété ce tangram !</div>
   {/if}
 
-  <!-- Debug Panel - Only shown when DEBUG_MODE is true -->
+    <!-- Debug Panel - Only shown when DEBUG_MODE is true -->
   {#if DEBUG_MODE}
     <div class="debug-panel">
       <h3>🔍 Debug Info</h3>
@@ -846,8 +826,3 @@
     </div>
   {/if}
 </div>
-{:else}
-<div class="flex items-center justify-center h-screen">
-  <p>Puzzle non trouvé</p>
-</div>
-{/if}
