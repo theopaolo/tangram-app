@@ -416,7 +416,7 @@
 
         whole?.addEventListener("click", () => {
           gsap.to(svg, {
-            scale: () => gsap.utils.random(0.8, 1.5),
+            scale: () => `+${gsap.utils.random(0.8, 1.5)}`,
             transformOrigin: "50% 50%",
             duration: 2,
             ease: "power2.inOut"
