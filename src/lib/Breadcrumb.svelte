@@ -32,7 +32,7 @@
       {/if}
     {/each}
   </div>
- <button onclick={() => isCreditsOpen.open()} class="bg-transparent border-none cursor-pointer">Crédits</button>
+ <button onclick={() => isCreditsOpen.open()} class="tracking-[5%] bg-transparent border-none cursor-pointer">Crédits</button>
 </div>
 
 <CreditsContent />

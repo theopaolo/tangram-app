@@ -154,7 +154,7 @@
 	<header class="fixed top-[35px] right-5 z-10">
 		<button
 			type="button"
-			class="flex h-[42px] w-[42px] items-center justify-center rounded-full bg-transparent"
+			class="flex items-center justify-center rounded-full bg-transparent"
 			onclick={handleClose}
 			aria-label="Fermer l'aide"
 		>

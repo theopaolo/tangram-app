@@ -149,7 +149,7 @@
 </div>
 
 <div class="no-select relative z-2 flex flex-col py-[80px] items-center justify-between min-h-svh text-center pointer-events-none">
-  <div class="py-[20px] px-[50px] w-fit text-center bg-white border border-black drop-shadow pointer-events-none">
+  <div class="py-[20px] px-[50px] max-w-4/5 text-center bg-white border border-black drop-shadow pointer-events-none">
     Bravo tu as découvert :
     <div class="text-titre-alt inf-bold my-5 uppercase">
       {PIECES_DATA[5].color_name}

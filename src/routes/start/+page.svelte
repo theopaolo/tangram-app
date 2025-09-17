@@ -65,9 +65,9 @@
 </div>
 
 <div class="fixed top-3 right-5 z-30">
-	<button onclick={() => isAideOpen.open()} aria-label="Aide" class="flex bg-transparent border-none cursor-pointer">
-		<img src="/images/quoi.svg" alt="camera" />
-		<div class="text-inter inf-bold text-white drop-shadow-[var(--my-drop-shadow)]">?</div>
+	<button onclick={() => isAideOpen.open()} aria-label="Aide" class="flex bg-transparent border-none cursor-pointer flex flex-row gap-2">
+		<img class="mt-2" src="/images/quoi.svg" alt="camera" />
+		<div class="text-inter inf-bold">?</div>
 	</button>
 </div>
 
@@ -77,7 +77,7 @@
 			{#if totalFound === 0}
 				Pars à la recherche des 7 formes du tangram pour débloquer le CHROMOGRAM !
 			{:else if totalFound === 7}
-				Bravo ! Tu as débloqué toutes les couleurs ! Les puzzles sont maintenant disponibles en
+				Bravo ! Tu as débloqué toutes les couleurs ! Les tangrams sont maintenant disponibles en
 				cliquant en bas de page !
 			{:else if totalFound === 1}
 				Tu as découvert 1 forme.<br />Rassemble les 7 formes pour débloquer le CHROMOGRAM !
@@ -106,7 +106,7 @@
 			</div>
 		{:else}
 			<div class="text-bouton inf-bold pointer-events-auto z-10 w-fit border bg-white px-[15px] py-[7px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]" >
-				ACCÉDER AUX PUZZLES
+				ACCÉDER AUX TANGRAMS
 			</div>
 		{/if}
 	</div>

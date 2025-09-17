@@ -82,12 +82,7 @@
 </script>
 
 <style>
-  /* Title positioning */
-  .title {
-    left: 50%;
-    top: 35px;
-    transform: translateX(-50%);
-  }
+ 
 
   /* Puzzle selection styles */
   .puzzle-selection {
@@ -114,11 +109,8 @@
   }
 
   .puzzle-card {
-    flex: 0 0 300px;
-    height: 400px;
-    background: white;
-    border: 1px solid #000;
-    padding: 1rem;
+    padding: 20px;
+    margin-bottom: 40px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -127,12 +119,12 @@
   }
 
   .puzzle-preview {
-    width: 250px;
-    height: 250px;
+    width: 100%;
+    height: 550px;
     position: relative;
     margin-bottom: 1rem;
     overflow: hidden;
-    background: #f8f8f8;
+    background: #f2f2f2;
   }
 
   .puzzle-preview .tangram-piece {
@@ -188,7 +180,7 @@
     color: #666;
   }
 
-  .selection-header {
+  /* .selection-header {
     text-align: center;
     padding: 2rem;
     max-width: 600px;
@@ -199,43 +191,45 @@
     font-size: 1.8rem;
     font-weight: bold;
     margin-bottom: 1rem;
-  }
+  } 
 
   .selection-header p {
     font-size: 1rem;
     line-height: 1.6;
     color: #333;
   }
+    */
 </style>
 
 <!-- Title -->
-<div class="title text-intro inf-bold fixed z-10 mx-auto w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">
-  CHROMOGRAM #1
+<div class="">
+	<div
+		class="title text-title inf-bold fixed top-5 left-5 z-100 mx-aut w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)] s-W8Sv8E2Q9PhB"
+	>
+		CHROMOGRAM #1
+	</div>
 </div>
-
-<!-- Help button -->
-<div class="top-2 right-5 fixed z-10 text-inter inf-bold cursor-pointer">?</div>
 
 <!-- Navigation breadcrumb -->
-<div class="z-10 bottom-3.5 left-5 fixed text-mini cursor-pointer">
+<div class="z-100 bottom-3.5 left-5 fixed text-mini cursor-pointer">
   Accueil > Les Couleurs > Les Tangrams
 </div>
-<div class="z-10 fixed text-mini bottom-3.5 right-5 cursor-pointer">Cr�dits</div>
+<div class="z-100 fixed text-mini bottom-3.5 right-5 cursor-pointer">Crédits</div>
 
 <!-- Puzzle Selection Screen -->
-<div class="puzzle-selection">
-  <div class="selection-header">
-    <h2>Voici les puzzles à compléter !</h2>
+<div class="p-5 mt-[90px]">
+  <div class="text-center">
+    <h2>Voici les tangrams à compléter !</h2>
     <p>Tu peux choisir dans quel ordre tu veux commencer.<br/>
-       Scroll pour découvrir les 7 Tangrams et appuie sur un d'eux pour commencer à le colorer !</p>
+       Scrolle pour découvrir les 7 tangrams et appuie sur un d'eux pour commencer à le colorer !</p>
   </div>
 
-  <div class="puzzle-gallery">
+  <div class="flex flex-col">
     {#each puzzles as puzzle}
       {@const previewScale = calculatePreviewScale(puzzle.data)}
       <div class="puzzle-card" onclick={() => selectPuzzle(puzzle.id)} role="button" tabindex="0"
            onkeydown={(e) => e.key === 'Enter' && selectPuzzle(puzzle.id)}>
-        <div class="puzzle-preview">
+        <div class="puzzle-preview w-full">
           {#each puzzle.data as piece}
             {@const pieceData = PIECES_DATA_WITH_VIEWBOX[piece.id]}
             {@const previewPos = calculatePreviewPosition(piece, puzzle.data, previewScale)}
@@ -250,14 +244,15 @@
                 --scaleX: 1;
               "
             >
-              <svg class="tangram-piece-svg" viewBox={pieceData.viewBox}>
+              <svg class="tangram-piece-svg w-full" viewBox={pieceData.viewBox}>
                 <polygon points={pieceData.points} fill={pieceData.color} />
               </svg>
             </div>
           {/each}
+          <div class="absolute bottom-0 left-0 p-5 text-intro leading-none">{puzzle.id}</div>
+
         </div>
-        <h3>{puzzle.name}</h3>
-        <p>{puzzle.description}</p>
+        <!-- <p>{puzzle.description}</p> -->
         <div class="status {puzzle.completed ? 'completed' : 'incomplete'}">
           {puzzle.completed ? 'Terminé' : 'À compléter'}
         </div>
