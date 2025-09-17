@@ -9,11 +9,12 @@
 
 	let foundPieces = $derived($piecesStore);
 
-	let scrollContainer; // ✅ conteneur scrollable
+	let scrollContainer = $state(null);
 
 	import { register } from 'swiper/element/bundle';
 	register();
-	let swiperEl;
+	let swiperEl = $state(null);
+
 	onMount(() => {
 		if (swiperEl) {
 			Object.assign(swiperEl, {
@@ -60,7 +61,7 @@
 
 	let gsap;
 	let gsapReady;
-	let circleEl;
+	let circleEl = $state(null);
 
 	onMount(() => {
 		gsapReady = import('gsap').then((m) => (gsap = m.gsap ?? m.default ?? m));
@@ -193,7 +194,7 @@
 					{label}
 				</button>
 			{/each}
-			<div class="absolute right-0">
+			<a href="/start" class="absolute right-0" aria-label="Retour à l'accueil">
 				<svg
 					width="18"
 					height="18"
@@ -210,7 +211,7 @@
 						fill="black"
 					/>
 				</svg>
-			</div>
+			</a>
 		</header>
 
 		<!-- Swiper -->
@@ -334,7 +335,7 @@
 		</div>
 
 
-    <div class="min-h-svh">   
+    <div class="min-h-svh">
       <!-- Bloc Couleur (GSAP press & hold) -->
       <div
         id="section-2"
@@ -412,9 +413,11 @@
           </div>
         </div>
       {:else}
-        <div class="m-auto text-bouton inf-bold z-10 w-fit border bg-white px-[15px] py-[7px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]" >
+	  <div class="mx-auto w-fit">
+        <a href="/puzzles" class="text-bouton inf-bold z-10 border bg-white px-[15px] py-[7px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]" >
           ACCÉDER AUX PUZZLES
-        </div>
+        </a>
+	  </div>
       {/if}
 
     </div>

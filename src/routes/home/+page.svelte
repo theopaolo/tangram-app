@@ -291,9 +291,7 @@
 	</div>
 </div>
 
-<div
-	class="bloc_one absolute top-0 left-0 z-100 flex hidden h-svh w-screen flex-col items-center justify-evenly py-[80px] text-center opacity-0"
->
+<div class="bloc_one absolute top-0 left-0 z-40 flex hidden h-svh w-screen flex-col items-center justify-evenly py-[80px] text-center opacity-0">
 	<div class="w-[80dvw]">
 		<p>
 			{#if totalFound === 0}

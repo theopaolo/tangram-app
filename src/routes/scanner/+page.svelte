@@ -2,11 +2,22 @@
 	import { goto } from '$app/navigation';
 	import OptimizedQRScanner from '$lib/OptimizedQRScanner.svelte';
 	import { PIECES_DATA } from '$lib/piecesData';
+	import { piecesStore } from '$lib/piecesStore.js';
 	import { onMount } from 'svelte';
+	import Breadcrumb from '$lib/Breadcrumb.svelte';
+
+	const breadcrumbItems = [
+		{ label: 'Accueil', href: '/' },
+		{ label: 'Démarrer', href: '/start' },
+		{ label: 'Scanner', disabled: true},
+	];
 
 	let isScanning = $state(true);
 
 	onMount(() => {
+		// Initialize pieces store
+		piecesStore.initialize();
+
 		// Prevent scrolling when scanner is active
 		document.body.style.overflow = 'hidden';
 
@@ -24,9 +35,12 @@
 		const scannedId = data.toString().trim();
 
 		if (PIECES_DATA[scannedId]) {
+			// Add the scanned piece to the store
+			piecesStore.addPiece(scannedId);
+
 			// Brief delay to show success feedback before navigation
 			setTimeout(() => {
-				goto(`/piece/${scannedId}`);
+				goto(`/animation/${scannedId}`);
 			}, 1500);
 		}
 	}
@@ -37,19 +51,32 @@
 	}
 </script>
 
-<div
-	class="title text-title inf-bold fixed top-5 left-5 z-100 mx-auto w-fit w-max bg-white px-[14px] py-1 tracking-[4%] "
->
+
+<style>
+	.qr-scanner-container{
+		border: 2px solid;
+	}
+	.scanner-fullscreen {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		z-index: 30;
+		background: #fff;
+	}
+</style>
+
+
+
+<div class="title text-title inf-bold fixed top-5 left-5 z-40 mx-aut w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">
 	CHROMOGRAM #1
 </div>
-<div class="text-inter inf-bold fixed top-2 right-5 z-100">?</div>
 
-<div class="fixed top-3 right-13 z-100">
+<div class="text-inter inf-bold fixed top-2 right-5 z-40">?</div>
+<div class="fixed top-3 right-13 z-40">
 	<img src="/images/quoi.svg" alt="camera" class="" />
 </div>
-
-	<div class="text-mini fixed bottom-3.5 left-5 z-100">Accueil > Les Couleurs > Les Tangrams</div>
-	<div class="text-mini fixed right-5 bottom-3.5 z-100">Crédits</div>
 
 <div class="scanner-fullscreen">
 	<OptimizedQRScanner
@@ -64,17 +91,6 @@
 	/>
 </div>
 
-<style>
-	.qr-scanner-container{
-		border: 2px solid;
-	}
-	.scanner-fullscreen {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100vw;
-		height: 100vh;
-		z-index: 50;
-		background: #fff;
-	}
-</style>
+<footer class="fixed bottom-5 left-0 z-50 flex w-full items-center justify-between px-5 py-3">
+	<Breadcrumb items={breadcrumbItems} />
+</footer>

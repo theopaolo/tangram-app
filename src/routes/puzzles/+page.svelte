@@ -90,6 +90,7 @@
 
 	const breadcrumbItems = [
 		{ label: 'Accueil', href: '/' },
+		{ label: 'Démarrer', href: '/start' },
 		{ label: 'Les Tangrams', disabled: true }
 	];
 
@@ -197,7 +198,7 @@
 
 <!-- Title -->
 
-<div class="title text-title inf-bold fixed top-5 left-5 z-100 mx-aut w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)] s-W8Sv8E2Q9PhB">
+<div class="title text-title inf-bold fixed top-5 left-5 z-40 mx-aut w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)] s-W8Sv8E2Q9PhB">
 	CHROMOGRAM #1
 </div>
 

@@ -35,7 +35,7 @@
 
 	function handleClick(id) {
 		if (foundPieces.includes(id)) {
-			goto(`/animation_${id}`);
+			goto(`/animation/${id}`);
 		} else {
 			goto('/start/');
 		}
@@ -105,9 +105,9 @@
 				<img src="/images/arrow_cam.png" alt="camera" class="" />
 			</div>
 		{:else}
-			<div class="text-bouton inf-bold pointer-events-auto z-10 w-fit border bg-white px-[15px] py-[7px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]" >
+			<a href="/puzzles" class="text-bouton inf-bold pointer-events-auto z-10 w-fit border bg-white px-[15px] py-[7px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]" >
 				ACCÉDER AUX TANGRAMS
-			</div>
+			</a>
 		{/if}
 	</div>
 </div>

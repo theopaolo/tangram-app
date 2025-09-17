@@ -324,10 +324,6 @@
 				<div class="corner corner-br"></div>
 			</div>
 
-			<!-- Scanning line animation -->
-			{#if isDetecting && !hasQRCode}
-				<div class="scan-line"></div>
-			{/if}
 
 			<!-- Success indicator -->
 			{#if hasQRCode}
@@ -427,7 +423,7 @@
 
 	.scan-area {
 		position: relative;
-		border: 1px solid #ef4444;
+		border: 1px solid transparent;
 		border-radius: 4px;
 		transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 		background: rgba(255, 255, 255, 0.1);
@@ -450,15 +446,6 @@
 		height: 100%;
 	}
 
-	.scan-line {
-		position: absolute;
-		top: 10px;
-		left: 10px;
-		right: 10px;
-		height: 2px;
-		background: linear-gradient(90deg, transparent, #10b981, transparent);
-		animation: scan 2s linear infinite;
-	}
 
 	.success-indicator {
 		position: absolute;
@@ -506,16 +493,6 @@
 		color: #9a5499;
 	}
 
-	@keyframes scan {
-		0% {
-			top: 10px;
-			opacity: 1;
-		}
-		100% {
-			top: calc(100% - 12px);
-			opacity: 0;
-		}
-	}
 
 	@keyframes pulse {
 		0% {
