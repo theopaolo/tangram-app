@@ -1,11 +1,12 @@
 <script>
   import { goto } from '$app/navigation';
+  import Breadcrumb from '$lib/Breadcrumb.svelte';
   import { getAllPuzzles, PIECES_DATA_WITH_VIEWBOX } from '$lib/puzzleData.js';
 
   const puzzles = getAllPuzzles();
 
   // Calculate preview scale for puzzle cards
-  function calculatePreviewScale(puzzleData) {
+  function calculatePreviewScale(puzzleData, containerWidth = null, containerHeight = null) {
     // Get transformed points for all pieces
     const allVertices = puzzleData.flatMap(pieceState => {
       const pieceData = PIECES_DATA_WITH_VIEWBOX[pieceState.id];
@@ -33,13 +34,16 @@
 
     const puzzleWidth = bounds.maxX - bounds.minX;
     const puzzleHeight = bounds.maxY - bounds.minY;
-    const previewSize = 220; // Available space in preview
 
-    return Math.min(previewSize / puzzleWidth, previewSize / puzzleHeight) * 0.8;
+    // Use container dimensions if provided, otherwise use window width as fallback
+    const availableWidth = containerWidth || (typeof window !== 'undefined' ? window.innerWidth - 80 : 350); // 80px for padding and margins
+    const availableHeight = containerHeight || 520; // Leave some margin from 550px container height
+
+    return Math.min(availableWidth / puzzleWidth, availableHeight / puzzleHeight) * 0.8;
   }
 
   // Calculate preview position for puzzle pieces
-  function calculatePreviewPosition(piece, puzzleData, scale) {
+  function calculatePreviewPosition(piece, puzzleData, scale, containerWidth = null, containerHeight = null) {
     // Get transformed points for all pieces to find bounds
     const allVertices = puzzleData.flatMap(pieceState => {
       const pieceData = PIECES_DATA_WITH_VIEWBOX[pieceState.id];
@@ -67,8 +71,12 @@
 
     const centerX = (bounds.minX + bounds.maxX) / 2;
     const centerY = (bounds.minY + bounds.maxY) / 2;
-    const previewCenterX = 125; // Half of 250px preview width
-    const previewCenterY = 125; // Half of 250px preview height
+
+    // Use dynamic center coordinates based on container dimensions
+    const availableWidth = containerWidth || (typeof window !== 'undefined' ? window.innerWidth - 80 : 350);
+    const availableHeight = containerHeight || 520;
+    const previewCenterX = availableWidth / 2;
+    const previewCenterY = availableHeight / 2;
 
     return {
       x: (piece.x - centerX) * scale + previewCenterX,
@@ -79,10 +87,16 @@
   function selectPuzzle(id) {
     goto(`/puzzle/${id}`);
   }
+
+	const breadcrumbItems = [
+		{ label: 'Accueil', href: '/' },
+		{ label: 'Les Tangrams', disabled: true }
+	];
+
 </script>
 
 <style>
- 
+
 
   /* Puzzle selection styles */
   .puzzle-selection {
@@ -179,42 +193,14 @@
     background: #e0e0e0;
     color: #666;
   }
-
-  /* .selection-header {
-    text-align: center;
-    padding: 2rem;
-    max-width: 600px;
-    margin: 0 auto;
-  }
-
-  .selection-header h2 {
-    font-size: 1.8rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-  } 
-
-  .selection-header p {
-    font-size: 1rem;
-    line-height: 1.6;
-    color: #333;
-  }
-    */
 </style>
 
 <!-- Title -->
-<div class="">
-	<div
-		class="title text-title inf-bold fixed top-5 left-5 z-100 mx-aut w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)] s-W8Sv8E2Q9PhB"
-	>
-		CHROMOGRAM #1
-	</div>
+
+<div class="title text-title inf-bold fixed top-5 left-5 z-100 mx-aut w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)] s-W8Sv8E2Q9PhB">
+	CHROMOGRAM #1
 </div>
 
-<!-- Navigation breadcrumb -->
-<div class="z-100 bottom-3.5 left-5 fixed text-mini cursor-pointer">
-  Accueil > Les Couleurs > Les Tangrams
-</div>
-<div class="z-100 fixed text-mini bottom-3.5 right-5 cursor-pointer">Crédits</div>
 
 <!-- Puzzle Selection Screen -->
 <div class="p-5 mt-[90px]">
@@ -259,8 +245,8 @@
       </div>
     {/each}
   </div>
-
-  <div class="text-center mt-8">
-    <p class="text-mini">Les autres Tangrams<br/>sont dessous</p>
-  </div>
 </div>
+
+<footer class="fixed bottom-0 left-0 z-40 flex w-full items-center justify-between px-5 py-3">
+	<Breadcrumb items={breadcrumbItems} />
+</footer>

@@ -1,6 +1,6 @@
 <script>
-	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 
 	let gsap; // SSR-safe
 
@@ -259,8 +259,8 @@
 
 	<div class="controls fixed right-[50px] bottom-[35px] z-20">
 		<div
-			on:click={handleBt1}
-			on:touchstart={handleBt1}
+			onclick={handleBt1}
+			ontouchstart={handleBt1}
 			class="bt1 text-bouton inf-bold z-10 w-fit border bg-white px-[15px] py-[7px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]"
 		>
 			ENTRER

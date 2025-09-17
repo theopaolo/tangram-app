@@ -1,10 +1,9 @@
 <script>
     import { browser } from '$app/environment';
+    import { PIECES_DATA } from '$lib/piecesData';
     import { isAideOpen } from '$lib/stores/aideStore.js';
     import { onDestroy, onMount, tick } from 'svelte';
-	import { fade, fly } from 'svelte/transition';
-
-	import { PIECES_DATA } from '$lib/piecesData';
+    import { fade, fly } from 'svelte/transition';
 
 	const TOTAL_BARS = 51;
 	const COLORS = [

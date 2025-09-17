@@ -1,19 +1,28 @@
 <script>
   import { browser } from '$app/environment';
-  import { page } from '$app/stores';
   import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
   import { onMount } from 'svelte';
+  import { fly } from 'svelte/transition';
   import createInteractionHandler from '../../../lib/interaction.js';
-  import {
-    getTriangleSimilarityGroups,
-    checkRotationMatch,
-    areInterchangeable,
-    debugLog,
-    createDebugState,
-    initializeDebugMode
-  } from '../../../lib/puzzleDebug.js';
-  import { getPuzzleById, PIECES_DATA, PIECES_DATA_WITH_VIEWBOX } from '$lib/puzzleData.js';
 
+  import Breadcrumb from '$lib/Breadcrumb.svelte';
+  import { getPuzzleById, PIECES_DATA, PIECES_DATA_WITH_VIEWBOX } from '$lib/puzzleData.js';
+  import {
+  	areInterchangeable,
+  	checkRotationMatch,
+  	debugLog,
+  	initializeDebugMode
+  } from '../../../lib/puzzleDebug.js';
+
+
+  // Breadcrumb items
+  const breadcrumbItems = [
+    { label: 'Accueil', href: '/' },
+    { label: 'Scanner', href: '/start' },
+    { label: 'Les Tangrams', href: '/puzzles' },
+    { label: 'Nom du tangram', disabled: true }
+  ];
   // Get puzzle ID from URL params
   const puzzleId = $derived($page.params.id);
   const currentPuzzle = $derived(getPuzzleById(puzzleId));
@@ -474,7 +483,7 @@
 </script>
 
 <style>
-  
+
   .puzzle-wrapper {
     position: relative;
     display: flex;
@@ -515,18 +524,11 @@
     pointer-events: none;
   }
 
-  .target-outline.magnetic-target {
-    animation: magneticGlow 0.8s ease-in-out infinite alternate;
+  .target-outline.magnetic-target svg polygon {
+    stroke: #1c1c1c;
+    opacity: 0.25;
   }
 
-  @keyframes magneticGlow {
-    0% {
-      filter: drop-shadow(0 0 5px rgba(76, 175, 80, 0.6));
-    }
-    100% {
-      filter: drop-shadow(0 0 15px rgba(76, 175, 80, 0.9));
-    }
-  }
   .tangram-piece {
      transition: transform 0.2s;
      will-change: transform;
@@ -579,9 +581,9 @@
   }
 
   .tangram-piece.active .tangram-piece-svg polygon {
-    stroke: rgba(0, 0, 0, 0.2);
+    /* stroke: rgb(191, 191, 191);
     stroke-width: 1;
-    filter: drop-shadow(10px 10px 10px rgba(0, 0, 0, 0.9));
+    filter: drop-shadow(4px 8px 0px rgb(191, 191, 191)); */
     will-change: transform;
   }
 
@@ -612,6 +614,14 @@
     cursor: grabbing;
   }
 
+  .container-piece.is-placeholder {
+    cursor: default;
+  }
+
+  .container-piece.is-placeholder svg {
+    pointer-events: none;
+  }
+
   .container-piece svg {
     pointer-events: auto;
     height: 100%;
@@ -620,15 +630,18 @@
     touch-action: none;
   }
   .success-message {
-    /* position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #4CAF50;
-    color: white;
-    padding: 2rem;
-    border-radius: 8px;
-    z-index: 2000; */
+      position: fixed;
+      top: 80%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #000;
+      color: white;
+      padding: 2rem 1rem;
+      padding-bottom: 1rem;
+      font-size: 1rem;
+      z-index: 2000;
+      text-align: center;
+      min-width: max-content;
   }
 
   .action-buttons {
@@ -701,16 +714,11 @@
 <div class="top-5 left-5  fixed title z-10 w-max text-title inf-bold mx-auto w-fit bg-white border py-1 px-[14px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">CHROMOGRAM #1</div>
 <div class="top-2 right-5 fixed z-10 text-inter inf-bold">?</div>
 
-  <div class="z-10 bottom-3.5 left-5 fixed text-mini" >Accueil > Les Couleurs > Les Tangrams</div>
-  <div class="z-10 fixed text-mini bottom-3.5 right-5" >Crédits</div>
-
   <div class="z-10 top-25 left-5 fixed text-11" >
     1. Fais glisser une des formes du bas vers le tangram.<br/>
     2. Appuie sur la forme pour la faire pivoter.<br/>
     3. Dépose la forme à son emplacement.<br/>
 </div>
-
-
 
 
 <div class="puzzle-wrapper" onpointerdown={unlockAudio}>
@@ -738,7 +746,7 @@
           --scaleX: 1;"
         >
         <svg class="tangram-piece-svg" viewBox={pieceData.viewBox}>
-          <polygon points={pieceData.points} fill="#000" opacity="0.1" stroke="{isMagneticTarget ? '#4CAF50' : '#555'}" stroke-width="{isMagneticTarget ? '3' : '2'}" stroke-dasharray="5,5" />
+          <polygon points={pieceData.points} fill="#000" opacity="0.1" stroke="#555" stroke-width="2" />
         </svg>
       </div>
     {/each}
@@ -778,20 +786,36 @@
   {/if}
 
   <div class="pieces-container" bind:this={piecesContainer}>
-    {#each pieces.filter(p => p.inContainer) as piece (piece.id)}
+    {#each pieces as piece (piece.id)}
       {@const pieceData = PIECES_DATA_WITH_VIEWBOX[piece.id]}
-        <div class="container-piece relative z-1">
+        <div class="container-piece relative z-1" class:is-placeholder={!piece.inContainer}>
           <svg viewBox={pieceData.viewBox}>
-            <polygon use:draggable={{ pieceId: piece.id }} points={pieceData.points} fill={pieceData.color} />
+            <polygon
+              use:draggable={piece.inContainer && { pieceId: piece.id }}
+              points={pieceData.points}
+              fill={piece.inContainer ? pieceData.color : 'transparent'}
+              stroke={piece.inContainer ? 'none' : pieceData.color}
+              stroke-width={piece.inContainer ? '0' : '2'}
+              vector-effect="non-scaling-stroke"
+              pointer-events={piece.inContainer ? 'auto' : 'none'}
+            />
           </svg>
         </div>
-      
     {/each}
   </div>
 
+<footer class="fixed bottom-0 left-0 z-40 flex w-full items-center justify-between px-5 py-3">
+	<Breadcrumb items={breadcrumbItems} />
+</footer>
 
   {#if puzzleSolved}
-    <div class="success-message absolute bottom-5">Super ! Tu as complété ce tangram !</div>
+    <div class="success-message" transition:fly={{ y: 20, duration: 300 }}>
+      <button class="absolute top-2 right-2 text-white" onclick={() => puzzleSolved = false}>✕</button>
+      <p> Bravo ! Tu as complété le tangram !</p>
+      <div class="mt-2">
+          <button class="bg-white text-black p-2 px-4 text-xs" onclick={() => goto('/puzzles')}>Retour à la liste des tangrams</button>
+      </div>
+    </div>
   {/if}
 
     <!-- Debug Panel - Only shown when DEBUG_MODE is true -->
