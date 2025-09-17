@@ -43,5 +43,11 @@
 		"gsap": "^3.13.0",
 		"jsqr": "^1.4.0",
 		"swiper": "^11.2.10"
+	},
+	"engines": {
+		"node": ">=24.0.2"
+	},
+	"optionalDependencies": {
+		"@rollup/rollup-linux-x64-gnu": "^4.50.0"
 	}
 }
