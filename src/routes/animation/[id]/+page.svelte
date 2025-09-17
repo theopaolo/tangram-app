@@ -47,8 +47,8 @@
         };
       case '4':
         return {
-          cols: 9, rows: 9, w: 4, h: 4, rowGap: 0,
-          visibleCols: 2.2, shape: '0,0 4,0 4,4 0,4'
+          cols: 9, rows: 9, w: 2.5, h: 5, rowGap: 0,
+          visibleCols: 4.3, shape: '2.5,5 2.5,0 0,2.5'
         };
       case '5':
         return {
