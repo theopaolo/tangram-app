@@ -62,8 +62,8 @@
         };
       case '7':
         return {
-          cols: 12, rows: 4, w: 4, h: 12, rowGap: 0,
-          visibleCols: 2.2, shape: '0,12 4,6 4,12'
+          cols: 9, rows: 15, w: 5, h: 2.5, rowGap: 0,
+          visibleCols: 2.5, shape: '5,0 0,0 2.5,2.5'
         };
       default:
         return {
