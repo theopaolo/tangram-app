@@ -49,13 +49,14 @@
 	onMount(async () => {
 		if (!browser) return;
 
-		const preventScroll = (e) => e.preventDefault();
-		document.body.style.overflow = 'hidden';
-		document.addEventListener('touchmove', preventScroll, { passive: false });
+		// Import scroll freeze utility
+		const { freezeScroll, unfreezeScroll } = await import('$lib/utils/scrollFreeze.js');
+
+		// Freeze scroll
+		freezeScroll();
 
 		return () => {
-			document.body.style.overflow = '';
-			document.removeEventListener('touchmove', preventScroll);
+			unfreezeScroll();
 		};
 	});
 </script>

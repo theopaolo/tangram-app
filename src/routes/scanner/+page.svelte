@@ -14,15 +14,18 @@
 
 	let isScanning = $state(true);
 
-	onMount(() => {
+	onMount(async () => {
 		// Initialize pieces store
 		piecesStore.initialize();
 
-		// Prevent scrolling when scanner is active
-		document.body.style.overflow = 'hidden';
+		// Import scroll freeze utility
+		const { freezeScroll, unfreezeScroll } = await import('$lib/utils/scrollFreeze.js');
+
+		// Freeze scroll when scanner is active
+		freezeScroll();
 
 		return () => {
-			document.body.style.overflow = '';
+			unfreezeScroll();
 		};
 	});
 

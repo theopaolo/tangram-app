@@ -1,5 +1,6 @@
 <script>
   import { goto } from '$app/navigation';
+  import { onMount } from 'svelte';
   import Breadcrumb from '$lib/Breadcrumb.svelte';
   import { getAllPuzzles, PIECES_DATA_WITH_VIEWBOX } from '$lib/puzzleData.js';
 
@@ -93,6 +94,17 @@
 		{ label: 'Démarrer', href: '/start' },
 		{ label: 'Les Tangrams', disabled: true }
 	];
+
+	onMount(async () => {
+		// Import scroll freeze utility and unfreeze scroll for puzzles page
+		const { unfreezeScroll, freezeScroll } = await import('$lib/utils/scrollFreeze.js');
+		unfreezeScroll();
+
+		// Return cleanup function to restore scroll freeze when leaving this page
+		return () => {
+			freezeScroll();
+		};
+	});
 
 </script>
 

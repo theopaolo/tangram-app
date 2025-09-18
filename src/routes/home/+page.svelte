@@ -253,9 +253,11 @@
 	}
 
 	onMount(async () => {
-		const preventScroll = (e) => e.preventDefault();
-		document.body.style.overflow = 'hidden';
-		document.addEventListener('touchmove', preventScroll, { passive: false });
+		// Import scroll freeze utility
+		const { freezeScroll, unfreezeScroll } = await import('$lib/utils/scrollFreeze.js');
+
+		// Freeze scroll
+		freezeScroll();
 
 		const mod = await import('gsap');
 		gsap = mod.gsap;
@@ -268,8 +270,7 @@
 		toLayout2Instant();
 
 		return () => {
-			document.body.style.overflow = '';
-			document.removeEventListener('touchmove', preventScroll);
+			unfreezeScroll();
 		};
 	});
 </script>

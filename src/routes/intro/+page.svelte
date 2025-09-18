@@ -154,10 +154,11 @@
 
 
   onMount(async () => {
-    // no-scroll
-    const preventScroll = (e) => e.preventDefault();
-    document.body.style.overflow = "hidden";
-    document.addEventListener("touchmove", preventScroll, { passive: false });
+    // Import scroll freeze utility
+    const { freezeScroll, unfreezeScroll } = await import('$lib/utils/scrollFreeze.js');
+
+    // Freeze scroll
+    freezeScroll();
 
     // GSAP + TextPlugin (SSR-safe)
     const mod = await import("gsap");
@@ -172,8 +173,7 @@
     window.addEventListener("resize", onRez);
 
     return () => {
-      document.body.style.overflow = "";
-      document.removeEventListener("touchmove", preventScroll);
+      unfreezeScroll();
       window.removeEventListener("resize", onRez);
     };
   });

@@ -63,10 +63,19 @@
 	let gsapReady;
 	let circleEl = $state(null);
 
-	onMount(() => {
+	onMount(async () => {
+		// Import scroll freeze utility and unfreeze scroll for indices page
+		const { unfreezeScroll, freezeScroll } = await import('$lib/utils/scrollFreeze.js');
+		unfreezeScroll();
+
 		gsapReady = import('gsap').then((m) => (gsap = m.gsap ?? m.default ?? m));
 		piecesStore.initialize();
 		hasInitialized = true;
+
+		// Return cleanup function to restore scroll freeze when leaving this page
+		return () => {
+			freezeScroll();
+		};
 	});
 
 	async function expand() {
