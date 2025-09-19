@@ -298,11 +298,10 @@
 			{#if totalFound === 0}
 				Pars à la recherche des 7 formes du tangram pour débloquer le CHROMOGRAM !
 			{:else if totalFound === 7}
-				Bravo ! Tu as débloqué toutes les couleurs ! Les puzzles sont maintenant disponibles en
-				cliquant en bas de page !
+				Bravo ! Tu as débloqué toutes les couleurs !<br/>Les tangrams sont maintenant disponibles en
+				cliquant en bas de page !<br/>
 			{:else if totalFound === 1}
-				Tu as déjà découvert {totalFound} forme.<br />Rassemble les 7 formes pour débloquer le
-				CHROMOGRAM !
+				Tu as découvert 1 forme.<br />Rassemble les 7 formes pour débloquer le CHROMOGRAM !
 			{:else}
 				Tu as déjà découvert {totalFound} formes.<br />Rassemble les 7 formes pour débloquer le
 				CHROMOGRAM !

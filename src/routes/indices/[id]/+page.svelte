@@ -185,7 +185,7 @@
 </script>
 
 {#if currentPiece}
-<div bind:this={scrollContainer} class="scroll-container">
+<div bind:this={scrollContainer} class="scroll-container" style="background-color: {selected.size > 2 ? currentPiece?.color : 'white'}; color: {selected.size > 2 ? 'white' : 'black'}">
 	<div class="p-5 pt-0" id="section-0">
 		<!-- Header / onglets -->
 		<header class="sticky top-0 z-10 flex items-center bg-white pt-[30px] pb-[5px]">
@@ -229,7 +229,7 @@
 				{#each currentPiece.images as img, i (i)}
 					<swiper-slide>
 						<img
-							class="aspect-3/2 object-cover"
+							class="object-contain"
 							src={img.src}
 							alt={img.credits ?? `image ${i + 1}`}
 						/>
@@ -252,61 +252,83 @@
 
 		<!-- QCM simple -->
 		<div class="mt-6 mb-15">
-			<span class="text-titre-alt inf-bold">Tu avais trouvé cette oeuvre ?</span><br />
-
+			<span class="text-titre-alt inf-bold">Tu avais trouvé cette œuvre ?</span><br />
+			
+			<div class="flex mt-2 gap-6 ">
 			<!-- Bah oui ! -->
-			<div
-				class="flex w-max cursor-pointer touch-none items-center space-x-2 select-none"
-				class:selected={selectedAnswer === 0}
-				on:click={() => toggleAnswer(0)}
-			>
-				<svg width="11" height="6" viewBox="0 0 11 6" class="shrink-0" fill="currentColor">
-					<path d="M11 3 6 .113v5.774L11 3ZM0 3v.5h6.5V3H0Zm0-1v.5h6.5V2H0Z" />
-				</svg>
-				<span class:underline={selectedAnswer === 0}>Bah oui !</span>
-				{#if selectedAnswer === 0}
-					<svg
-						width="15"
-						height="15"
-						viewBox="0 0 15 15"
-						fill={currentPiece.color}
-						class="shrink-0"
-					>
-						<path
-							d="M13.025 2.88117c-.3193-.31937-.6983-.57272-1.1155-.74557C11.4924 1.96275 11.0453 1.87378 10.5937 1.87378c-.4516 0-.89868.08897-1.31585.26182-.41716.17285-.79617.4262-1.1154.74557l-.6625.6625-.6625-.6625C6.19264 2.23636 5.3181 1.87411 4.4062 1.87411s-1.78644.36225-2.43125 1.00706C1.33014 3.52598.967896 4.40052.967896 5.31242c0 .9119.362244 1.78644 1.007054 2.43125l5.525 5.525 5.525-5.525c.3193-.31922.5727-.69824.7455-1.1154.1729-.41717.2618-.8643.2618-1.31585 0-.45155-.0889-.89869-.2618-1.31585-.1728-.41716-.4262-.79618-.7455-1.1154Z"
-						/>
-					</svg>
-				{/if}
-			</div>
+				<div
+					class="relative flex w-max cursor-pointer touch-none text-11 items-center space-x-2 select-none"
+					class:selected={selectedAnswer === 0}
+					on:click={() => toggleAnswer(0)}
+				>
+					<!-- <svg width="11" height="6" viewBox="0 0 11 6" class="shrink-0" fill="currentColor">
+						<path d="M11 3 6 .113v5.774L11 3ZM0 3v.5h6.5V3H0Zm0-1v.5h6.5V2H0Z" />
+					</svg> -->
+					<span 
+					style=""
+					class="opacity-40 py-1 px-5 border rounded-full m-0 text-{selected.size > 2 ? 'white' : 'black'}"
+					class:bg-black={selectedAnswer === 0}
+					class:text-white={selectedAnswer === 0}
+					>Bah oui !</span>
 
-			<!-- Et nan… -->
-			<div
-				class="flex w-max cursor-pointer touch-none items-center space-x-2 select-none"
-				class:selected={selectedAnswer === 1}
-				on:click={() => toggleAnswer(1)}
-			>
-				<svg width="11" height="6" viewBox="0 0 11 6" class="shrink-0" fill="currentColor">
-					<path d="M11 3 6 .113v5.774L11 3ZM0 3v.5h6.5V3H0Zm0-1v.5h6.5V2H0Z" />
-				</svg>
-				<span class:underline={selectedAnswer === 1}>Et nan…</span>
-				{#if selectedAnswer === 1}
-					<svg
-						width="15"
-						height="15"
-						viewBox="0 0 15 15"
-						fill={currentPiece.color}
-						class="shrink-0"
-					>
-						<path
-							d="M13.025 2.88117c-.3193-.31937-.6983-.57272-1.1155-.74557C11.4924 1.96275 11.0453 1.87378 10.5937 1.87378c-.4516 0-.89868.08897-1.31585.26182-.41716.17285-.79617.4262-1.1154.74557l-.6625.6625-.6625-.6625C6.19264 2.23636 5.3181 1.87411 4.4062 1.87411s-1.78644.36225-2.43125 1.00706C1.33014 3.52598.967896 4.40052.967896 5.31242c0 .9119.362244 1.78644 1.007054 2.43125l5.525 5.525 5.525-5.525c.3193-.31922.5727-.69824.7455-1.1154.1729-.41717.2618-.8643.2618-1.31585 0-.45155-.0889-.89869-.2618-1.31585-.1728-.41716-.4262-.79618-.7455-1.1154Z"
-						/>
-					</svg>
-				{/if}
+					<div class="absolute mt-[2px] ml-[2px] m-auto left-full">
+						{#if selectedAnswer === 0}
+							<svg
+								width="17"
+								height="17"
+								viewBox="0 0 15 15"
+								fill={currentPiece.color}
+								class="shrink-0 m-auto"
+							>
+								<path
+									d="M13.025 2.88117c-.3193-.31937-.6983-.57272-1.1155-.74557C11.4924 1.96275 11.0453 1.87378 10.5937 1.87378c-.4516 0-.89868.08897-1.31585.26182-.41716.17285-.79617.4262-1.1154.74557l-.6625.6625-.6625-.6625C6.19264 2.23636 5.3181 1.87411 4.4062 1.87411s-1.78644.36225-2.43125 1.00706C1.33014 3.52598.967896 4.40052.967896 5.31242c0 .9119.362244 1.78644 1.007054 2.43125l5.525 5.525 5.525-5.525c.3193-.31922.5727-.69824.7455-1.1154.1729-.41717.2618-.8643.2618-1.31585 0-.45155-.0889-.89869-.2618-1.31585-.1728-.41716-.4262-.79618-.7455-1.1154Z"
+								/>
+							</svg>
+						{/if}
+					</div>
+				</div>
+			
+
+				<!-- Et nan… -->
+				<div
+					class="relative flex w-max cursor-pointer touch-none text-11 items-center space-x-2 select-none"
+					class:selected={selectedAnswer === 1}
+					on:click={() => toggleAnswer(1)}
+				>
+					<!-- <svg width="11" height="6" viewBox="0 0 11 6" class="shrink-0" fill="currentColor">
+						<path d="M11 3 6 .113v5.774L11 3ZM0 3v.5h6.5V3H0Zm0-1v.5h6.5V2H0Z" />
+					</svg> -->
+					<span 
+					class="opacity-40 py-1 px-5 border rounded-full m-0 text-{selected.size > 2 ? 'white' : 'black'}"
+					class:bg-black={selectedAnswer === 1}
+					class:text-white={selectedAnswer === 1}
+					>Et nan…</span>
+			
+					<div class="absolute mt-[2px] ml-[2px] m-auto left-full">
+					{#if selectedAnswer === 1}
+						<svg
+							width="17"
+							height="17"
+							viewBox="0 0 15 15"
+							fill={currentPiece.color}
+							class="shrink-0 m-auto"
+						>
+							<path
+								d="M13.025 2.88117c-.3193-.31937-.6983-.57272-1.1155-.74557C11.4924 1.96275 11.0453 1.87378 10.5937 1.87378c-.4516 0-.89868.08897-1.31585.26182-.41716.17285-.79617.4262-1.1154.74557l-.6625.6625-.6625-.6625C6.19264 2.23636 5.3181 1.87411 4.4062 1.87411s-1.78644.36225-2.43125 1.00706C1.33014 3.52598.967896 4.40052.967896 5.31242c0 .9119.362244 1.78644 1.007054 2.43125l5.525 5.525 5.525-5.525c.3193-.31922.5727-.69824.7455-1.1154.1729-.41717.2618-.8643.2618-1.31585 0-.45155-.0889-.89869-.2618-1.31585-.1728-.41716-.4262-.79618-.7455-1.1154Z"
+							/>
+						</svg>
+					{/if}
+				</div>
+
+
+				</div>
+
+
 			</div>
 		</div>
 
 		<!-- Bloc "D'après toi..." -->
-		<div class="relative mb-15 bg-black px-5 py-6 pb-10 text-white" id="section-1">
+		<div class="relative mb-15 bg-black px-5 py-6 pb-10 text-white" id="section-1"   style="background-color: {selected.size > 0 ? currentPiece?.color : 'black'} ; ">
 			<img
 				src="/images/aro_dapres_bas.svg"
 				alt="indic"
@@ -330,7 +352,7 @@
 								width="15"
 								height="15"
 								viewBox="0 0 15 15"
-								fill={currentPiece.color}
+								fill="#fff"
 								class="shrink-0"
 							>
 								<path
@@ -375,10 +397,10 @@
       <!-- Progress / navigation par couleurs -->
       <div class="m-auto mt-17 mb-10 h-px w-2/3 bg-black"></div>
 
-      <div class="flex justify-center gap-5">
+      <div class="flex justify-center gap-[4vw]">
         {#each PIECES_ENTRIES as [id, data] (id)}
           <span
-            class="rounded-full px-[11px] py-[11px]"
+            class="rounded-full px-[3vw] py-[3vw]"
             style="cursor: pointer; background-color: {foundPieces.includes(id) ? data.color : '#E3E3E3'}"
             title={data.color_name}
             on:click={() => {

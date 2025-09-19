@@ -14,13 +14,13 @@
   --text-intro: 1.75rem; /* 28px */
   --text-inter: 2.50rem; /* 28px */
 
-  --c1: #ccffff;
-  --c2: #ffe215;
+  --c5: #ccffff;
+  --c7: #ffe215;
   --c3: #0b4ed1;
-  --c4: #7b77d4;
-  --c5: #1a5435;
-  --c6: #44a635;
-  --c7: #1b3c75;
+  --c6: #7b77d4;
+  --c1: #1a5435;
+  --c2: #44a635;
+  --c4: #1b3c75;
 }
 
 .no-select {

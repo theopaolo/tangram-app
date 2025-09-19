@@ -6,6 +6,7 @@
   import { fly } from 'svelte/transition';
   import createInteractionHandler from '../../../lib/interaction.js';
 
+  
   import Breadcrumb from '$lib/Breadcrumb.svelte';
   import { getPuzzleById, PIECES_DATA, PIECES_DATA_WITH_VIEWBOX } from '$lib/puzzleData.js';
   import {
@@ -18,10 +19,10 @@
 
   // Breadcrumb items
   const breadcrumbItems = [
-    { label: 'Accueil', href: '/' },
-    { label: 'Scanner', href: '/start' },
+    { label: 'Accueil', href: '/home' },
+    { label: 'Les Couleurs', href: '/start' },
     { label: 'Les Tangrams', href: '/puzzles' },
-    { label: 'Nom du tangram', disabled: true }
+    { label: 'Nom du tangram', current: true }
   ];
   // Get puzzle ID from URL params
   const puzzleId = $derived($page.params.id);

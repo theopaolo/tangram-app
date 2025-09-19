@@ -164,10 +164,16 @@
 		</button>
 	</header>
 
-	<div class="scroll-box" bind:this={scrollBox}>
+
+
+	<div class="scroll-box relative" bind:this={scrollBox}>
+
+	
+
 		<div class="m-auto w-[30px] rotate-45 text-center"><img src="/images/tan.jpg" alt="Tangram" /></div>
 
 		<div style="" class="text-titre-alt mt-10 mb-10 w-full text-center">
+
 			<div class="mb-5 bg-black p-5">
 				<div>
 					Clique sur l'icone de l'appareil photo pour scanner un QR code.<br />( Valide l’accès à
@@ -196,14 +202,20 @@
 			</div>
 			<div class="mb-5 bg-black p-5">
 				<div>
-					Résous les 7 tangrams du CHROMOGRAM.
+					Débloque un fond d'écran conçu par Armelle Caron.
 				</div>
 			</div>
 			<div class="mb-5 bg-black p-5">
 				<div>
-					Débloque un fond d'écran conçu par Armelle Caron.
+					Résous les 7 tangrams du CHROMOGRAM.
 				</div>
 			</div>
+			<div class="mb-5 bg-[red] p-5">
+				<div>
+					CLIQUE ICI POUR<br/>RECOMMENCER LE<br/>JEU À ZÉRO.
+				</div>
+			</div>
+
 		</div>
 		<div class="m-auto w-[30px] rotate-45 text-center"><img src="/images/tan.jpg" alt="Tangram" /></div>
 	</div>

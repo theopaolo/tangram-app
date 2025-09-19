@@ -7,9 +7,10 @@
 	import Breadcrumb from '$lib/Breadcrumb.svelte';
 
 	const breadcrumbItems = [
-		{ label: 'Accueil', href: '/' },
-		{ label: 'Démarrer', href: '/start' },
-		{ label: 'Scanner', disabled: true},
+		{ label: 'Accueil', href: '/home' },
+		{ label: 'Les Couleurs', href: '/start' },
+		{ label: 'Scanner', current: true},
+		// { label: 'Les Tangrams', disabled: true }
 	];
 
 	let isScanning = $state(true);
@@ -76,9 +77,11 @@
 	CHROMOGRAM #1
 </div>
 
-<div class="text-inter inf-bold fixed top-2 right-5 z-40">?</div>
-<div class="fixed top-3 right-13 z-40">
-	<img src="/images/quoi.svg" alt="camera" class="" />
+<div class="fixed top-3 right-5 z-40">
+	<button onclick={() => isAideOpen.open()} aria-label="Aide" class="flex bg-transparent border-none cursor-pointer flex flex-row gap-2">
+		<img class="mt-2" src="/images/quoi.svg" alt="camera" />
+		<div class="text-inter inf-bold">?</div>
+	</button>
 </div>
 
 <div class="scanner-fullscreen">
@@ -94,6 +97,6 @@
 	/>
 </div>
 
-<footer class="fixed bottom-5 left-0 z-50 flex w-full items-center justify-between px-5 py-3">
+<footer class="fixed bottom-0 left-0 z-40 flex w-full items-center justify-between px-5 py-3">
 	<Breadcrumb items={breadcrumbItems} />
 </footer>

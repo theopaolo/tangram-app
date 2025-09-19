@@ -40,7 +40,6 @@
 <style>
   .breadcrumb-item {
     color: inherit;
-    text-decoration: none;
   }
 
   .breadcrumb-item:hover, a:hover {

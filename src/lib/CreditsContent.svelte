@@ -33,6 +33,8 @@
 			...COLORS.slice(0, startIndex + 1)
 		];
 
+
+		
 		orderedColors.forEach((color) => {
 			tl.to('.animated-bg', {
 				backgroundColor: color,
@@ -99,7 +101,7 @@
 <div class="credits-overlay fixed inset-0 z-50" in:fade={{ duration: 200 }} out:fade={{ duration: 200 }}>
 	<div class="credits-surface z-50" in:fly={{ y: 100, duration: 400 }} out:fly={{ y: 100, duration: 300 }} onintroend={initializeGSAP}>
 		<!-- Animated background -->
-		<div class="animated-bg"></div>
+		<div class="animated-bg" style="background-color: {VARS[0]}"></div>
 
 		<main>
 			<header>
@@ -150,8 +152,7 @@
 
 <style>
 	.credits-overlay {
-		background: rgba(0, 0, 0, 0.8);
-		backdrop-filter: blur(2px);
+	backdrop-filter: blur(2px);
 	}
 
 	.credits-surface {
@@ -176,7 +177,7 @@
 		width: 100vw;
 		height: 100vh;
 		z-index: -1;
-		background-color: #000;
+		/* background-color: #000; */
 	}
 
 	button {

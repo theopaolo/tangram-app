@@ -42,7 +42,8 @@
 	}
 
 	const breadcrumbItems = [
-		{ label: 'Accueil', href: '/' },
+		{ label: 'Accueil', href: '/home' },
+		{ label: 'Les Couleurs', current: true },
 		{ label: 'Les Tangrams', disabled: true }
 	];
 
@@ -62,7 +63,7 @@
 </script>
 
 <div class="title text-title inf-bold fixed top-5 left-5 z-10 mx-aut w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">
-	CHROMOGRAM #1
+	<a href="/">CHROMOGRAM #1</a>
 </div>
 
 <div class="fixed top-3 right-5 z-30">
@@ -78,8 +79,8 @@
 			{#if totalFound === 0}
 				Pars à la recherche des 7 formes du tangram pour débloquer le CHROMOGRAM !
 			{:else if totalFound === 7}
-				Bravo ! Tu as débloqué toutes les couleurs ! Les tangrams sont maintenant disponibles en
-				cliquant en bas de page !
+				Bravo ! Tu as débloqué toutes les couleurs !<br/>Les tangrams sont maintenant disponibles en
+				cliquant en bas de page !<br/>
 			{:else if totalFound === 1}
 				Tu as découvert 1 forme.<br />Rassemble les 7 formes pour débloquer le CHROMOGRAM !
 			{:else}
@@ -95,6 +96,11 @@
 				<img src="/images/couleur.png" alt="couleur" class="" />
 			</div>
 		{/if}
+		{#if totalFound === 7}
+			<a href="" class="absolute right-5 top-5 text-mini text-white inf-bold pointer-events-auto z-10 w-fit border bg-black px-[15px] py-[7px] tracking-[4%] rounded-full" >
+				TÉLÉCHARGE TON FOND D'ECRAN
+			</a>
+		{/if}
 	</div>
 
 	<div class="relative">
@@ -102,9 +108,11 @@
 			<a href="/scanner" class="pointer-events-auto block">
 				<img src="/images/camera.svg" alt="camera" class="m-auto h-auto" />
 			</a>
-			<div class="absolute top-1/2 left-15 !w-[108.3px] translate-y-[-50%]">
-				<img src="/images/arrow_cam.png" alt="camera" class="" />
-			</div>
+			{#if totalFound === 0 || totalFound === 1}
+				<div class="absolute top-1/2 left-15 !w-[108.3px] translate-y-[-50%]">
+					<img src="/images/arrow_cam.png" alt="camera" class="" />
+				</div>
+			{/if}
 		{:else}
 			<a href="/puzzles" class="text-bouton inf-bold pointer-events-auto z-10 w-fit border bg-white px-[15px] py-[7px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]" >
 				ACCÉDER AUX TANGRAMS

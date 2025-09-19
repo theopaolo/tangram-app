@@ -90,9 +90,9 @@
   }
 
 	const breadcrumbItems = [
-		{ label: 'Accueil', href: '/' },
-		{ label: 'Démarrer', href: '/start' },
-		{ label: 'Les Tangrams', disabled: true }
+		{ label: 'Accueil', href: '/home' },
+		{ label: 'Les Couleurs', href: '/start' },
+		{ label: 'Les Tangrams', current: true }
 	];
 
 	onMount(async () => {
@@ -248,13 +248,12 @@
               </svg>
             </div>
           {/each}
-          <div class="absolute bottom-0 left-0 p-5 text-intro leading-none">{puzzle.id}</div>
+          <div class="absolute bottom-0 left-0 p-5 text-intro leading-none">{puzzle.id}.</div>
+          <div class="status {puzzle.completed ? 'completed' : 'incomplete'} absolute bottom-0 left-0 right-0 margin-auto p-5 text-intro leading-none"> {puzzle.completed ? 'Terminé' : 'À compléter'}</div>
 
         </div>
         <!-- <p>{puzzle.description}</p> -->
-        <div class="status {puzzle.completed ? 'completed' : 'incomplete'}">
-          {puzzle.completed ? 'Terminé' : 'À compléter'}
-        </div>
+        <!-- <div class="status {puzzle.completed ? 'completed' : 'incomplete'}"></div> -->
       </div>
     {/each}
   </div>

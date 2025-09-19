@@ -378,10 +378,10 @@
 
 	.qr-scanner-container.fullscreen {
 		position: fixed;
-		top: 85px;
+		top: 110px;
 		left: 10vw;
 		width: 80vw;
-		height: calc(100vh - 280px);
+		height: calc(100vh - 250px);
 		border-radius: 0;
 		z-index: 50;
 		background: #fff;
