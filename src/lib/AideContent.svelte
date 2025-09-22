@@ -1,6 +1,7 @@
 <script>
     import { browser } from '$app/environment';
     import { PIECES_DATA } from '$lib/piecesData';
+    import { piecesStore } from '$lib/piecesStore.js';
     import { isAideOpen } from '$lib/stores/aideStore.js';
     import { onDestroy, onMount, tick } from 'svelte';
     import { fade, fly } from 'svelte/transition';
@@ -16,6 +17,12 @@
 		PIECES_DATA[7].color
 	];
 	const EFFECT_RADIUS = 200;
+
+	function handleRestart() {
+		piecesStore.initialize();
+		piecesStore.clear();
+		window.location.reload();
+	}
 
 	let container;
 	let scrollBox;
@@ -168,7 +175,7 @@
 
 	<div class="scroll-box relative" bind:this={scrollBox}>
 
-	
+
 
 		<div class="m-auto w-[30px] rotate-45 text-center"><img src="/images/tan.jpg" alt="Tangram" /></div>
 
@@ -210,11 +217,9 @@
 					Résous les 7 tangrams du CHROMOGRAM.
 				</div>
 			</div>
-			<div class="mb-5 bg-[red] p-5">
-				<div>
-					CLIQUE ICI POUR<br/>RECOMMENCER LE<br/>JEU À ZÉRO.
-				</div>
-			</div>
+			<button class="mb-5 bg-[red] p-5" onclick={handleRestart}>
+				<p>CLIQUE ICI POUR<br/>RECOMMENCER LE<br/>JEU À ZÉRO.</p>
+			</button>
 
 		</div>
 		<div class="m-auto w-[30px] rotate-45 text-center"><img src="/images/tan.jpg" alt="Tangram" /></div>
