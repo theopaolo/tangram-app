@@ -32,8 +32,8 @@
     switch(id) {
       case '1':
         return {
-          cols: 5, rows: 20, w: 7.5, h: 2.5, rowGap: 0,
-          visibleCols: 2.8, shape: '7.5,2.5 2.5,2.5 0,0 5,0'
+          cols: 3, rows: 20, w: 7.5, h: 2.5, rowGap: 0,
+          visibleCols: 2.6, shape: '7.5,2.5 2.5,2.5 0,0 5,0'
         };
       case '2':
         return {
@@ -130,7 +130,7 @@
           gsap.to(polygon, {
             rotation: "+=360",
             transformOrigin: "50% 50%",
-            duration: 20,
+            duration: 28,
             repeat: -1,
             ease: "linear"
           });
@@ -154,11 +154,11 @@
           piece.addEventListener("click", () => {
             const dir = Math.random() < 0.5 ? -20 : 20;
             const diro = Math.random() < 0.5 ? -10 : 10;
-            gsap.to(piece.parentElement, {
+            gsap.to(piece, {
               x: `+=${dir}`,
               y: `+=${diro}`,
-              rotate: 90,
-              duration: 5,
+              rotate: 360,
+              duration: 7,
               ease: "power2.inOut",
               yoyo: true,
               repeat: 1,

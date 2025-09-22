@@ -188,7 +188,7 @@
 <div bind:this={scrollContainer} class="scroll-container" style="background-color: {selected.size > 2 ? currentPiece?.color : 'white'}; color: {selected.size > 2 ? 'white' : 'black'}">
 	<div class="p-5 pt-0" id="section-0">
 		<!-- Header / onglets -->
-		<header class="sticky top-0 z-10 flex items-center bg-white pt-[30px] pb-[5px]">
+		<header class="sticky top-0 z-10 flex items-center bg-white pt-[30px] pb-[5px]" style="background-color: {selected.size > 2 ? currentPiece?.color : 'white'} ; ">
 			{#each LABELS as label, i}
 				<button
 					type="button"
@@ -234,7 +234,7 @@
 							alt={img.credits ?? `image ${i + 1}`}
 						/>
 						{#if img.credits}
-							<p class="text-mini text-black text-right italic pt-1 py-0 px-1">{img.credits}</p>
+							<p class="text-mini text-right italic pt-1 py-0 px-1">{img.credits}</p>
 						{/if}
 					</swiper-slide>
 				{/each}
@@ -254,7 +254,7 @@
 		<div class="mt-6 mb-15">
 			<span class="text-titre-alt inf-bold">Tu avais trouvé cette œuvre ?</span><br />
 			
-			<div class="flex mt-2 gap-6 ">
+			<div class="flex mt-2 gap-8">
 			<!-- Bah oui ! -->
 				<div
 					class="relative flex w-max cursor-pointer touch-none text-11 items-center space-x-2 select-none"
@@ -265,17 +265,20 @@
 						<path d="M11 3 6 .113v5.774L11 3ZM0 3v.5h6.5V3H0Zm0-1v.5h6.5V2H0Z" />
 					</svg> -->
 					<span 
-					style=""
+					style="background-color: {selected.size > 2 ? currentPiece?.color : ''}"
 					class="opacity-40 py-1 px-5 border rounded-full m-0 text-{selected.size > 2 ? 'white' : 'black'}"
 					class:bg-black={selectedAnswer === 0}
+					class:opacity-100={selectedAnswer === 0}
 					class:text-white={selectedAnswer === 0}
 					>Bah oui !</span>
 
-					<div class="absolute mt-[2px] ml-[2px] m-auto left-full">
+					<div class="absolute mt-[2px] ml-[4px] m-auto left-full">
 						{#if selectedAnswer === 0}
 							<svg
 								width="17"
 								height="17"
+								stroke="white"
+								strokeWidth="1"
 								viewBox="0 0 15 15"
 								fill={currentPiece.color}
 								class="shrink-0 m-auto"
@@ -299,17 +302,21 @@
 						<path d="M11 3 6 .113v5.774L11 3ZM0 3v.5h6.5V3H0Zm0-1v.5h6.5V2H0Z" />
 					</svg> -->
 					<span 
+					style="background-color: {selected.size > 2 ? currentPiece?.color : ''}"
 					class="opacity-40 py-1 px-5 border rounded-full m-0 text-{selected.size > 2 ? 'white' : 'black'}"
 					class:bg-black={selectedAnswer === 1}
+					class:opacity-100={selectedAnswer === 1}
 					class:text-white={selectedAnswer === 1}
 					>Et nan…</span>
 			
-					<div class="absolute mt-[2px] ml-[2px] m-auto left-full">
+					<div class="absolute mt-[2px] ml-[4px] m-auto left-full">
 					{#if selectedAnswer === 1}
 						<svg
 							width="17"
 							height="17"
 							viewBox="0 0 15 15"
+							stroke="white"
+							strokeWidth="1"
 							fill={currentPiece.color}
 							class="shrink-0 m-auto"
 						>
@@ -328,7 +335,7 @@
 		</div>
 
 		<!-- Bloc "D'après toi..." -->
-		<div class="relative mb-15 bg-black px-5 py-6 pb-10 text-white" id="section-1"   style="background-color: {selected.size > 0 ? currentPiece?.color : 'black'} ; ">
+		<div class="relative mb-15 bg-black border-white border px-5 py-6 pb-10 text-white" id="section-1"   style="background-color: {selected.size > 0 ? currentPiece?.color : 'black'}">
 			<img
 				src="/images/aro_dapres_bas.svg"
 				alt="indic"
@@ -383,7 +390,7 @@
         <div class="flex items-center gap-5">
           <div
             bind:this={circleEl}
-            class="relative z-0 h-20 w-20 origin-center touch-none rounded-full select-none"
+            class="relative z-0 h-20 w-20 border border-white origin-center touch-none rounded-full select-none"
             style="background-color: {currentPiece?.color};"
           />
           <div class="relative z-[1] leading-6">
@@ -400,7 +407,7 @@
       <div class="flex justify-center gap-[4vw]">
         {#each PIECES_ENTRIES as [id, data] (id)}
           <span
-            class="rounded-full px-[3vw] py-[3vw]"
+            class="rounded-full px-[3vw] py-[3vw] border-white border"
             style="cursor: pointer; background-color: {foundPieces.includes(id) ? data.color : '#E3E3E3'}"
             title={data.color_name}
             on:click={() => {
@@ -432,7 +439,12 @@
         <div class="relative flex items-center justify-center">
           <div class="relative inline-block">
             <a href="/scanner" class="block">
-              <img src="/images/camera.svg" alt="camera" class="mx-auto h-auto !w-[52px]" />
+				<svg width="52" height="43" viewBox="0 0 52 43" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<g clip-path="url(#clip0_2041_26)">
+					<path style="fill: {selected.size > 2 ? 'white' : 'black'}" d="M48 5H45V0H31V5H20V2H9V5H4C1.79 5 0 6.79 0 9V39C0 41.21 1.79 43 4 43H48C50.21 43 52 41.21 52 39V9C52 6.79 50.21 5 48 5ZM26.5 38C19.04 38 13 31.96 13 24.5C13 17.04 19.04 11 26.5 11C33.96 11 40 17.04 40 24.5C40 31.96 33.96 38 26.5 38Z" fill="black"/>
+					<path style="fill: {selected.size > 2 ? 'white' : 'black'}" d="M26.5 34C31.7467 34 36 29.7467 36 24.5C36 19.2533 31.7467 15 26.5 15C21.2533 15 17 19.2533 17 24.5C17 29.7467 21.2533 34 26.5 34Z" fill="black"/>
+					</g>
+				</svg>
             </a>
             <div class="absolute top-1/2 right-full -translate-y-1/2 pr-2">
               <img

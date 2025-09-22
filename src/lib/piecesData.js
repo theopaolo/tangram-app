@@ -1,4 +1,4 @@
-export const PIECES_DATA = {
+export let PIECES_DATA = {
      1: {
       color: '#1a5435',
       rvb: '26, 84, 53',

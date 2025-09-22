@@ -5,6 +5,7 @@
 	import { piecesStore } from '$lib/piecesStore.js';
 	import { onMount } from 'svelte';
 	import Breadcrumb from '$lib/Breadcrumb.svelte';
+	import { isAideOpen } from '$lib/stores/aideStore.js';
 
 	const breadcrumbItems = [
 		{ label: 'Accueil', href: '/home' },
@@ -77,7 +78,7 @@
 	CHROMOGRAM #1
 </div>
 
-<div class="fixed top-3 right-5 z-40">
+<div class="fixed top-3 right-5 z-100">
 	<button onclick={() => isAideOpen.open()} aria-label="Aide" class="flex bg-transparent border-none cursor-pointer flex flex-row gap-2">
 		<img class="mt-2" src="/images/quoi.svg" alt="camera" />
 		<div class="text-inter inf-bold">?</div>
@@ -97,6 +98,6 @@
 	/>
 </div>
 
-<footer class="fixed bottom-0 left-0 z-40 flex w-full items-center justify-between px-5 py-3">
+<footer class="fixed bottom-0 left-0 z-40 flex w-full items-center justify-between px-5 py-2">
 	<Breadcrumb items={breadcrumbItems} />
 </footer>

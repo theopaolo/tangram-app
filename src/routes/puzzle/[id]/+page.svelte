@@ -713,7 +713,7 @@
 </style>
 
 <div class="top-5 left-5  fixed title z-10 w-max text-title inf-bold mx-auto w-fit bg-white border py-1 px-[14px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">CHROMOGRAM #1</div>
-<div class="top-2 right-5 fixed z-10 text-inter inf-bold">?</div>
+<div class="top-7 right-5 fixed z-10 text-mini inf-bold border border-black px-4 py-1 rounded-full">RETOUR TANGRAMS</div>
 
   <div class="z-10 top-25 left-5 fixed text-11" >
     1. Fais glisser une des formes du bas vers le tangram.<br/>
@@ -805,7 +805,7 @@
     {/each}
   </div>
 
-<footer class="fixed bottom-0 left-0 z-40 flex w-full items-center justify-between px-5 py-3">
+<footer class="fixed bottom-0 left-0 z-40 flex w-full items-center justify-between px-5 py-2">
 	<Breadcrumb items={breadcrumbItems} />
 </footer>
 

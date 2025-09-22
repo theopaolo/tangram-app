@@ -325,7 +325,12 @@
 	</div>
 	<div class="h-[80dvw] bg-transparent"></div>
 	<div>
-		<img src="/images/camera.svg" alt="camera" class="" />
+		<svg width="52" height="43" viewBox="0 0 52 43" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<g clip-path="url(#clip0_2041_26)">
+			<path d="M48 5H45V0H31V5H20V2H9V5H4C1.79 5 0 6.79 0 9V39C0 41.21 1.79 43 4 43H48C50.21 43 52 41.21 52 39V9C52 6.79 50.21 5 48 5ZM26.5 38C19.04 38 13 31.96 13 24.5C13 17.04 19.04 11 26.5 11C33.96 11 40 17.04 40 24.5C40 31.96 33.96 38 26.5 38Z" fill="black"/>
+			<path d="M26.5 34C31.7467 34 36 29.7467 36 24.5C36 19.2533 31.7467 15 26.5 15C21.2533 15 17 19.2533 17 24.5C17 29.7467 21.2533 34 26.5 34Z" fill="black"/>
+			</g>
+		</svg>
 	</div>
 	<div class="text-mini fixed bottom-3.5 left-5 z-10">Accueil > Les Couleurs > Les Tangrams</div>
 	<div class="text-mini fixed right-5 bottom-3.5 z-10">Crédits</div>

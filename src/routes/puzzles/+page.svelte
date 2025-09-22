@@ -248,7 +248,7 @@
               </svg>
             </div>
           {/each}
-          <div class="absolute bottom-0 left-0 p-5 text-intro leading-none">{puzzle.id}.</div>
+          <div class="absolute bottom-0 left-0 p-5 text-intro leading-none">#{puzzle.id}</div>
           <div class="status {puzzle.completed ? 'completed' : 'incomplete'} absolute bottom-0 left-0 right-0 margin-auto p-5 text-intro leading-none"> {puzzle.completed ? 'Terminé' : 'À compléter'}</div>
 
         </div>
@@ -259,6 +259,6 @@
   </div>
 </div>
 
-<footer class="fixed bottom-0 left-0 z-40 flex w-full items-center justify-between px-5 py-3">
+<footer class="fixed bottom-0 left-0 z-40 flex w-full items-center justify-between px-5 py-2">
 	<Breadcrumb items={breadcrumbItems} />
 </footer>
