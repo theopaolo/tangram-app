@@ -217,12 +217,12 @@
 					Résous les 7 tangrams du CHROMOGRAM.
 				</div>
 			</div>
-			<button class="mb-5 bg-[red] p-5" onclick={handleRestart}>
-				<p>CLIQUE ICI POUR<br/>RECOMMENCER LE<br/>JEU À ZÉRO.</p>
-			</button>
-
 		</div>
 		<div class="m-auto w-[30px] rotate-45 text-center"><img src="/images/tan.jpg" alt="Tangram" /></div>
+
+			<button class="mt-12 mb-5 bg-[red] p-5 w-full" onclick={handleRestart}>
+				<p>CLIQUE ICI POUR<br/>RECOMMENCER LE JEU À ZÉRO.</p>
+			</button>
 	</div>
 
 	<div class="striped-container fixed bottom-0 left-0" bind:this={container}>
