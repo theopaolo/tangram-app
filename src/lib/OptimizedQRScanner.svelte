@@ -347,7 +347,7 @@
 		<!-- Fullscreen close button -->
 		{#if fullscreen}
 			<button
-				class="close-button top-[100%] absolute right-[-10px] !mt-5 flex items-center"
+				class="close-button fixed right-5 top-0 flex items-center"
 				onclick={() => dispatch('close')}
 				aria-label="Fermer le scanner"
 			>
@@ -363,7 +363,9 @@
 </div>
 
 <style>
+	
 	.qr-scanner-container {
+		border: 2px solid;
 		position: relative;
 		width: 100%;
 		height: 400px;
