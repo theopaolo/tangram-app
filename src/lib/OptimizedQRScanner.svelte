@@ -383,7 +383,7 @@
 		top: 110px;
 		left: 10vw;
 		width: 80vw;
-		height: calc(100svh - 210px);
+		height: calc(100svh - 185px);
 		border-radius: 0;
 		z-index: 50;
 		background: #fff;
