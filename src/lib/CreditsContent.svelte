@@ -111,11 +111,11 @@
 				</div>
 				<button
 					type="button"
-					class="fixed z-10 right-5 top-[35px] bg-transparent border-none cursor-pointer"
+					class="fixed z-10 right-5 top-[30px] bg-transparent border-none cursor-pointer"
 					onclick={handleClose}
 					aria-label="Fermer les crédits"
 				>
-					<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<svg width="30" height="30" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path d="M17.1421 15.1421L15.0208 17.2635L0.87868 3.12132L3 1L17.1421 15.1421Z" fill="white"/>
 						<path d="M2.85786 17.1421L0.736544 15.0208L14.8787 0.87868L17 3L2.85786 17.1421Z" fill="white"/>
 					</svg>

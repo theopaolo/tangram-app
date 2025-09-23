@@ -157,14 +157,14 @@
 {#if $isAideOpen}
 <div class="aide-overlay fixed inset-0 z-50" in:fade={{ duration: 200 }} out:fade={{ duration: 200 }}>
 	<div class="aide-surface z-50" in:fly={{ y: -100, duration: 400 }} out:fly={{ y: -100, duration: 300 }} onintroend={initializeGSAP}>
-	<header class="fixed top-[35px] right-5 z-10">
+	<header class="fixed top-[30px] right-5 z-10">
 		<button
 			type="button"
 			class="flex items-center justify-center rounded-full bg-transparent"
 			onclick={handleClose}
 			aria-label="Fermer l'aide"
 		>
-			<svg width="18" height="18" fill="white" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+			<svg width="30" height="30" fill="white" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
 				<path d="M17.1421 15.1421L15.0208 17.2635L0.87868 3.12132L3 1L17.1421 15.1421Z" />
 				<path d="M2.85786 17.1421L0.736544 15.0208L14.8787 0.87868L17 3L2.85786 17.1421Z" />
 			</svg>
