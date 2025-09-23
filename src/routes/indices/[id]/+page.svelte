@@ -157,6 +157,7 @@
 
 	function navigateToPiece(id) {
 		goto(`/indices/${id}`);
+		scrollContainer.scrollTo(0, 0);	
 	}
 
 	function capturePiece() {
@@ -253,7 +254,7 @@
 		<!-- QCM simple -->
 		<div class="mt-6 mb-15">
 			<span class="text-titre-alt inf-bold">Tu avais trouvé cette œuvre ?</span><br />
-			
+
 			<div class="flex mt-2 gap-8">
 			<!-- Bah oui ! -->
 				<div
@@ -264,7 +265,7 @@
 					<!-- <svg width="11" height="6" viewBox="0 0 11 6" class="shrink-0" fill="currentColor">
 						<path d="M11 3 6 .113v5.774L11 3ZM0 3v.5h6.5V3H0Zm0-1v.5h6.5V2H0Z" />
 					</svg> -->
-					<span 
+					<span
 					style="background-color: {selected.size > 2 ? currentPiece?.color : ''}"
 					class="opacity-40 py-1 px-5 border rounded-full m-0 text-{selected.size > 2 ? 'white' : 'black'}"
 					class:bg-black={selectedAnswer === 0}
@@ -290,7 +291,7 @@
 						{/if}
 					</div>
 				</div>
-			
+
 
 				<!-- Et nan… -->
 				<div
@@ -301,14 +302,14 @@
 					<!-- <svg width="11" height="6" viewBox="0 0 11 6" class="shrink-0" fill="currentColor">
 						<path d="M11 3 6 .113v5.774L11 3ZM0 3v.5h6.5V3H0Zm0-1v.5h6.5V2H0Z" />
 					</svg> -->
-					<span 
+					<span
 					style="background-color: {selected.size > 2 ? currentPiece?.color : ''}"
 					class="opacity-40 py-1 px-5 border rounded-full m-0 text-{selected.size > 2 ? 'white' : 'black'}"
 					class:bg-black={selectedAnswer === 1}
 					class:opacity-100={selectedAnswer === 1}
 					class:text-white={selectedAnswer === 1}
 					>Et nan…</span>
-			
+
 					<div class="absolute mt-[2px] ml-[4px] m-auto left-full">
 					{#if selectedAnswer === 1}
 						<svg
@@ -408,15 +409,9 @@
         {#each PIECES_ENTRIES as [id, data] (id)}
           <span
             class="rounded-full px-[3vw] py-[3vw] border-white border"
-            style="cursor: pointer; background-color: {foundPieces.includes(id) ? data.color : '#E3E3E3'}"
+            style="background-color: {foundPieces.includes(id) ? data.color : '#E3E3E3'}"
             title={data.color_name}
-            on:click={() => {
-              if (foundPieces.includes(id)) {
-                navigateToPiece(id);
-              } else {
-                goto('/start');
-              }
-            }}
+            on:click={() => foundPieces.includes(id) && navigateToPiece(id)}
           />
         {/each}
       </div>
