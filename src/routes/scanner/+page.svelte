@@ -58,6 +58,9 @@
 
 
 <style>
+	/* html,body{
+		height: 100svh;
+	} */
 	.qr-scanner-container{
 		border: 2px solid;
 	}
@@ -78,7 +81,7 @@
 	CHROMOGRAM #1
 </div>
 
-<div class="fixed top-3 right-5 z-100">
+<div class="fixed top-3 right-5 z-40">
 	<button onclick={() => isAideOpen.open()} aria-label="Aide" class="flex bg-transparent border-none cursor-pointer flex flex-row gap-2">
 		<img class="mt-2" src="/images/quoi.svg" alt="camera" />
 		<div class="text-inter inf-bold">?</div>
