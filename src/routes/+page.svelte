@@ -274,14 +274,11 @@
 	<div
 		class="text-bouton intro-intro height-auto max-w-prose text-center whitespace-pre-line opacity-0"
 	>
-		CHROMOGRAM ou tangram des couleurs est un jeu proposé par l'artiste Armelle Caron qui se
-		renouvelle à chaque exposition de collection. L'art est habité de mille couleurs. Subtiles,
-		franches, opposées, brutales ou délicates. Elles sont partout et toujours précisément choisies
-		par les artistes. Le CHROMOGRAM #1 vous propose de les découvrir dans les salles de l'exposition
-		ALLONS, de les observer avec attention pour révéler toutes leurs nuances. Ce jeu est une
-		invitation à chercher des qr codes cachés dans les salles. Chacun d'eux débloque un élément du
-		tangram et une couleur à retrouver dans les œuvres présentées et ainsi de débloquer le
-		CHROMOGRAM. Il y a 7 qr codes à trouver dans l'exposition.
+		CHROMOGRAM ou tangram des couleurs est un jeu proposé par l'artiste Armelle Caron qui se renouvelle à chaque exposition de collection. L'art est habité de mille couleurs. Subtiles, franches, opposées, brutales ou délicates. Elles sont partout et toujours précisément choisies par les artistes.
+
+		Le CHROMOGRAM #1 vous propose de les découvrir dans les salles de l'exposition ALLONS, de les observer avec attention pour révéler toutes leurs nuances.
+
+		Retrouve les œuvres choisies par Armelle Caron à l’aide des 7 QR codes cachés dans l’exposition. Chacun d’eux propose une couleur à retrouver dans une œuvre de la même salle. Débloque ainsi, une à une, les formes du tangram.
 	</div>
 
 	<div

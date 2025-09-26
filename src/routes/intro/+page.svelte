@@ -265,17 +265,13 @@
 </div>
 
 <div class="d-none absolute inset-x-0 top-0 z-10 h-[100dvh] px-2 flex items-center justify-evenly flex-col pt-[105px] pb-[25px]">
-  <div class="text-bouton intro-intro opacity-0 text-center height-auto max-w-prose whitespace-pre-line">
-    CHROMOGRAM ou tangram des couleurs est un jeu proposé par l'artiste Armelle Caron qui se renouvelle à chaque exposition de collection.
+	<div class="text-bouton intro-intro opacity-0 height-auto max-w-prose text-center whitespace-pre-line">
+		CHROMOGRAM ou tangram des couleurs est un jeu proposé par l'artiste Armelle Caron qui se renouvelle à chaque exposition de collection. L'art est habité de mille couleurs. Subtiles, franches, opposées, brutales ou délicates. Elles sont partout et toujours précisément choisies par les artistes.
 
-    L'art est habité de mille couleurs. Subtiles, franches, opposées, brutales ou délicates.
-    Elles sont partout et toujours précisément choisies par les artistes.
+		Le CHROMOGRAM #1 vous propose de les découvrir dans les salles de l'exposition ALLONS, de les observer avec attention pour révéler toutes leurs nuances.
 
-    Le CHROMOGRAM #1 vous propose de les découvrir dans les salles de l'exposition ALLONS, de les observer avec attention pour révéler toutes leurs nuances. Ce jeu est une invitation à chercher des qr codes cachés dans les salles.
-    Chacun d'eux débloque un élément du tangram et une couleur à retrouver dans les œuvres présentées et ainsi de débloquer le CHROMOGRAM.
-
-    Il y a 7 qr codes à trouver dans l'exposition.
-  </div>
+		Retrouve les œuvres choisies par Armelle Caron à l’aide des 7 QR codes cachés dans l’exposition. Chacun d’eux propose une couleur à retrouver dans une œuvre de la même salle. Débloque ainsi, une à une, les formes du tangram.
+	</div>
 
   <div class="opacity-0 bt2 z-10 text-bouton inf-bold w-fit bg-white border border-black py-[7px] px-[15px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">
     ENTRER
