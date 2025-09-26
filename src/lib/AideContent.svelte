@@ -4,7 +4,7 @@
     import { piecesStore } from '$lib/piecesStore.js';
     import { isAideOpen } from '$lib/stores/aideStore.js';
     import { onDestroy, onMount, tick } from 'svelte';
-    import { fade, fly } from 'svelte/transition';
+    import { fly } from 'svelte/transition';
 
 	const TOTAL_BARS = 51;
 	const COLORS = [
@@ -155,8 +155,8 @@
 </script>
 
 {#if $isAideOpen}
-<div class="aide-overlay fixed inset-0 z-50" in:fade={{ duration: 200 }} out:fade={{ duration: 200 }}>
-	<div class="aide-surface z-50" in:fly={{ y: -100, duration: 400 }} out:fly={{ y: -100, duration: 300 }} onintroend={initializeGSAP}>
+<div class="aide-overlay fixed inset-0 z-50" in:fly={{ y: -100, duration: 400 }} out:fly={{ y: -100, duration: 400 }}>
+	<div class="aide-surface z-50" onintroend={initializeGSAP}>
 	<header class="fixed top-[30px] right-5 z-10">
 		<button
 			type="button"
@@ -164,16 +164,19 @@
 			onclick={handleClose}
 			aria-label="Fermer l'aide"
 		>
-			<svg width="30" height="30" fill="white" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
-				<path d="M17.1421 15.1421L15.0208 17.2635L0.87868 3.12132L3 1L17.1421 15.1421Z" />
-				<path d="M2.85786 17.1421L0.736544 15.0208L14.8787 0.87868L17 3L2.85786 17.1421Z" />
+		
+			<svg width="29" height="29" viewBox="0 0 29 29" fill="white" xmlns="http://www.w3.org/2000/svg">
+				<path d="M28.8613 25.8936L26.0347 28.7238L0.173337 2.83019L3 0L28.8613 25.8936Z" fill="white"/>
+				<path d="M3.13867 28.8936L0.312005 26.0634L26.1733 0.16981L29 3L3.13867 28.8936Z" fill="white"/>
 			</svg>
+
+
 		</button>
 	</header>
 
 
 
-	<div class="scroll-box relative" bind:this={scrollBox}>
+	<div class="scroll-box relative text-center" bind:this={scrollBox}>
 
 
 
@@ -194,12 +197,12 @@
 			</div>
 			<div class="mb-5 bg-black p-5">
 				<div>
-					Quand tu scannes un QR code, la forme correspondante se colore.
+					Quand tu scanne un QR code, tu débloques une couleur. Retrouve-la dans une œuvre de la même salle.
 				</div>
 			</div>
 			<div class="mb-5 bg-black p-5">
 				<div>
-					Clique sur une des formes colorées pour avoir des informations sur l'œuvre et la couleur.
+					Les formes se colorent sur ton chromogram au fur et à mesure de ta quête.
 				</div>
 			</div>
 			<div class="mb-5 bg-black p-5">
@@ -214,15 +217,15 @@
 			</div>
 			<div class="mb-5 bg-black p-5">
 				<div>
-					Résous les 7 tangrams du CHROMOGRAM.
+					Résous selon ton envie les 7 tangrams du CHROMOGRAM.
 				</div>
 			</div>
 		</div>
-		<div class="m-auto w-[30px] rotate-45 text-center"><img src="/images/tan.jpg" alt="Tangram" /></div>
+		<div class="m-auto mt-2 w-[30px] rotate-45 text-center"><img src="/images/tan.jpg" alt="Tangram" /></div>
 
-			<button class="mt-12 mb-5 bg-[red] p-5 w-full" onclick={handleRestart}>
-				<p>CLIQUE ICI POUR<br/>RECOMMENCER LE JEU À ZÉRO.</p>
-			</button>
+		<button style="border:1px solid" class="relative mt-12 mb-14 text-black text-bouton inf-bold z-0 w-fit bg-white px-5 py-3 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]" onclick={handleRestart}>
+			<div class="leading-[1.5] rounded-full absolute top-1 left-2 bg-black text-white h-5 w-5">!</div>CLIQUE ICI POUR<br/>RECOMMENCER LE JEU À ZÉRO
+		</button>
 	</div>
 
 	<div class="striped-container fixed bottom-0 left-0" bind:this={container}>
@@ -256,13 +259,17 @@
 		height: 100svh;
 		overflow-y: auto;
 		-webkit-overflow-scrolling: touch;
-		padding: 60px 20px 20vh;
+		/* padding: 60px 20px 20vh; */
+		padding-left:20px ;
+		padding-right:20px ;
+		padding-bottom: 15svh;
+		padding-top:29px;
 	}
 
 	.striped-container {
 		display: flex;
 		width: 100%;
-		height: 15vh;
+		height: 15svh;
 		touch-action: none;
 	}
 

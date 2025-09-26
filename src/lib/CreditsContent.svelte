@@ -3,7 +3,7 @@
 	import { PIECES_DATA } from '$lib/piecesData';
 	import { isCreditsOpen } from '$lib/stores/creditsStore.js';
 	import { onDestroy, onMount } from 'svelte';
-	import { fade, fly } from 'svelte/transition';
+	import { fly } from 'svelte/transition';
 
 	let gsap;
 	const VARS = [
@@ -98,8 +98,8 @@
 </script>
 
 {#if $isCreditsOpen}
-<div class="credits-overlay fixed inset-0 z-50" in:fade={{ duration: 200 }} out:fade={{ duration: 200 }}>
-	<div class="credits-surface z-50" in:fly={{ y: 100, duration: 400 }} out:fly={{ y: 100, duration: 300 }} onintroend={initializeGSAP}>
+<div class="credits-overlay fixed inset-0 z-50" in:fly={{ y: 100, duration: 400 }} out:fly={{ y: 100, duration: 400 }}>
+	<div class="credits-surface z-50" onintroend={initializeGSAP}>
 		<!-- Animated background -->
 		<div class="animated-bg" style="background-color: {VARS[0]}"></div>
 
@@ -115,9 +115,9 @@
 					onclick={handleClose}
 					aria-label="Fermer les crédits"
 				>
-					<svg width="30" height="30" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<path d="M17.1421 15.1421L15.0208 17.2635L0.87868 3.12132L3 1L17.1421 15.1421Z" fill="white"/>
-						<path d="M2.85786 17.1421L0.736544 15.0208L14.8787 0.87868L17 3L2.85786 17.1421Z" fill="white"/>
+					<svg width="29" height="29" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M28.8613 25.8936L26.0347 28.7238L0.173337 2.83019L3 0L28.8613 25.8936Z" fill="white"/>
+						<path d="M3.13867 28.8936L0.312005 26.0634L26.1733 0.16981L29 3L3.13867 28.8936Z" fill="white"/>
 					</svg>
 				</button>
 			</header>
