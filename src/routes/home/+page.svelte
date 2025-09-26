@@ -98,12 +98,20 @@
 		gsap.to('.title', {
 			left: '20px',
 			top: '20px',
-			xPercent: 0,
+			// xPercent: 0,
 			x: 0,
-			fontSize: '19px',
 			duration: 0.6,
 			ease: 'power2.inOut'
 		});
+		gsap.fromTo(".title",{
+			fontSize: "1.75rem"
+		},{
+			fontSize: "1.188rem",
+		});
+
+
+
+
 		// gsap.to(".text-bouton", {
 		//   width:"100%",
 		//   height:"100%",
@@ -277,7 +285,7 @@
 
 <div class="">
 	<div
-		class="title text-intro inf-bold fixed top-[35px] left-[50%] z-10 mx-auto w-fit w-max -translate-x-1/2 transform border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]"
+		class="title text-intro inf-bold fixed top-[35px] left-[50%] z-10 mx-auto w-max -translate-x-1/2 transform border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]"
 	>
 		CHROMOGRAM #1
 	</div>
@@ -340,14 +348,11 @@
 	class="meme d-none absolute inset-x-0 top-0 z-10 flex h-[100dvh] flex-col items-center justify-evenly px-2 pt-[105px] pb-[25px]"
 >
 	<div class="text-bouton intro-intro height-auto max-w-prose text-center whitespace-pre-line">
-		CHROMOGRAM ou tangram des couleurs est un jeu proposé par l'artiste Armelle Caron qui se
-		renouvelle à chaque exposition de collection. L'art est habité de mille couleurs. Subtiles,
-		franches, opposées, brutales ou délicates. Elles sont partout et toujours précisément choisies
-		par les artistes. Le CHROMOGRAM #1 vous propose de les découvrir dans les salles de l'exposition
-		ALLONS, de les observer avec attention pour révéler toutes leurs nuances. Ce jeu est une
-		invitation à chercher des qr codes cachés dans les salles. Chacun d'eux débloque un élément du
-		tangram et une couleur à retrouver dans les œuvres présentées et ainsi de débloquer le
-		CHROMOGRAM. Il y a 7 qr codes à trouver dans l'exposition.
+		CHROMOGRAM ou tangram des couleurs est un jeu proposé par l'artiste Armelle Caron qui se renouvelle à chaque exposition de collection. L'art est habité de mille couleurs. Subtiles, franches, opposées, brutales ou délicates. Elles sont partout et toujours précisément choisies par les artistes.
+
+		Le CHROMOGRAM #1 vous propose de les découvrir dans les salles de l'exposition ALLONS, de les observer avec attention pour révéler toutes leurs nuances.
+
+		Retrouve les œuvres choisies par Armelle Caron à l’aide des 7 QR codes cachés dans l’exposition. Chacun d’eux propose une couleur à retrouver dans une œuvre de la même salle. Débloque ainsi, une à une, les formes du tangram.
 	</div>
 
 	<div
@@ -363,43 +368,43 @@
 	<div>
 		<div class="piece p1">
 			<svg viewBox="0 0 7.5 2.5">
-				<polygon points="7.5,2.5 2.5,2.5 0,0 5,0" />
+				<polygon stroke-linejoin="bevel" points="7.5,2.5 2.5,2.5 0,0 5,0" />
 			</svg>
 		</div>
 
 		<div class="piece p2">
 			<svg viewBox="0 0 5 5">
-				<polygon points="0,0 5,0 5,5" />
+				<polygon stroke-linejoin="bevel" points="0,0 5,0 5,5" />
 			</svg>
 		</div>
 
 		<div class="piece p3">
 			<svg viewBox="0 0 5 10">
-				<polygon points="0,10 0,0 5,5" />
+				<polygon stroke-linejoin="bevel" points="0,10 0,0 5,5" />
 			</svg>
 		</div>
 
 		<div class="piece p4">
 			<svg viewBox="0 0 2.5 5">
-				<polygon points="2.5,5 2.5,0 0,2.5" />
+				<polygon stroke-linejoin="bevel" points="2.5,5 2.5,0 0,2.5" />
 			</svg>
 		</div>
 
 		<div class="piece p5">
 			<svg viewBox="0 0 10 5">
-				<polygon points="0,5 10,5 5,0" />
+				<polygon stroke-linejoin="bevel" points="0,5 10,5 5,0" />
 			</svg>
 		</div>
 
 		<div class="piece p6">
 			<svg viewBox="0 0 5 5">
-				<polygon points="0,2.5 2.5,0 5,2.5 2.5,5" />
+				<polygon stroke-linejoin="bevel" points="0,2.5 2.5,0 5,2.5 2.5,5" />
 			</svg>
 		</div>
 
 		<div class="piece p7">
 			<svg viewBox="0 0 5 2.5">
-				<polygon points="5,0 0,0 2.5,2.5" />
+				<polygon stroke-linejoin="bevel" points="5,0 0,0 2.5,2.5" />
 			</svg>
 		</div>
 	</div>

@@ -395,7 +395,7 @@
       case '7': // Random individual rotations
         gsap.to(pieces, {
           rotation: () => `+=${gsap.utils.random(-360, 360)}`,
-          transformOrigin: "10% 50%",
+          transformOrigin: "50% 50%",
           duration: 140,
           ease: "linear",
           repeat: -1
@@ -475,6 +475,7 @@
 </style>
 
 {#if currentPiece}
+
 <div class="h-svh absolute w-screen z-1">
   <div class="whole h-svh absolute w-screen z-1">
     {#if pieceId === '2'}
@@ -556,11 +557,12 @@
 
 <div class="no-select relative z-2 flex flex-col py-[70px] items-center justify-between min-h-svh text-center pointer-events-none">
   <div class="py-[20px] px-[50px] max-w-4/5 text-center bg-white border border-black drop-shadow pointer-events-none">
-    Bravo tu as découvert :
+    Bravo tu as découvert
     <div class="text-titre-alt inf-bold my-5 uppercase">
      {currentPiece.color_name}
     </div>
-    À quelle œuvre penses-tu que<br/>cette couleur appartient ?
+    Retrouve l’œuvre choisie par Armelle<br/>qui correspond à cette couleur.
+     <!-- À quelle œuvre penses-tu que<br/>cette couleur appartient ? -->
   </div>
 
   <button
