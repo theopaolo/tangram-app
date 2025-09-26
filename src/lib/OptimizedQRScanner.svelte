@@ -347,14 +347,14 @@
 		<!-- Fullscreen close button -->
 		{#if fullscreen}
 			<button
-				class="close-button fixed right-5 top-0 flex items-center"
+				class="close-button fixed top-0 right-5 flex items-center"
 				onclick={() => dispatch('close')}
 				aria-label="Fermer le scanner"
 			>
 			
-			 <svg width="30" height="30" fill="black" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
-				<path d="M17.1421 15.1421L15.0208 17.2635L0.87868 3.12132L3 1L17.1421 15.1421Z"/>
-				<path d="M2.85786 17.1421L0.736544 15.0208L14.8787 0.87868L17 3L2.85786 17.1421Z"/>
+			<svg width="29" height="29" viewBox="0 0 29 29" fill="black" xmlns="http://www.w3.org/2000/svg">
+				<path d="M28.8613 25.8936L26.0347 28.7238L0.173337 2.83019L3 0L28.8613 25.8936Z"/>
+				<path d="M3.13867 28.8936L0.312005 26.0634L26.1733 0.16981L29 3L3.13867 28.8936Z"/>
 			</svg>
 			
 			</button>
