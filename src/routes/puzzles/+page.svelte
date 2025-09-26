@@ -218,9 +218,7 @@
 <!-- Puzzle Selection Screen -->
 <div class="p-5 mt-[90px]">
   <div class="text-center">
-    <h2>Voici les tangrams à compléter !</h2>
-    <p>Tu peux choisir dans quel ordre tu veux commencer.<br/>
-       Scrolle pour découvrir les 7 tangrams et appuie sur un d'eux pour commencer à le colorer !</p>
+    <p>Voici les 7 tangrams à compléter selon ton envie !<br/>Scrolle pour les découvrir !</p>
   </div>
 
   <div class="flex flex-col">

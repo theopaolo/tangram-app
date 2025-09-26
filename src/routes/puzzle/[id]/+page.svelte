@@ -712,10 +712,17 @@
   }
 </style>
 
-<div class="top-5 left-5  fixed title z-10 w-max text-title inf-bold mx-auto w-fit bg-white border py-1 px-[14px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">CHROMOGRAM #1</div>
-<div class="top-7 right-5 fixed z-10 text-mini inf-bold border border-black px-4 py-1 rounded-full">RETOUR TANGRAMS</div>
+	<header class="fixed left-5 top-0 z-10 flex items-center pt-[20px] mix-blend-difference">
+  		<a href="/puzzles" class="" aria-label="Retour à l'accueil">
+				<svg width="33" height="22" viewBox="0 0 33 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M32.83 8.84H7.68L13.69 2.83L10.86 0L2.85 8.01L2.83 7.99L0 10.82L0.02 10.84L0 10.86L2.83 13.69L2.85 13.67L10.87 21.69L13.7 18.86L7.68 12.84H32.83V8.84Z" fill="black"/>
+				</svg>
+			</a>
+		</header>
 
-  <div class="z-10 top-25 left-5 fixed text-11" >
+
+    
+  <div class="z-10 top-5 right-5 fixed text-11" >
     1. Fais glisser une des formes du bas vers le tangram.<br/>
     2. Appuie sur la forme pour la faire pivoter.<br/>
     3. Dépose la forme à son emplacement.<br/>
@@ -726,7 +733,7 @@
 
   <!-- Puzzle area with padding -->
   <div class="h-full">
-    <div class="pt-[80px] puzzle-container {puzzleSolved ? 'puzzle-solved' : ''}"
+    <div class="puzzle-container {puzzleSolved ? 'puzzle-solved' : ''}"
           bind:this={puzzleContainer}
           use:observeResize
           role="main"

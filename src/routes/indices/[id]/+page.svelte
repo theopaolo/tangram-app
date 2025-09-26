@@ -37,15 +37,15 @@
 			swiperEl.initialize();
 		}
 		// Scroll spy
-		scrollContainer.addEventListener('scroll', onScrollThrottled, { passive: true });
-		scrollContainer.addEventListener('resize', onScrollThrottled);
+		// scrollContainer.addEventListener('scroll', onScrollThrottled, { passive: true });
+		// scrollContainer.addEventListener('resize', onScrollThrottled);
 
-		updateActiveOnScroll();
+		// updateActiveOnScroll();
 
-		return () => {
-			scrollContainer.removeEventListener('scroll', onScrollThrottled);
-			scrollContainer.removeEventListener('resize', onScrollThrottled);
-		};
+		// return () => {
+		// 	scrollContainer.removeEventListener('scroll', onScrollThrottled);
+		// 	scrollContainer.removeEventListener('resize', onScrollThrottled);
+		// };
 
 
 	});
@@ -97,63 +97,63 @@
 	// ——————————————————
 	// Smooth scroll dans le container
 	// ——————————————————
-	function smoothScrollTo(to, duration = SCROLL_MS) {
-		const start = scrollContainer.scrollTop;
-		const delta = to - start;
-		const t0 = performance.now();
-		const ease = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
+	// function smoothScrollTo(to, duration = SCROLL_MS) {
+	// 	const start = scrollContainer.scrollTop;
+	// 	const delta = to - start;
+	// 	const t0 = performance.now();
+	// 	const ease = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
 
-		function step(now) {
-			const p = Math.min((now - t0) / duration, 1);
-			scrollContainer.scrollTo(0, start + delta * ease(p));
-			if (p < 1) requestAnimationFrame(step);
-		}
-		requestAnimationFrame(step);
-	}
+	// 	function step(now) {
+	// 		const p = Math.min((now - t0) / duration, 1);
+	// 		scrollContainer.scrollTo(0, start + delta * ease(p));
+	// 		if (p < 1) requestAnimationFrame(step);
+	// 	}
+	// 	requestAnimationFrame(step);
+	// }
 
-	function setActiveAndScroll(i) {
-		const el = document.getElementById(`section-${i}`);
-		if (!el) return;
+	// function setActiveAndScroll(i) {
+	// 	const el = document.getElementById(`section-${i}`);
+	// 	if (!el) return;
 
-		const top =
-			el.getBoundingClientRect().top -
-			scrollContainer.getBoundingClientRect().top +
-			scrollContainer.scrollTop -
-			OFFSET;
+	// 	const top =
+	// 		el.getBoundingClientRect().top -
+	// 		scrollContainer.getBoundingClientRect().top +
+	// 		scrollContainer.scrollTop -
+	// 		OFFSET;
 
-		smoothScrollTo(top, 800);
-	}
+	// 	smoothScrollTo(top, 800);
+	// }
 
 	// ——————————————————
 	// Scroll spy
 	// ——————————————————
-	let _raf = 0;
+	// let _raf = 0;
 
-	function updateActiveOnScroll() {
-		const y = scrollContainer.scrollTop + OFFSET + 1;
-		let nextActive = 0;
+	// function updateActiveOnScroll() {
+	// 	const y = scrollContainer.scrollTop + OFFSET + 1;
+	// 	let nextActive = 0;
 
-		for (let i = 0; i < LABELS.length; i++) {
-			const el = document.getElementById(`section-${i}`);
-			if (!el) continue;
-			const top = el.offsetTop;
-			if (y >= top) nextActive = i;
-		}
-		active = nextActive;
-	}
+	// 	for (let i = 0; i < LABELS.length; i++) {
+	// 		const el = document.getElementById(`section-${i}`);
+	// 		if (!el) continue;
+	// 		const top = el.offsetTop;
+	// 		if (y >= top) nextActive = i;
+	// 	}
+	// 	active = nextActive;
+	// }
 
-	function onScrollThrottled() {
-		if (_raf) return;
-		_raf = requestAnimationFrame(() => {
-			_raf = 0;
-			updateActiveOnScroll();
-		});
-	}
+	// function onScrollThrottled() {
+	// 	if (_raf) return;
+	// 	_raf = requestAnimationFrame(() => {
+	// 		_raf = 0;
+	// 		updateActiveOnScroll();
+	// 	});
+	// }
 
-	$effect(() => {
-		pieceId;
-		requestAnimationFrame(updateActiveOnScroll);
-	});
+	// $effect(() => {
+	// 	pieceId;
+	// 	requestAnimationFrame(updateActiveOnScroll);
+	// });
 
 	function navigateToPiece(id) {
 		goto(`/indices/${id}`);
@@ -189,8 +189,8 @@
 <div bind:this={scrollContainer} class="scroll-container" style="background-color: {selected.size > 2 ? currentPiece?.color : 'white'}; color: {selected.size > 2 ? 'white' : 'black'}">
 	<div class="p-5 pt-0" id="section-0">
 		<!-- Header / onglets -->
-		<header class="sticky top-0 z-10 flex items-center bg-white pt-[30px] pb-[5px]" style="background-color: {selected.size > 2 ? currentPiece?.color : 'white'} ; ">
-			{#each LABELS as label, i}
+		<header class="sticky left-0 top-0 z-10 flex items-center pt-[20px] mix-blend-difference">
+			<!-- {#each LABELS as label, i}
 				<button
 					type="button"
 					on:click={() => setActiveAndScroll(i)}
@@ -203,29 +203,35 @@
 				>
 					{label}
 				</button>
-			{/each}
-			<a href="/start" class="absolute right-0" aria-label="Retour à l'accueil">
-				<svg
-					width="18"
-					height="18"
-					viewBox="0 0 18 18"
+			{/each} -->
+
+			<a href="/start" class="" aria-label="Retour à l'accueil">
+				<!-- <svg width="33" height="22" viewBox="0 0 33 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M32.83 8.84H7.68L13.69 2.83L10.86 0L2.85 8.01L2.83 7.99L0 10.82L0.02 10.84L0 10.86L2.83 13.69L2.85 13.67L10.87 21.69L13.7 18.86L7.68 12.84H32.83V8.84Z" fill="white"/>
+				</svg> -->
+
+					<svg fill="none" height="29" viewBox="0 0 28 29" width="28" xmlns="http://www.w3.org/2000/svg"><path d="m17.1387 2.83008-8.98929 9.00002h19.84569l.0049 4h-20.88281l9.88281 9.8935-2.8271 2.8301-14.0879391-14.1055.0156251-.0166-.100586-.1015 14.3125-14.3301z" fill="#fff"/></svg>
+				<!-- <svg
+					width="29"
+					height="29"
+					viewBox="0 0 29 29"
 					fill="none"
 					xmlns="http://www.w3.org/2000/svg"
 				>
 					<path
-						d="M17.1421 15.1421L15.0208 17.2635L0.87868 3.12132L3 1L17.1421 15.1421Z"
+						d="M28.8613 25.8936L26.0347 28.7238L0.173337 2.83019L3 0L28.8613 25.8936Z"
 						fill="black"
 					/>
 					<path
-						d="M2.85786 17.1421L0.736544 15.0208L14.8787 0.87868L17 3L2.85786 17.1421Z"
+						d="M3.13867 28.8936L0.312005 26.0634L26.1733 0.16981L29 3L3.13867 28.8936Z"
 						fill="black"
 					/>
-				</svg>
+				</svg> -->
 			</a>
 		</header>
 
 		<!-- Swiper -->
-		<div class="mt-[40px] mb-4 w-full" style="">
+		<div class="mt-5 mb-4 w-full" style="">
 			<swiper-container bind:this={swiperEl}>
 				{#each currentPiece.images as img, i (i)}
 					<swiper-slide>
@@ -244,27 +250,22 @@
 
 		<!-- Infos oeuvre -->
 		<div class="flex flex-col">
-			<h2 class="text-titre-alt whitespace-pre-line uppercase italic">
+			<h2 class="text-dixsept whitespace-pre-line uppercase italic">
 				{currentPiece.titre_artwork}
 			</h2>
 			<p>{currentPiece.artiste} - {currentPiece.date}</p>
 			<p class="mt-3">{currentPiece.story}</p>
 		</div>
 
-		<!-- QCM simple -->
-		<div class="mt-6 mb-15">
+		<!-- <div class="mt-6 mb-15">
 			<span class="text-titre-alt inf-bold">Tu avais trouvé cette œuvre ?</span><br />
 
 			<div class="flex mt-2 gap-8">
-			<!-- Bah oui ! -->
 				<div
 					class="relative flex w-max cursor-pointer touch-none text-11 items-center space-x-2 select-none"
 					class:selected={selectedAnswer === 0}
 					on:click={() => toggleAnswer(0)}
 				>
-					<!-- <svg width="11" height="6" viewBox="0 0 11 6" class="shrink-0" fill="currentColor">
-						<path d="M11 3 6 .113v5.774L11 3ZM0 3v.5h6.5V3H0Zm0-1v.5h6.5V2H0Z" />
-					</svg> -->
 					<span
 					style="background-color: {selected.size > 2 ? currentPiece?.color : ''}"
 					class="opacity-40 py-1 px-5 border rounded-full m-0 text-{selected.size > 2 ? 'white' : 'black'}"
@@ -293,15 +294,11 @@
 				</div>
 
 
-				<!-- Et nan… -->
 				<div
 					class="relative flex w-max cursor-pointer touch-none text-11 items-center space-x-2 select-none"
 					class:selected={selectedAnswer === 1}
 					on:click={() => toggleAnswer(1)}
 				>
-					<!-- <svg width="11" height="6" viewBox="0 0 11 6" class="shrink-0" fill="currentColor">
-						<path d="M11 3 6 .113v5.774L11 3ZM0 3v.5h6.5V3H0Zm0-1v.5h6.5V2H0Z" />
-					</svg> -->
 					<span
 					style="background-color: {selected.size > 2 ? currentPiece?.color : ''}"
 					class="opacity-40 py-1 px-5 border rounded-full m-0 text-{selected.size > 2 ? 'white' : 'black'}"
@@ -333,14 +330,14 @@
 
 
 			</div>
-		</div>
+		</div> -->
 
 		<!-- Bloc "D'après toi..." -->
-		<div class="relative mb-15 bg-black border-white border px-5 py-6 pb-10 text-white" id="section-1"   style="background-color: {selected.size > 0 ? currentPiece?.color : 'black'}">
+		<div class="relative mt-15 mb-16 bg-black border-white border px-5 py-6 pb-10 text-white" id="section-1"   style="background-color: {selected.size > 0 ? currentPiece?.color : 'black'}">
 			<img
 				src="/images/aro_dapres_bas.svg"
 				alt="indic"
-				class="absolute right-5 bottom-2 h-auto !w-[105px]"
+				class="absolute right-5 bottom-2 h-auto !w-[97.9px]"
 			/>
 			<div class="text-titre-alt inf-bold bah mb-4">{currentPiece.dapres_toi}</div>
 
@@ -374,7 +371,7 @@
 		</div>
 
 
-    <div class="min-h-svh">
+    <div class="mb-25">
       <!-- Bloc Couleur (GSAP press & hold) -->
       <div
         id="section-2"
@@ -416,7 +413,7 @@
         {/each}
       </div>
 
-      <div class="mt-5 mb-15 text-center">
+      <div class="mt-5 mb-15 text-center text-titre-alt">
         <p>
           {#if totalPiece === 0}
             Tu n'as découvert aucune couleur
@@ -445,7 +442,7 @@
               <img
                 src="/images/indic_camera_oeuvre.svg"
                 alt="gauche"
-                class="pointer-events-none mr-2 h-auto !w-[105.96px] max-w-none"
+                class="pointer-events-none mr-2 h-auto !w-[116.556px] max-w-none"
               />
             </div>
           </div>
@@ -453,11 +450,10 @@
       {:else}
 	  <div class="mx-auto w-fit">
         <a href="/puzzles" class="text-bouton inf-bold z-10 border bg-white px-[15px] py-[7px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]" >
-          ACCÉDER AUX PUZZLES
+          ACCÉDER AUX TANGRAMS
         </a>
 	  </div>
       {/if}
-
     </div>
   </div>
 </div>
@@ -465,7 +461,7 @@
 
 
 <style>
-		.scroll-container {
+	.scroll-container {
 		height: 100vh;
 		overflow-y: auto;
 		overflow-x: hidden;

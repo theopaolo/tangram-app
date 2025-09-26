@@ -62,13 +62,13 @@
 	});
 </script>
 
-<div class="title text-title inf-bold fixed top-5 left-5 z-10 mx-aut w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">
+<div class="title text-title inf-bold fixed top-[20px] left-[20px] z-10 mx-aut w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">
 	<a href="/">CHROMOGRAM #1</a>
 </div>
 
 <div class="fixed top-3 right-5 z-30">
 	<button onclick={() => isAideOpen.open()} aria-label="Aide" class="flex bg-transparent border-none cursor-pointer flex flex-row gap-2">
-		<img class="mt-2" src="/images/quoi.svg" alt="quoi" />
+		<!-- <img class="mt-2" src="/images/quoi.svg" alt="quoi" /> -->
 		<div class="text-inter inf-bold">?</div>
 	</button>
 </div>
@@ -92,8 +92,8 @@
 
 	<div class="relative h-[80dvw] w-[80dvw]">
 		{#if totalFound === 1}
-			<div class="absolute top-full left-0 !w-[101px]">
-				<img src="/images/couleur.png" alt="couleur" class="" />
+			<div class="absolute top-full left-0 !w-[112.2px]">
+				<img src="/images/couleur.svg" alt="couleur" class="" />
 			</div>
 		{/if}
 		{#if totalFound === 7}
@@ -114,8 +114,8 @@
 				</svg>
 			</a>
 			{#if totalFound === 0 || totalFound === 1}
-				<div class="absolute top-1/2 left-15 !w-[108.3px] translate-y-[-50%]">
-					<img src="/images/arrow_cam.png" alt="camera" class="" />
+				<div class="absolute top-1/2 left-full ml-2 !w-[105.787px] translate-y-[-50%]">
+					<img src="/images/arrow_cam.svg" alt="camera" class="" />
 				</div>
 			{/if}
 		{:else}
@@ -134,43 +134,43 @@
 	<div>
 		<div class="piece p1">
 			<svg viewBox="0 0 7.5 2.5">
-				<polygon points="7.5,2.5 2.5,2.5 0,0 5,0" onclick={() => handleClick('1')} />
+				<polygon stroke-linejoin="bevel" points="7.5,2.5 2.5,2.5 0,0 5,0" onclick={() => handleClick('1')} />
 			</svg>
 		</div>
 
 		<div class="piece p2">
 			<svg viewBox="0 0 5 5">
-				<polygon points="0,0 5,0 5,5" onclick={() => handleClick('2')} />
+				<polygon stroke-linejoin="bevel" points="0,0 5,0 5,5" onclick={() => handleClick('2')} />
 			</svg>
 		</div>
 
 		<div class="piece p3">
 			<svg viewBox="0 0 5 10">
-				<polygon points="0,10 0,0 5,5" onclick={() => handleClick('3')} />
+				<polygon stroke-linejoin="bevel" points="0,10 0,0 5,5" onclick={() => handleClick('3')} />
 			</svg>
 		</div>
 
 		<div class="piece p4">
 			<svg viewBox="0 0 2.5 5">
-				<polygon points="2.5,5 2.5,0 0,2.5" onclick={() => handleClick('4')} />
+				<polygon stroke-linejoin="bevel" points="2.5,5 2.5,0 0,2.5" onclick={() => handleClick('4')} />
 			</svg>
 		</div>
 
 		<div class="piece p5">
 			<svg viewBox="0 0 10 5">
-				<polygon points="0,5 10,5 5,0" onclick={() => handleClick('5')} />
+				<polygon stroke-linejoin="bevel" points="0,5 10,5 5,0" onclick={() => handleClick('5')} />
 			</svg>
 		</div>
 
 		<div class="piece p6">
 			<svg viewBox="0 0 5 5">
-				<polygon points="0,2.5 2.5,0 5,2.5 2.5,5" onclick={() => handleClick('6')} />
+				<polygon stroke-linejoin="bevel" points="0,2.5 2.5,0 5,2.5 2.5,5" onclick={() => handleClick('6')} />
 			</svg>
 		</div>
 
 		<div class="piece p7">
 			<svg viewBox="0 0 5 2.5">
-				<polygon points="5,0 0,0 2.5,2.5" onclick={() => handleClick('7')} />
+				<polygon stroke-linejoin="bevel" points="5,0 0,0 2.5,2.5" onclick={() => handleClick('7')} />
 			</svg>
 		</div>
 	</div>
