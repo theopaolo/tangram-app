@@ -6,7 +6,7 @@
   import { fly } from 'svelte/transition';
   import createInteractionHandler from '../../../lib/interaction.js';
 
-  
+
   import Breadcrumb from '$lib/Breadcrumb.svelte';
   import { getPuzzleById, PIECES_DATA, PIECES_DATA_WITH_VIEWBOX } from '$lib/puzzleData.js';
   import {
@@ -510,11 +510,6 @@
   -webkit-touch-callout: none;
   }
 
-  .puzzle-solved {
-    /* border-color: #4CAF50;
-    box-shadow: 0 0 20px rgba(76, 175, 80, 0.3); */
-  }
-
   .target-outline, .tangram-piece {
     position: absolute;
     top: 0;
@@ -791,6 +786,9 @@
       {@const pieceData = PIECES_DATA_WITH_VIEWBOX[piece.id]}
         <div class="container-piece relative z-1" class:is-placeholder={!piece.inContainer}>
           <svg viewBox={pieceData.viewBox}>
+             <!-- 1. Make polygon draggable only when out of container -->
+             <!-- 2. Polygon onclick throw out of the container into the puzzle area -->
+             <!-- 3. If polygon dragged back to container, automatticaly place it back to his original position -->
             <polygon
               use:draggable={piece.inContainer && { pieceId: piece.id }}
               points={pieceData.points}

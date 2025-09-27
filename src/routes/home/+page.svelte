@@ -277,7 +277,7 @@
 
 <div class="">
 	<div
-		class="title text-intro inf-bold fixed top-[35px] left-[50%] z-10 mx-auto w-fit w-max -translate-x-1/2 transform border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]"
+		class="title text-intro inf-bold fixed top-[35px] left-[50%] z-10 mx-auto 	w-max -translate-x-1/2 transform border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]"
 	>
 		CHROMOGRAM #1
 	</div>
@@ -337,7 +337,7 @@
 </div>
 
 <div
-	class="meme d-none absolute inset-x-0 top-0 z-10 flex h-[100dvh] flex-col items-center justify-evenly px-2 pt-[105px] pb-[25px]"
+	class="meme d-none absolute inset-x-0 top-0 z-10 flex h-dvh flex-col items-center justify-evenly px-2 pt-[105px] pb-[25px]"
 >
 	<div class="text-bouton intro-intro height-auto max-w-prose text-center whitespace-pre-line">
 		CHROMOGRAM ou tangram des couleurs est un jeu proposé par l'artiste Armelle Caron qui se
