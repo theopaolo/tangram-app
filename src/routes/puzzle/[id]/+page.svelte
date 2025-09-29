@@ -786,9 +786,6 @@
       {@const pieceData = PIECES_DATA_WITH_VIEWBOX[piece.id]}
         <div class="container-piece relative z-1" class:is-placeholder={!piece.inContainer}>
           <svg viewBox={pieceData.viewBox}>
-             <!-- 1. Make polygon draggable only when out of container -->
-             <!-- 2. Polygon onclick throw out of the container into the puzzle area -->
-             <!-- 3. If polygon dragged back to container, automatticaly place it back to his original position -->
             <polygon
               use:draggable={piece.inContainer && { pieceId: piece.id }}
               points={pieceData.points}
