@@ -99,11 +99,11 @@
 				<img src="/images/couleur.svg" alt="couleur" class="" />
 			</div>
 		{/if}
-		{#if totalFound === 7}
+		<!-- {#if totalFound === 7}
 			<a href="" class="relative top-7 text-mini text-white inf-bold pointer-events-auto z-10 w-fit border bg-black px-[15px] py-[7px] tracking-[4%] " >
 				TÉLÉCHARGE TON FOND D'ECRAN !
 			</a>
-		{/if}
+		{/if} -->
 	</div>
 
 	<div class="relative">

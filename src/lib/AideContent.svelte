@@ -210,14 +210,15 @@
 					Complète le tangram en scannant les 7 QR codes cachés et accède aux puzzles.
 				</div>
 			</div>
+			
 			<div class="mb-5 bg-black p-5">
 				<div>
-					Débloque un fond d'écran conçu par Armelle Caron.
+					Résous selon ton envie les 7 tangrams du CHROMOGRAM.
 				</div>
 			</div>
 			<div class="mb-5 bg-black p-5">
 				<div>
-					Résous selon ton envie les 7 tangrams du CHROMOGRAM.
+					(Télécharge un fond d'écran)
 				</div>
 			</div>
 		</div>
