@@ -136,7 +136,7 @@
   }
 
   .puzzle-card {
-    padding: 20px;
+    /* padding: 20px; */
     /* margin-bottom: 40px; */
     display: flex;
     flex-direction: column;
@@ -189,6 +189,10 @@
     margin-bottom: 1rem;
   }
 
+  .puzzle-card:last-of-type{
+  border: none !important;
+  }
+
   .puzzle-card .status {
     padding: 0.25rem 0.75rem;
     font-size: 0.8rem;
@@ -196,13 +200,13 @@
   }
 
   .puzzle-card .status.completed {
-    background: #4CAF50;
-    color: white;
+    background: #fff;
+    color: rgb(0, 0, 0);
   }
 
   .puzzle-card .status.incomplete {
     background: #fff;
-    color: #666;
+    color: #a6a5a5;
   }
   .complet_1{
     bottom:10%;
@@ -244,7 +248,7 @@
 
 <!-- Puzzle Selection Screen -->
 <!-- <div class="p-5 mt-[90px]"> -->
-  <div class="p-5">
+  <div class="px-10">
   <div class="text-center absolute top-[110px] m-auto left-0 right-0 z-1 ">
     <p>Voici les 7 tangrams à compléter selon ton envie !<br/>Scrolle pour les découvrir !</p>
   </div>
@@ -252,8 +256,9 @@
   <div class="flex flex-col">
     {#each puzzles as puzzle}
       {@const previewScale = calculatePreviewScale(puzzle.data)}
-      <div class="puzzle-card h-svh border-[#ddd] border-b justify-center flex" onclick={() => selectPuzzle(puzzle.id)} role="button" tabindex="0"
-           onkeydown={(e) => e.key === 'Enter' && selectPuzzle(puzzle.id)}>
+      <div class="puzzle-card h-svh border-[#ddd] border-b justify-center flex" role="button" tabindex="0"
+          onclick={() => selectPuzzle(puzzle.id)} 
+          onkeydown={(e) => e.key === 'Enter' && selectPuzzle(puzzle.id)}>
         <div class="puzzle-preview w-full">
           {#each puzzle.data as piece}
             {@const pieceData = PIECES_DATA_WITH_VIEWBOX[piece.id]}
@@ -291,7 +296,7 @@
           {/if}
 
 
-
+<div class="absolute top-0 left-0 p-5 text-intro leading-none">#{puzzle.id}</div>
 
           <!-- <div class="status {puzzle.completed ? 'completed' : 'incomplete'} absolute bottom-0 left-0 right-0 margin-auto p-5 text-intro leading-none"> {puzzle.completed ? 'Terminé' : 'À compléter'}</div> -->
 
