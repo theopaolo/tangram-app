@@ -63,28 +63,31 @@
 </script>
 
 <div class="title text-title inf-bold fixed top-[20px] left-[20px] z-10 mx-aut w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">
-	<a href="/">CHROMOGRAM #1</a>
+	<a href="/start">CHROMOGRAM #1</a>
 </div>
 
+<!-- {#if totalFound !== 7} -->
 <div class="fixed top-3 right-5 z-30">
 	<button onclick={() => isAideOpen.open()} aria-label="Aide" class="flex bg-transparent border-none cursor-pointer flex flex-row gap-2">
 		<!-- <img class="mt-2" src="/images/quoi.svg" alt="quoi" /> -->
 		<div class="text-inter inf-bold">?</div>
 	</button>
 </div>
+<!-- {/if} -->
 
-<div class="bloc_one pointer-events-none absolute top-0 left-0 z-30 flex h-svh w-screen flex-col items-center justify-evenly pt-[80px] pb-[80px] text-center" >
+
+<div class="bloc_one pointer-events-none absolute top-0 left-0 z-30 flex h-svh w-screen flex-col items-center justify-evenly py-[80px] text-center" >
 	<div class="w-[80dvw]">
 		<p>
 			{#if totalFound === 0}
-				Pars à la recherche des 7 formes du tangram pour débloquer le CHROMOGRAM !
+				Pars à la recherche des 7 couleurs du tangram pour débloquer le CHROMOGRAM !
 			{:else if totalFound === 7}
 				Bravo ! Tu as débloqué toutes les couleurs !<br/>Les tangrams sont maintenant disponibles en
 				cliquant en bas de page !<br/>
 			{:else if totalFound === 1}
-				Tu as découvert 1 forme.<br />Rassemble les 7 formes pour débloquer le CHROMOGRAM !
+				Tu as découvert 1 couleur.<br />Rassemble les 7 formes pour débloquer le CHROMOGRAM !
 			{:else}
-				Tu as déjà découvert {totalFound} formes.<br />Rassemble les 7 formes pour débloquer le
+				Tu as déjà découvert {totalFound} couleurs.<br />Rassemble les 7 formes pour débloquer le
 				CHROMOGRAM !
 			{/if}
 		</p>
@@ -97,8 +100,8 @@
 			</div>
 		{/if}
 		{#if totalFound === 7}
-			<a href="" class="absolute right-5 top-5 text-mini text-white inf-bold pointer-events-auto z-10 w-fit border bg-black px-[15px] py-[7px] tracking-[4%] rounded-full" >
-				TÉLÉCHARGE TON FOND D'ECRAN
+			<a href="" class="relative top-7 text-mini text-white inf-bold pointer-events-auto z-10 w-fit border bg-black px-[15px] py-[7px] tracking-[4%] " >
+				TÉLÉCHARGE TON FOND D'ECRAN !
 			</a>
 		{/if}
 	</div>
@@ -119,9 +122,12 @@
 				</div>
 			{/if}
 		{:else}
-			<a href="/puzzles" class="text-bouton inf-bold pointer-events-auto z-10 w-fit border bg-white px-[15px] py-[7px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]" >
-				ACCÉDER AUX TANGRAMS
-			</a>
+		
+			<div class="pointer-events-auto z-10 h-[43px]">
+				<a href="/puzzles" class="mt-[3px] text-bouton inf-bold w-fit border bg-white px-[15px] py-[7px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]" >
+					ACCÈDE AUX TANGRAMS
+				</a>
+			</div>
 		{/if}
 	</div>
 </div>

@@ -76,7 +76,7 @@
 
 
 <div class="title text-title inf-bold fixed top-5 left-5 z-40 mx-aut w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">
-	CHROMOGRAM #1
+	<a href="/start">CHROMOGRAM #1</a>
 </div>
 
 <!-- <div class="fixed top-3 right-5 z-40">
