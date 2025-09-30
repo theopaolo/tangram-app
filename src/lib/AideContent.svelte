@@ -155,7 +155,7 @@
 </script>
 
 {#if $isAideOpen}
-<div class="aide-overlay fixed inset-0 z-50" in:fly={{ y: -100, duration: 400 }} out:fly={{ y: -100, duration: 300 }} onintroend={initializeGSAP}>
+<div class="aide-overlay fixed inset-0 z-50" in:fly={{ y: -100, duration: 400 }} out:fly={{ y: -100, duration: 400 }} onintroend={initializeGSAP}>
 	<div class="aide-surface z-50">
 	<header class="fixed top-[30px] right-5 z-10">
 		<button
