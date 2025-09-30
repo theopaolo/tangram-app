@@ -718,9 +718,9 @@
 <header class="fixed left-5 top-0 z-10 flex items-center pt-[20px] mix-blend-difference">
     <a href="/puzzles" class="flex gap-2" aria-label="Retour à l'accueil">
       <img
-      src="/images/tangrams_grey.svg"
+      src="/images/chat.svg"
       alt="grey"
-      class="h-auto !w-[32px]"
+      class="h-auto !w-[42px]"
     />
       <img
       src="/images/retour_tangrams.svg"
