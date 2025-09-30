@@ -206,12 +206,41 @@
     background: #e0e0e0;
     color: #666;
   }
+  .complet_1{
+    bottom:10%;
+    left:10%;
+  }
+  .complet_2{
+    bottom:10%;
+    right:10%;
+  }
+  .complet_3{
+    top:10%;
+    left:10%;
+  }
+    .complet_4{
+    bottom:10%;
+    left:10%;
+  }
+    .complet_5{
+    top:10%;
+    left:10%;
+  }
+    .complet_6{
+    top:10%;
+    right:10%;
+  }
+    .complet_7{
+    bottom:10%;
+    right:10%;
+  }
+
 </style>
 
 <!-- Title -->
 
 <div class="title text-title inf-bold fixed top-5 left-5 z-40 mx-aut w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)] s-W8Sv8E2Q9PhB">
-	CHROMOGRAM #1
+	<a href="/start">CHROMOGRAM #1</a>
 </div>
 
 
@@ -226,7 +255,7 @@
       {@const previewScale = calculatePreviewScale(puzzle.data)}
       <div class="puzzle-card" onclick={() => selectPuzzle(puzzle.id)} role="button" tabindex="0"
            onkeydown={(e) => e.key === 'Enter' && selectPuzzle(puzzle.id)}>
-        <div class="puzzle-preview w-full">
+        <div class="puzzle-preview w-full !bg-white border-[#ddd] border-b">
           {#each puzzle.data as piece}
             {@const pieceData = PIECES_DATA_WITH_VIEWBOX[piece.id]}
             {@const previewPos = calculatePreviewPosition(piece, puzzle.data, previewScale)}
@@ -246,8 +275,26 @@
               </svg>
             </div>
           {/each}
-          <div class="absolute bottom-0 left-0 p-5 text-intro leading-none">#{puzzle.id}</div>
-          <div class="status {puzzle.completed ? 'completed' : 'incomplete'} absolute bottom-0 left-0 right-0 margin-auto p-5 text-intro leading-none"> {puzzle.completed ? 'Terminé' : 'À compléter'}</div>
+          <!-- <div class="absolute bottom-0 left-0 p-5 text-intro leading-none">#{puzzle.id}</div> -->
+
+          {#if puzzle.completed}
+            <!-- RIEN -->
+
+          {:else}
+            
+             <div class="absolute complet_{puzzle.id}">
+              <img
+                src="/images/complet_{puzzle.id}.svg"
+                alt="complet #{puzzle.id}"
+                class=""
+              />
+            </div>
+          {/if}
+
+
+
+
+          <!-- <div class="status {puzzle.completed ? 'completed' : 'incomplete'} absolute bottom-0 left-0 right-0 margin-auto p-5 text-intro leading-none"> {puzzle.completed ? 'Terminé' : 'À compléter'}</div> -->
 
         </div>
         <!-- <p>{puzzle.description}</p> -->

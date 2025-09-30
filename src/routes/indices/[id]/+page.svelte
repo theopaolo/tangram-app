@@ -9,6 +9,26 @@
 
 	let foundPieces = $derived($piecesStore);
 
+
+	
+	//  const colors = Object.keys(PIECES_DATA).map(id => PIECES_DATA[id].color);
+  	// const marsGradient = `linear-gradient(90deg, ${colors.join(', ')}`;
+
+
+// const colors = Object.keys(PIECES_DATA).map(id => PIECES_DATA[id].color);
+
+//   let currentColorIndex = 0;
+//   let marsEl;
+
+//   onMount(() => {
+//     setInterval(() => {
+//       currentColorIndex = (currentColorIndex + 1) % colors.length;
+//       marsEl.style.stroke = colors[currentColorIndex];
+//     }, 2500); // 1s par couleur
+//   });
+
+
+
 	let scrollContainer = $state(null);
 
 	import { register } from 'swiper/element/bundle';
@@ -189,49 +209,23 @@
 <div bind:this={scrollContainer} class="scroll-container" style="background-color: {selected.size > 2 ? currentPiece?.color : 'white'}; color: {selected.size > 2 ? 'white' : 'black'}">
 	<div class="p-5 pt-0" id="section-0">
 		<!-- Header / onglets -->
-		<header class="sticky left-0 top-0 z-10 flex items-center pt-[20px] mix-blend-difference">
-			<!-- {#each LABELS as label, i}
-				<button
-					type="button"
-					on:click={() => setActiveAndScroll(i)}
-					class="text-11 mr-[20px] w-fit border px-[11px] py-1 tracking-[4%] transition-colors"
-					class:bg-black={active === i}
-					class:bg-white={active !== i}
-					class:text-white={active === i}
-					class:text-black={active !== i}
-					class:border-black={active === i}
-				>
-					{label}
-				</button>
-			{/each} -->
+		<header class="sticky left-5 top-0 z-10 flex items-center pt-4 pb-4 bg-white">
+			<a href="/start" class="flex gap-2" aria-label="Retour à l'accueil">
+			
+				<svg  width="32" height="32" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path bind:this={marsEl} d="M12.9639 0.700195L13.0068 0.705078C13.0168 0.704069 13.0269 0.700195 13.0371 0.700195H24.9258C25.0915 0.700195 25.2256 0.834315 25.2256 1V25C25.2256 25.0795 25.1939 25.1557 25.1377 25.2119C25.0814 25.2681 25.0053 25.2998 24.9258 25.2998H1C0.83434 25.2998 0.700237 25.1657 0.700195 25V1C0.700195 0.834315 0.834315 0.700195 1 0.700195H12.9639ZM1.72559 24.7002H24.2002L18.7324 19.249C18.7314 19.248 18.7305 19.2471 18.7295 19.2461L12.9629 13.4971L1.72559 24.7002ZM1.2998 24.2764L12.54 13.0713L6.76758 7.21094L1.2998 1.72559V24.2764ZM19.4082 19.0752L24.626 24.2764V13.8408L19.4082 19.0752ZM13.4219 13.042L18.96 18.5967L24.502 13.0713L18.9814 7.46484L13.4219 13.042ZM13.0342 12.5742L18.2275 7.2998H7.74414L13.0342 12.5742ZM19.1816 6.8125H19.2119L24.626 12.2432V1.2998H13.7539L19.1816 6.8125ZM7.14258 6.7002H18.2227L12.8389 1.2998H1.72656L7.14258 6.7002Z" fill="black"/>
+				</svg>
 
-			<a href="/start" class="" aria-label="Retour à l'accueil">
-				<!-- <svg width="33" height="22" viewBox="0 0 33 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path d="M32.83 8.84H7.68L13.69 2.83L10.86 0L2.85 8.01L2.83 7.99L0 10.82L0.02 10.84L0 10.86L2.83 13.69L2.85 13.67L10.87 21.69L13.7 18.86L7.68 12.84H32.83V8.84Z" fill="white"/>
-				</svg> -->
-
-					<svg fill="none" height="29" viewBox="0 0 28 29" width="28" xmlns="http://www.w3.org/2000/svg"><path d="m17.1387 2.83008-8.98929 9.00002h19.84569l.0049 4h-20.88281l9.88281 9.8935-2.8271 2.8301-14.0879391-14.1055.0156251-.0166-.100586-.1015 14.3125-14.3301z" fill="#fff"/></svg>
-				<!-- <svg
-					width="29"
-					height="29"
-					viewBox="0 0 29 29"
-					fill="none"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<path
-						d="M28.8613 25.8936L26.0347 28.7238L0.173337 2.83019L3 0L28.8613 25.8936Z"
-						fill="black"
+				<img
+				src="/images/retour_couleurs.svg"
+				alt="retour"
+				class="h-auto !w-[97.9px]"
 					/>
-					<path
-						d="M3.13867 28.8936L0.312005 26.0634L26.1733 0.16981L29 3L3.13867 28.8936Z"
-						fill="black"
-					/>
-				</svg> -->
 			</a>
 		</header>
 
 		<!-- Swiper -->
-		<div class="mt-5 mb-4 w-full" style="">
+		<div class=" mb-4 w-full" style="">
 			<swiper-container bind:this={swiperEl}>
 				{#each currentPiece.images as img, i (i)}
 					<swiper-slide>
@@ -450,7 +444,7 @@
       {:else}
 	  <div class="mx-auto w-fit">
         <a href="/puzzles" class="text-bouton inf-bold z-10 border bg-white px-[15px] py-[7px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]" >
-          ACCÉDER AUX TANGRAMS
+          ACCÈDE AUX TANGRAMS
         </a>
 	  </div>
       {/if}
@@ -461,6 +455,7 @@
 
 
 <style>
+
 	.scroll-container {
 		height: 100vh;
 		overflow-y: auto;
