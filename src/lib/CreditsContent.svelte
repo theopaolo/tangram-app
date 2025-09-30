@@ -98,8 +98,8 @@
 </script>
 
 {#if $isCreditsOpen}
-<div class="credits-overlay fixed inset-0 z-50" in:fly={{ y: 100, duration: 400 }} out:fly={{ y: 100, duration: 400 }}>
-	<div class="credits-surface z-50" onintroend={initializeGSAP}>
+<div class="credits-overlay fixed inset-0 z-50" in:fly={{ y: 100, duration: 400 }} out:fly={{ y: 100, duration: 400 }} onintroend={initializeGSAP}>
+	<div class="credits-surface z-50">
 		<!-- Animated background -->
 		<div class="animated-bg" style="background-color: {VARS[0]}"></div>
 
