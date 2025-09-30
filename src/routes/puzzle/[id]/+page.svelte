@@ -737,7 +737,6 @@
     <button
         type="button"
         class="absolute right-3 top-3"
-        onclick={handleClose}
         aria-label="Fermer l'aide"
       >
         <svg width="16" height="16" viewBox="0 0 29 29" fill="black" xmlns="http://www.w3.org/2000/svg">
