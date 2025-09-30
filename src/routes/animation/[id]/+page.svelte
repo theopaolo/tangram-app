@@ -32,7 +32,7 @@
     switch(id) {
       case '1':
         return {
-          cols: 3, rows: 20, w: 7.5, h: 2.5, rowGap: 0,
+          cols: 3, rows: 20, w: 7.5, h: 2.5, rowGap: -0.02,
           visibleCols: 2.6, shape: '7.5,2.5 2.5,2.5 0,0 5,0'
         };
       case '2':
