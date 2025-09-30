@@ -17,17 +17,20 @@
   } from '../../../lib/puzzleDebug.js';
 
 
+
+  // Get puzzle ID from URL params
+  const puzzleId = $derived($page.params.id);
+  const currentPuzzle = $derived(getPuzzleById(puzzleId));
+  let planePuzzle = $state([]);
+
   // Breadcrumb items
   const breadcrumbItems = [
     { label: 'Accueil', href: '/home' },
     { label: 'Les Couleurs', href: '/start' },
     { label: 'Les Tangrams', href: '/puzzles' },
-    { label: 'Nom du tangram', current: true }
+    { label: `numéro ${puzzleId}`, current: true }
   ];
-  // Get puzzle ID from URL params
-  const puzzleId = $derived($page.params.id);
-  const currentPuzzle = $derived(getPuzzleById(puzzleId));
-  let planePuzzle = $state([]);
+
 
   // Update planePuzzle when currentPuzzle changes
   $effect(() => {
@@ -712,22 +715,41 @@
   }
 </style>
 
-	<header class="fixed left-5 top-0 z-10 flex items-center pt-[20px] mix-blend-difference">
-  		<a href="/puzzles" class="" aria-label="Retour à l'accueil">
-				<svg width="33" height="22" viewBox="0 0 33 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path d="M32.83 8.84H7.68L13.69 2.83L10.86 0L2.85 8.01L2.83 7.99L0 10.82L0.02 10.84L0 10.86L2.83 13.69L2.85 13.67L10.87 21.69L13.7 18.86L7.68 12.84H32.83V8.84Z" fill="black"/>
-				</svg>
-			</a>
-		</header>
+<header class="fixed left-5 top-0 z-10 flex items-center pt-[20px] mix-blend-difference">
+    <a href="/puzzles" class="flex gap-2" aria-label="Retour à l'accueil">
+      <img
+      src="/images/tangrams_grey.svg"
+      alt="grey"
+      class="h-auto !w-[32px]"
+    />
+      <img
+      src="/images/retour_tangrams.svg"
+      alt="retour"
+      class="h-auto !w-[106.7px]"
+    />
+    </a>
+</header>
 
 
-    
-  <div class="z-10 top-5 right-5 fixed text-11" >
+<div class="fixed w-full h-svh flex items-center pointer-events-none z-100000000000000">
+
+  <div class="relative mx-auto w-max border drop-shadow-[var(--my-drop-shadow)] text-bouton px-9 py-10 max-h-max bg-white">
+    <button
+        type="button"
+        class="absolute right-3 top-3"
+        onclick={handleClose}
+        aria-label="Fermer l'aide"
+      >
+        <svg width="16" height="16" viewBox="0 0 29 29" fill="black" xmlns="http://www.w3.org/2000/svg">
+          <path d="M28.8613 25.8936L26.0347 28.7238L0.173337 2.83019L3 0L28.8613 25.8936Z" fill="black"/>
+          <path d="M3.13867 28.8936L0.312005 26.0634L26.1733 0.16981L29 3L3.13867 28.8936Z" fill="black"/>
+        </svg>
+		</button>
     1. Fais glisser une des formes du bas vers le tangram.<br/>
     2. Appuie sur la forme pour la faire pivoter.<br/>
     3. Dépose la forme à son emplacement.<br/>
+  </div>
 </div>
-
 
 <div class="puzzle-wrapper" onpointerdown={unlockAudio}>
 
