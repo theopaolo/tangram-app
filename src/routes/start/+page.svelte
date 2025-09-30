@@ -43,7 +43,7 @@
 
 	const breadcrumbItems = [
 		{ label: 'Accueil', href: '/home' },
-		{ label: 'Les Couleurs', current: true },
+		{ label: 'Le Chromogram', current: true },
 		{ label: 'Les Tangrams', disabled: true }
 	];
 
@@ -63,7 +63,7 @@
 </script>
 
 <div class="title text-title inf-bold fixed top-[20px] left-[20px] z-10 mx-aut w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">
-	<a href="/start">CHROMOGRAM #1</a>
+	<a href="/home">CHROMOGRAM #1</a>
 </div>
 
 <!-- {#if totalFound !== 7} -->

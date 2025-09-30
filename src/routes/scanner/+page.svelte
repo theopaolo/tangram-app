@@ -9,7 +9,7 @@
 
 	const breadcrumbItems = [
 		{ label: 'Accueil', href: '/home' },
-		{ label: 'Les Couleurs', href: '/start' },
+		{ label: 'Le Chromogram', href: '/start' },
 		{ label: 'Scanner', current: true},
 		// { label: 'Les Tangrams', disabled: true }
 	];

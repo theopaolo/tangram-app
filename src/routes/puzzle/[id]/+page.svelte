@@ -26,7 +26,7 @@
   // Breadcrumb items
   const breadcrumbItems = [
     { label: 'Accueil', href: '/home' },
-    { label: 'Les Couleurs', href: '/start' },
+    { label: 'Le Chromogram', href: '/start' },
     { label: 'Les Tangrams', href: '/puzzles' },
     { label: `numéro ${puzzleId}`, current: true }
   ];

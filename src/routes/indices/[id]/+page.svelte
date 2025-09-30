@@ -217,9 +217,9 @@
 				</svg>
 
 				<img
-				src="/images/retour_couleurs.svg"
+				src="/images/retour_chromo.svg"
 				alt="retour"
-				class="h-auto !w-[97.9px]"
+				class="h-auto !w-[99px]"
 					/>
 			</a>
 		</header>
