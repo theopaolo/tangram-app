@@ -99,13 +99,14 @@
 			left: '20px',
 			top: '20px',
 			// xPercent: 0,
-			x: 0,
 			duration: 0.6,
 			ease: 'power2.inOut'
 		});
 		gsap.fromTo(".title",{
+			x: "-50%",
 			fontSize: "1.75rem"
 		},{
+			x: 0,
 			fontSize: "1.188rem",
 		});
 
@@ -285,9 +286,10 @@
 
 <div class="">
 	<div
-		class="title text-intro inf-bold fixed top-[35px] left-[50%] z-10 mx-auto w-max -translate-x-1/2 transform border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]"
+		class="title text-intro inf-bold fixed top-[35px] left-[50%] z-1000 mx-auto w-max -translate-x-1/2 transform border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]"
 	>
-		CHROMOGRAM #1
+			<a href="/">CHROMOGRAM #1</a>
+
 	</div>
 	<div class="controls fixed right-[initial] bottom-[35px] left-[50%] z-20 -translate-x-[50%]">
 		<div
@@ -304,34 +306,20 @@
 	<div class="w-[80dvw]">
 		<p>
 			{#if totalFound === 0}
-				Pars à la recherche des 7 formes du tangram pour débloquer le CHROMOGRAM !
+				Pars à la recherche des 7 couleurs du tangram pour débloquer le CHROMOGRAM !
 			{:else if totalFound === 7}
 				Bravo ! Tu as débloqué toutes les couleurs !<br/>Les tangrams sont maintenant disponibles en
 				cliquant en bas de page !<br/>
 			{:else if totalFound === 1}
-				Tu as découvert 1 forme.<br />Rassemble les 7 formes pour débloquer le CHROMOGRAM !
+				Tu as découvert 1 couleur.<br />Rassemble les 7 formes pour débloquer le CHROMOGRAM !
 			{:else}
-				Tu as déjà découvert {totalFound} formes.<br />Rassemble les 7 formes pour débloquer le
+				Tu as déjà découvert {totalFound} couleurs.<br />Rassemble les 7 formes pour débloquer le
 				CHROMOGRAM !
 			{/if}
 		</p>
-
-		<!-- {#if totalPiece === 0}
-      Pars à la recherche des 7 formes du tangram pour débloquer le CHROMOGRAM !
-    {:else if totalPiece === 1}
-      Tu as déjà découvert 1 couleur !
-      Pars à la recherche des 6 formes restantes du tangram pour débloquer le CHROMOGRAM !
-    {:else if totalPiece === 6}
-      Tu as déjà découvert 6 couleurs sur 7 !
-      Pars à la recherche de la forme restante du tangram pour débloquer le CHROMOGRAM !
-    {:else if totalPiece === 7}
-      Bravo ! Tu as débloqué toutes les couleurs ! Les tangrams sont maintenant disponibles en cliquant en bas de page !
-    {:else}
-      Tu as déjà découvert {totalPiece} couleurs sur 7 !
-      Pars à la recherche des {totalPiece-1} formes restantes du tangram pour débloquer le CHROMOGRAM !
-    {/if}     -->
 	</div>
 	<div class="h-[80dvw] bg-transparent"></div>
+	
 	<div>
 		<svg width="52" height="43" viewBox="0 0 52 43" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<g clip-path="url(#clip0_2041_26)">
@@ -340,8 +328,7 @@
 			</g>
 		</svg>
 	</div>
-	<div class="text-mini fixed bottom-3.5 left-5 z-10">Accueil > Les Couleurs > Les Tangrams</div>
-	<div class="text-mini fixed right-5 bottom-3.5 z-10">Crédits</div>
+	
 </div>
 
 <div
@@ -361,6 +348,11 @@
 		<span>JOUER</span>
 	</div>
 </div>
+
+
+<footer class="fixed bottom-0 left-0 z-40 flex w-full items-center justify-between px-5 py-2">
+
+</footer>
 
 <div
 	class="conta absolute top-0 left-0 flex h-[103dvh] w-[103dvh] translate-0 flex-col justify-around"
@@ -467,7 +459,7 @@
 		left: -100%;
 	}
 	.p4 {
-		width: auto;
+		width: initial;
 		height: 50%;
 		bottom: initial;
 		right: initial;
