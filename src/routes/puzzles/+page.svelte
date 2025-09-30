@@ -91,7 +91,7 @@
 
 	const breadcrumbItems = [
 		{ label: 'Accueil', href: '/home' },
-		{ label: 'Les Couleurs', href: '/start' },
+		{ label: 'Le Chromogram', href: '/start' },
 		{ label: 'Les Tangrams', current: true }
 	];
 
@@ -137,7 +137,7 @@
 
   .puzzle-card {
     padding: 20px;
-    margin-bottom: 40px;
+    /* margin-bottom: 40px; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -149,9 +149,7 @@
     width: 100%;
     height: 550px;
     position: relative;
-    margin-bottom: 1rem;
     overflow: hidden;
-    background: #f2f2f2;
   }
 
   .puzzle-preview .tangram-piece {
@@ -203,7 +201,7 @@
   }
 
   .puzzle-card .status.incomplete {
-    background: #e0e0e0;
+    background: #fff;
     color: #666;
   }
   .complet_1{
@@ -245,17 +243,18 @@
 
 
 <!-- Puzzle Selection Screen -->
-<div class="p-5 mt-[90px]">
-  <div class="text-center">
+<!-- <div class="p-5 mt-[90px]"> -->
+  <div class="p-5">
+  <div class="text-center absolute top-[110px] m-auto left-0 right-0 z-1 ">
     <p>Voici les 7 tangrams à compléter selon ton envie !<br/>Scrolle pour les découvrir !</p>
   </div>
 
   <div class="flex flex-col">
     {#each puzzles as puzzle}
       {@const previewScale = calculatePreviewScale(puzzle.data)}
-      <div class="puzzle-card" onclick={() => selectPuzzle(puzzle.id)} role="button" tabindex="0"
+      <div class="puzzle-card h-svh border-[#ddd] border-b justify-center flex" onclick={() => selectPuzzle(puzzle.id)} role="button" tabindex="0"
            onkeydown={(e) => e.key === 'Enter' && selectPuzzle(puzzle.id)}>
-        <div class="puzzle-preview w-full !bg-white border-[#ddd] border-b">
+        <div class="puzzle-preview w-full">
           {#each puzzle.data as piece}
             {@const pieceData = PIECES_DATA_WITH_VIEWBOX[piece.id]}
             {@const previewPos = calculatePreviewPosition(piece, puzzle.data, previewScale)}
