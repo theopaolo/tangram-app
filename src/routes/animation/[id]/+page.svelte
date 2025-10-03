@@ -32,7 +32,7 @@
     switch(id) {
       case '1':
         return {
-          cols: 3, rows: 20, w: 7.5, h: 2.5, rowGap: -0.02,
+          cols: 5, rows: 16, w: 7.5, h: 2.5, rowGap: -0.02,
           visibleCols: 2.6, shape: '7.5,2.5 2.5,2.5 0,0 5,0'
         };
       case '2':
@@ -130,17 +130,17 @@
           gsap.to(polygon, {
             rotation: "+=360",
             transformOrigin: "50% 50%",
-            duration: 28,
+            duration: 210,
             repeat: -1,
             ease: "linear"
           });
-        });
+       });
 
         // Double click interaction
-        svg?.addEventListener("dblclick", () => {
+        whole?.addEventListener("dblclick", () => {
           const randomRotation = gsap.utils.random(-120, 180);
           gsap.to(svg, {
-            scale: zoomed ? 1 : 2,
+            scale: zoomed ? 1 : 2.1,
             rotation: `+=${randomRotation}`,
             transformOrigin: "40% 55%",
             duration: 1.2,
@@ -157,8 +157,9 @@
             gsap.to(piece, {
               x: `+=${dir}`,
               y: `+=${diro}`,
-              rotate: 360,
-              duration: 7,
+              // rotate: 360,
+              duration: 3,
+              transformOrigin: "40% 55%",
               ease: "power2.inOut",
               yoyo: true,
               repeat: 1,
@@ -517,6 +518,29 @@
         <g id="zoom-wrapper" transform={`translate(${-gridW / 2}, ${-gridH / 2})`}>
           {#each Array(config.rows) as _, r}
             <g class="row" transform={`translate(0, ${r * config.h})`}>
+              {#each Array(config.cols) as _, c}
+                <polygon
+                  fill={currentPiece.color}
+                  class="piece"
+                  points={config.shape}
+                  transform={`translate(${c * config.w}, 0)`}
+                />
+              {/each}
+            </g>
+          {/each}
+        </g>
+      </svg>
+    {:else if pieceId === '1'}
+      <svg
+        overflow="visible"
+        viewBox={`0 0 ${viewW} ${viewH}`}
+        width="100%"
+        height="100%"
+        preserveAspectRatio="xMidYMid slice"
+      >
+        <g transform={`translate(${(viewW - gridW) / 2}, ${(viewH - gridH) / 2})`}>
+          {#each Array(config.rows) as _, r}
+            <g class="row" transform={`translate(0, ${r * rowPitch})`}>
               {#each Array(config.cols) as _, c}
                 <polygon
                   fill={currentPiece.color}
