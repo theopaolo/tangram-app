@@ -45,7 +45,7 @@ export let PIECES_DATA = {
       ],
       points: '0,2.5 2.5,0 5,2.5 2.5,5'
     },
-     3: {
+     4: {
       color: '#0b4ed1',
       rvb: '11, 78, 209',
       cmjn: '91, 67, 0, 0',
@@ -68,7 +68,7 @@ export let PIECES_DATA = {
       ],
       points: '0,10 0,0 5,5'
     },
-    4: {
+    3: {
       color: '#1b3c75',
       rvb: '27, 60, 117',
       cmjn: '100, 80, 26, 9',
