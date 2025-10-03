@@ -363,7 +363,9 @@
 </div>
 
 <style>
-	
+	svg{
+		fill:#000;
+	}
 	.qr-scanner-container {
 		border: 2px solid;
 		position: relative;
