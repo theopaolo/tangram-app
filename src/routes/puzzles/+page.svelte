@@ -241,10 +241,20 @@
 
 <!-- Title -->
 
-<div class="title text-title inf-bold fixed top-5 left-5 z-40 mx-aut w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)] s-W8Sv8E2Q9PhB">
-	<a href="/start">CHROMOGRAM #1</a>
-</div>
+		<header class="fixed left-5 top-0 z-10 flex items-center pt-4 pb-2 bg-white w-full">
+			<a href="/start" class="flex gap-2" aria-label="Retour au Chromogram">
+			
+				<!-- <svg  width="32" height="32" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" >
+				<path d="M12.9639 0.700195L13.0068 0.705078C13.0168 0.704069 13.0269 0.700195 13.0371 0.700195H24.9258C25.0915 0.700195 25.2256 0.834315 25.2256 1V25C25.2256 25.0795 25.1939 25.1557 25.1377 25.2119C25.0814 25.2681 25.0053 25.2998 24.9258 25.2998H1C0.83434 25.2998 0.700237 25.1657 0.700195 25V1C0.700195 0.834315 0.834315 0.700195 1 0.700195H12.9639ZM1.72559 24.7002H24.2002L18.7324 19.249C18.7314 19.248 18.7305 19.2471 18.7295 19.2461L12.9629 13.4971L1.72559 24.7002ZM1.2998 24.2764L12.54 13.0713L6.76758 7.21094L1.2998 1.72559V24.2764ZM19.4082 19.0752L24.626 24.2764V13.8408L19.4082 19.0752ZM13.4219 13.042L18.96 18.5967L24.502 13.0713L18.9814 7.46484L13.4219 13.042ZM13.0342 12.5742L18.2275 7.2998H7.74414L13.0342 12.5742ZM19.1816 6.8125H19.2119L24.626 12.2432V1.2998H13.7539L19.1816 6.8125ZM7.14258 6.7002H18.2227L12.8389 1.2998H1.72656L7.14258 6.7002Z" fill="black"/>
+				</svg> -->
 
+				<img
+				src="/images/retour_chromo.svg"
+				alt="retour"
+				class="h-auto !w-[162px]"
+					/>
+			</a>
+		</header>
 
 <!-- Puzzle Selection Screen -->
 <!-- <div class="p-5 mt-[90px]"> -->
@@ -282,24 +292,30 @@
           <!-- <div class="absolute bottom-0 left-0 p-5 text-intro leading-none">#{puzzle.id}</div> -->
 
           {#if puzzle.completed}
-            <!-- RIEN -->
-
-          {:else}
-            
-             <div class="absolute complet_{puzzle.id}">
+            <div class="absolute complet_{puzzle.id}">
               <img
                 src="/images/complet_{puzzle.id}.svg"
                 alt="complet #{puzzle.id}"
                 class=""
               />
             </div>
+          {:else}
+            <!-- rien -->
           {/if}
 
 
-<div class="absolute top-0 left-0 p-5 text-intro leading-none">#{puzzle.id}</div>
+          <div class="absolute top-0 left-0 p-5 text-intro leading-none">#{puzzle.id}</div>
 
           <!-- <div class="status {puzzle.completed ? 'completed' : 'incomplete'} absolute bottom-0 left-0 right-0 margin-auto p-5 text-intro leading-none"> {puzzle.completed ? 'Terminé' : 'À compléter'}</div> -->
 
+        </div>
+    
+        <div class="absolute bottom-[10svh] right-[10svh]">
+          <img
+            src="/images/clik_tangram.svg"
+            alt="enter"
+            class=""
+          />
         </div>
         <!-- <p>{puzzle.description}</p> -->
         <!-- <div class="status {puzzle.completed ? 'completed' : 'incomplete'}"></div> -->
