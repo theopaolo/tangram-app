@@ -16,15 +16,18 @@
   --text-intro: 1.75rem; /* 28px */
   --text-inter: 2.50rem; /* 28px */
 
-  --c5: #ccffff;
-  --c7: #ffe215;
-  --c3: #0b4ed1;
-  --c6: #7b77d4;
-  --c1: #1a5435;
-  --c2: #44a635;
-  --c4: #1b3c75;
-}
 
+  /* --c1: #1a5435;
+  --c2: #44a635;
+  --c3: #0b4ed1;
+  --c4: #1b3c75;
+  --c5: #ccffff;
+  --c6: #7b77d4;
+  --c7: #ffe215; */
+}
+svg{
+  fill:#fff
+}
 .no-select {
     -moz-user-select: none;
     -webkit-user-select: none;

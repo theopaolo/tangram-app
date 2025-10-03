@@ -10,7 +10,7 @@ A reusable breadcrumb navigation component for the Tangram app.
 
   const breadcrumbItems = [
     { label: 'Accueil', href: '/' },
-    { label: 'Les Couleurs', current: true },
+    { label: 'Le Chromogram', current: true },
     { label: 'Les Tangrams', disabled: true }
   ];
 </script>
