@@ -16,7 +16,8 @@
   	initializeDebugMode
   } from '../../../lib/puzzleDebug.js';
 
-
+  
+  let showHelp = $state(true); // rune => re-render quand on assigne
 
   // Get puzzle ID from URL params
   const puzzleId = $derived($page.params.id);
@@ -635,17 +636,10 @@
   }
   .success-message {
       position: fixed;
-      top: 80%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: #000;
-      color: white;
-      padding: 2rem 1rem;
-      padding-bottom: 1rem;
-      font-size: 1rem;
+      bottom: 150px;
+      right: 40px;
       z-index: 2000;
-      text-align: center;
-      min-width: max-content;
+     
   }
 
   .action-buttons {
@@ -715,40 +709,44 @@
   }
 </style>
 
-<header class="fixed left-5 top-0 z-10 flex items-center pt-[20px] mix-blend-difference">
+<header class="fixed left-5 top-0 z-10 flex items-center pt-4 mix-blend-difference">
     <a href="/puzzles" class="flex gap-2" aria-label="Retour à l'accueil">
-      <img
+      <!-- <img
       src="/images/chat.svg"
       alt="grey"
       class="h-auto !w-[42px]"
-    />
+    /> -->
       <img
       src="/images/retour_tangrams.svg"
       alt="retour"
-      class="h-auto !w-[106.7px]"
+      class="h-auto !w-[162px]"
     />
     </a>
 </header>
 
 
-<div class="fixed w-full h-svh flex items-center pointer-events-none z-100000000000000">
-
-  <div class="relative mx-auto w-max border drop-shadow-[var(--my-drop-shadow)] text-bouton px-9 py-10 max-h-max bg-white">
-    <button
+{#if showHelp}
+  <div class="fixed inset-0 z-[9999] grid place-items-center">
+    <div class="absolute inset-0 bg-black/30" onclick={() => showHelp = false} />
+    <div class="relative mx-auto w-max border drop-shadow-[var(--my-drop-shadow)] text-bouton px-9 py-10 max-h-max bg-white">
+      <button
         type="button"
-        class="absolute right-3 top-3"
+        class="absolute right-3 top-3 oki"
         aria-label="Fermer l'aide"
+        onclick={() => showHelp = false}
       >
         <svg width="16" height="16" viewBox="0 0 29 29" fill="black" xmlns="http://www.w3.org/2000/svg">
           <path d="M28.8613 25.8936L26.0347 28.7238L0.173337 2.83019L3 0L28.8613 25.8936Z" fill="black"/>
           <path d="M3.13867 28.8936L0.312005 26.0634L26.1733 0.16981L29 3L3.13867 28.8936Z" fill="black"/>
         </svg>
-		</button>
-    1. Fais glisser une des formes du bas vers le tangram.<br/>
-    2. Appuie sur la forme pour la faire pivoter.<br/>
-    3. Dépose la forme à son emplacement.<br/>
+      </button>
+
+      <p>1. Fais glisser une des formes du bas vers le tangram.</p>
+      <p>2. Appuie sur la forme pour la faire pivoter.</p>
+      <p>3. Dépose la forme à son emplacement.</p>
+    </div>
   </div>
-</div>
+{/if}
 
 <div class="puzzle-wrapper" onpointerdown={unlockAudio}>
 
@@ -837,14 +835,16 @@
 	<Breadcrumb items={breadcrumbItems} />
 </footer>
 
-  {#if puzzleSolved}
-    <div class="success-message" transition:fly={{ y: 20, duration: 300 }}>
+{#if puzzleSolved}
+    <div class="success-message text-corps" transition:fly={{ y: 20, duration: 300 }}>
       <button class="absolute top-2 right-2 text-white" onclick={() => puzzleSolved = false}>✕</button>
-      <p> Bravo ! Tu as complété le tangram !</p>
-      <div class="mt-2">
-          <button class="bg-white text-black p-2 px-4 text-xs" onclick={() => goto('/puzzles')}>Retour à la liste des tangrams</button>
+      <div class="mt-2 flex flex-row gap-5">
+        
+          <!-- <button class="inf-bold w-fit w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]" onclick={() => goto('/puzzles')}>Retour aux tangrams</button> -->
+          <button class="inf-bold w-fit w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">Recommencer<br/>ce tangram ?</button>
       </div>
     </div>
+      
   {/if}
 
     <!-- Debug Panel - Only shown when DEBUG_MODE is true -->
