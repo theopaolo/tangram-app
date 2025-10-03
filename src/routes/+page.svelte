@@ -2,6 +2,29 @@
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 
+	import { PIECES_DATA } from '$lib/piecesData';
+import { piecesStore } from '$lib/piecesStore.js';
+
+	let totalFound = $state(0);
+	let foundPieces = $state([]);
+
+	onMount(() => {
+		applyColors();
+	});
+
+function applyColors() {
+	if (typeof document === 'undefined') return; // SSR guard
+
+	Object.keys(PIECES_DATA).forEach((id) => {
+		const color = PIECES_DATA[id].color;
+
+		document.querySelectorAll(`.p${id} polygon`).forEach((el) => {
+			el.setAttribute("fill", color);
+		});
+	});
+}
+
+
 	let gsap; // SSR-safe
 
 	// === Router de clic pour .bt1 ===
@@ -400,28 +423,5 @@
 		right: 0;
 		top: 25%;
 		margin: auto;
-	}
-
-	/* Couleurs (optionnel) */
-	.p1 polygon {
-		fill: var(--c1, #ccffff);
-	}
-	.p2 polygon {
-		fill: var(--c2, #ffe215);
-	}
-	.p3 polygon {
-		fill: var(--c3, #0b4ed1);
-	}
-	.p4 polygon {
-		fill: var(--c4, #7b77d4);
-	}
-	.p5 polygon {
-		fill: var(--c5, #1a5435);
-	}
-	.p6 polygon {
-		fill: var(--c6, #44a635);
-	}
-	.p7 polygon {
-		fill: var(--c7, #1b3c75);
 	}
 </style>

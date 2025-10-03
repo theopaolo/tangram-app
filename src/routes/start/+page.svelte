@@ -9,17 +9,36 @@
 	import { piecesStore } from '$lib/piecesStore.js';
 	import { isAideOpen } from '$lib/stores/aideStore.js';
 
+
+
+	
 	let totalFound = $state(0);
 	let foundPieces = $state([]);
 	// --- FUNCTIONS ---
 	onMount(() => {
 		if (!browser) return;
+		injectPieceStyles();
 
 		piecesStore.initialize();
 		totalFound = piecesStore.count;
 		foundPieces = piecesStore.pieces;
 		applyColors();
+
 	});
+
+
+
+
+	function injectPieceStyles() {
+	const style = document.createElement("style");
+	style.innerHTML = Object.keys(PIECES_DATA)
+		.map(id => `.p${id} polygon { fill: var(--c${id}); }`)
+		.join("\n");
+	document.head.appendChild(style);
+	}
+
+
+
 
 	function applyColors() {
 		if (typeof document === 'undefined') return; // SSR guard
@@ -269,24 +288,24 @@
 	}
 	/* Couleurs (optionnel) */
 	.p1 polygon {
-		fill: var(--c1, #ccffff);
+		fill: var(--c1);
 	}
 	.p2 polygon {
-		fill: var(--c2, #ffe215);
+		fill: var(--c2);
 	}
 	.p3 polygon {
-		fill: var(--c3, #0b4ed1);
+		fill: var(--c3);
 	}
 	.p4 polygon {
-		fill: var(--c4, #7b77d4);
+		fill: var(--c4);
 	}
 	.p5 polygon {
-		fill: var(--c5, #1a5435);
+		fill: var(--c5);
 	}
 	.p6 polygon {
-		fill: var(--c6, #44a635);
+		fill: var(--c6);
 	}
 	.p7 polygon {
-		fill: var(--c7, #1b3c75);
+		fill: var(--c7);
 	}
 </style>

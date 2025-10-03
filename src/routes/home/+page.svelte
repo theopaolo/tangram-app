@@ -13,11 +13,22 @@
 	let foundPieces = $state([]);
 	// --- FUNCTIONS ---
 	onMount(() => {
+		applyCol();
 		piecesStore.initialize();
 		totalFound = piecesStore.count;
 		foundPieces = piecesStore.pieces;
 	});
 
+
+	function applyCol() {
+  	if (typeof document === 'undefined') return; // SSR guard
+		Object.keys(PIECES_DATA).forEach((id) => {
+			document.documentElement.style.setProperty(
+				`--c${id}`, PIECES_DATA[id].color
+			);
+		});
+	}
+	
 	function applyColors() {
 		Object.keys(PIECES_DATA).forEach((id) => {
 			const isFound = foundPieces.includes(id);
@@ -349,14 +360,11 @@
 	</div>
 </div>
 
-
 <footer class="fixed bottom-0 left-0 z-40 flex w-full items-center justify-between px-5 py-2">
 
 </footer>
 
-<div
-	class="conta absolute top-0 left-0 flex h-[103dvh] w-[103dvh] translate-0 flex-col justify-around"
->
+<div class="conta absolute top-0 left-0 flex h-[103dvh] w-[103dvh] translate-0 flex-col justify-around">
 	<div>
 		<div class="piece p1">
 			<svg viewBox="0 0 7.5 2.5">
@@ -404,17 +412,15 @@
 
 <style>
 	.piece polygon {
-		fill: var(--cMyPiece);
+		/* fill: var(--cMyPiece); */
 		transition: fill 0.4s ease-in 0.2s; /* durée 0.2s, delay 0.4s */
 	}
-
 	body,
 	html {
 		overflow: hidden;
 		height: 100%;
 		overscroll-behavior: none; /* évite le "rebond" sur mobile */
 	}
-
 	/* Une pièce = conteneur absolument positionné + 1 SVG avec viewBox identique */
 	.piece {
 		position: fixed;
@@ -494,24 +500,24 @@
 	}
 	/* Couleurs (optionnel) */
 	.p1 polygon {
-		fill: var(--c1, #ccffff);
+		fill: var(--c1);
 	}
 	.p2 polygon {
-		fill: var(--c2, #ffe215);
+		fill: var(--c2);
 	}
 	.p3 polygon {
-		fill: var(--c3, #0b4ed1);
+		fill: var(--c3);
 	}
 	.p4 polygon {
-		fill: var(--c4, #7b77d4);
+		fill: var(--c4);
 	}
 	.p5 polygon {
-		fill: var(--c5, #1a5435);
+		fill: var(--c5);
 	}
 	.p6 polygon {
-		fill: var(--c6, #44a635);
+		fill: var(--c6);
 	}
 	.p7 polygon {
-		fill: var(--c7, #1b3c75);
+		fill: var(--c7);
 	}
 </style>
