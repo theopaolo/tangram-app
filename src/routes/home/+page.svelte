@@ -495,26 +495,26 @@
 		margin: auto;
 		/* transform: translateY(-50%); */
 	}
-	/* Couleurs (optionnel) */
+	/* Couleurs dynamiques depuis piecesData.js */
 	.p1 polygon {
-		fill: var(--c1, #ccffff);
+		fill: var(--c1);
 	}
 	.p2 polygon {
-		fill: var(--c2, #ffe215);
+		fill: var(--c2);
 	}
 	.p3 polygon {
-		fill: var(--c3, #0b4ed1);
+		fill: var(--c3);
 	}
 	.p4 polygon {
-		fill: var(--c4, #7b77d4);
+		fill: var(--c4);
 	}
 	.p5 polygon {
-		fill: var(--c5, #1a5435);
+		fill: var(--c5);
 	}
 	.p6 polygon {
-		fill: var(--c6, #44a635);
+		fill: var(--c6);
 	}
 	.p7 polygon {
-		fill: var(--c7, #1b3c75);
+		fill: var(--c7);
 	}
 </style>

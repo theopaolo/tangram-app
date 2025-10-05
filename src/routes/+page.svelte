@@ -1,6 +1,7 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { PIECES_DATA } from '$lib/piecesData.js';
 
 	let gsap; // SSR-safe
 
@@ -224,7 +225,20 @@
 		fitTitle(0, 1, 'topLeft', true);
 	}
 
+	// Apply colors from piecesData
+	function applyColors() {
+		Object.keys(PIECES_DATA).forEach((id) => {
+			document.documentElement.style.setProperty(
+				`--c${id}`,
+				PIECES_DATA[id].color
+			);
+		});
+	}
+
 	onMount(async () => {
+		// Apply colors dynamically
+		applyColors();
+
 		// Import scroll freeze utility
 		const { freezeScroll, unfreezeScroll } = await import('$lib/utils/scrollFreeze.js');
 
@@ -405,26 +419,26 @@
 		margin: auto;
 	}
 
-	/* Couleurs (optionnel) */
+	/* Couleurs dynamiques depuis piecesData.js */
 	.p1 polygon {
-		fill: var(--c1, #ccffff);
+		fill: var(--c1);
 	}
 	.p2 polygon {
-		fill: var(--c2, #ffe215);
+		fill: var(--c2);
 	}
 	.p3 polygon {
-		fill: var(--c3, #0b4ed1);
+		fill: var(--c3);
 	}
 	.p4 polygon {
-		fill: var(--c4, #7b77d4);
+		fill: var(--c4);
 	}
 	.p5 polygon {
-		fill: var(--c5, #1a5435);
+		fill: var(--c5);
 	}
 	.p6 polygon {
-		fill: var(--c6, #44a635);
+		fill: var(--c6);
 	}
 	.p7 polygon {
-		fill: var(--c7, #1b3c75);
+		fill: var(--c7);
 	}
 </style>

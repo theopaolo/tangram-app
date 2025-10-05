@@ -1,13 +1,21 @@
 // Shared puzzle data and piece definitions
 
+import { PIECES_DATA as PIECES_DATA_SOURCE } from './piecesData.js';
+
+// Unit-based coordinate system for perfect alignment
+const UNIT = 27;       // 270px / 10 units
+const OFFSET = 15;     // margin
+const U = (n) => OFFSET + UNIT * n;
+const P = (pts) => pts.map(([x,y]) => `${U(x)},${U(y)}`).join(' ');
+
 export const PIECES_DATA = {
-  1: {  name: 'Le Grand Triangle',color: '#A9BCC4',story: 'Cette pièce représente la majestuosité de la pyramide de Khéops...',artwork: 'Pyramide de Khéops - Égypte Antique',points: '15,15 150,150 285,15' /* Large right triangle*/},
-  2: {	name: 'Le Triangle Moyen',	color: '#FFF35C',	story: 'Inspiré des voiles des navires vénitiens...',	artwork: 'Les Marchands de Venise - Canaletto',	points: '15,15 150,150 15,285' /* Large left triangle */ },
-  3: { 	name: 'Le Petit Triangle', 	color: '#2B3B6D', 	story: 'Cette petite forme géométrique fait écho...', 	artwork: "Livre d'Heures - Art Médiéval", 	points: '150,150 217,217 217,83' /* Small triangle (top right) */ },
-  4: { 	name: 'Le Carré', 	color: '#7AC142', 	story: "Le carré parfait représente l'équilibre...", 	artwork: 'Le Parthénon - Grèce Antique', 	points: '150,150 217,217 150,285 83,217' /* Square in center */ },
-  5: { 	name: 'Le Parallélogramme', 	color: '#6B8FD6', 	story: 'Cette oeuvre fait partie de la série...', 	artwork: 'MC Mitout. Les plus belles heures...', 	points: '217,83 217,217 285,150 285,15' /* Parallelogram (right) */ },
-  6: { 	name: 'Le Grand Trapèze', 	color: '#3B5D3A', 	story: 'Inspiré des toitures des pagodes japonaises...', 	artwork: 'Temple Kinkaku-ji - Architecture Japonaise', 	points: '15,285 150,285 83,217' /* Small triangle (bottom left) */ },
-  7: { 	name: 'Le Petit Trapèze', 	color: '#8B83D2', 	story: 'Cette dernière pièce représente les rayons...', 	artwork: 'Impression, soleil levant - Claude Monet', 	points: '150,285 285,150 285,285' /* Triangle (bottom right) */ }
+  1: { name: 'Le Grand Triangle', color: PIECES_DATA_SOURCE[1].color, story: PIECES_DATA_SOURCE[1].story, artwork: PIECES_DATA_SOURCE[1].titre_artwork, points: P([[0,0],[5,5],[10,0]]) },
+  2: { name: 'Le Second Grand Triangle', color: PIECES_DATA_SOURCE[2].color, story: PIECES_DATA_SOURCE[2].story, artwork: PIECES_DATA_SOURCE[2].titre_artwork, points: P([[0,0],[5,5],[0,10]]) },
+  3: { name: 'Le Petit Triangle', color: PIECES_DATA_SOURCE[3].color, story: PIECES_DATA_SOURCE[3].story, artwork: PIECES_DATA_SOURCE[3].titre_artwork, points: P([[5,5],[7.5,7.5],[7.5,2.5]]) },
+  4: { name: 'Le Carré', color: PIECES_DATA_SOURCE[4].color, story: PIECES_DATA_SOURCE[4].story, artwork: PIECES_DATA_SOURCE[4].titre_artwork, points: P([[5,5],[7.5,7.5],[5,10],[2.5,7.5]]) },
+  5: { name: 'Le Parallélogramme', color: PIECES_DATA_SOURCE[5].color, story: PIECES_DATA_SOURCE[5].story, artwork: PIECES_DATA_SOURCE[5].titre_artwork, points: P([[7.5,2.5],[7.5,7.5],[10,5],[10,0]]) },
+  6: { name: 'Le Grand Trapèze', color: PIECES_DATA_SOURCE[6].color, story: PIECES_DATA_SOURCE[6].story, artwork: PIECES_DATA_SOURCE[6].titre_artwork, points: P([[0,10],[5,10],[2.5,7.5]]) },
+  7: { name: 'Le Petit Trapèze', color: PIECES_DATA_SOURCE[7].color, story: PIECES_DATA_SOURCE[7].story, artwork: PIECES_DATA_SOURCE[7].titre_artwork, points: P([[5,10],[10,5],[10,10]]) }
 };
 
 // Calculate viewBox for each piece

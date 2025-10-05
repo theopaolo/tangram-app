@@ -218,6 +218,7 @@
   // --- INTERACTION FUNCTIONS ---
   function draggable(node, params) {
     let offsetX, offsetY;
+    let startedInContainer = false;
 
     const handlePointerDown = createInteractionHandler({
       onDown: (e) => {
@@ -230,6 +231,7 @@
 
         const rect = puzzleContainer.getBoundingClientRect();
 
+        startedInContainer = piece.inContainer;
         if (piece.inContainer) {
           // Moving from container to puzzle area
           piece.inContainer = false;
@@ -284,13 +286,30 @@
         if (!piece) return;
 
         if (wasTap) {
-          // Rotate on tap
-          piece.rotation = (piece.rotation + 45) % 360;
-          piece.animationKey += 1;
+          if (startedInContainer) {
+            // Tap on a container piece: throw it into the puzzle area, just above the container
+            const rect = puzzleContainer.getBoundingClientRect();
+            const containerRect = piecesContainer.getBoundingClientRect();
+            const paddingX = Math.round(rect.width * 0.1);
+            const minX = paddingX;
+            const maxX = rect.width - paddingX;
+            const targetX = Math.round(minX + Math.random() * Math.max(0, maxX - minX));
+            const offsetAbove = 40; // place a bit above the pieces container
+            const computedY = Math.round(containerRect.top - rect.top - offsetAbove);
+            const targetY = Math.max(0, Math.min(rect.height - 1, computedY));
+            piece.x = targetX;
+            piece.y = targetY;
+            piece.inContainer = false;
+            piece.animationKey += 1;
+          } else {
+            // Rotate on tap when already in puzzle area
+            piece.rotation = (piece.rotation + 45) % 360;
+            piece.animationKey += 1;
+          }
         } else if (wasDrag) {
           // playSound(dropSound);
 
-          // If near a valid target, snap perfectly into place and override rotation
+          // If near a valid target, snap perfectly into place
           const target = findMagneticTarget(piece);
           if (target) {
             const dist = Math.hypot(piece.x - target.screenX, piece.y - target.screenY);
@@ -298,7 +317,8 @@
               piece.inContainer = false;
               piece.x = target.screenX;
               piece.y = target.screenY;
-              piece.rotation = target.rotation;
+              // Don't change rotation - findMagneticTarget already verified rotation compatibility
+              // This prevents unnecessary rotation changes for interchangeable pieces (e.g., the two big triangles)
               piece.animationKey += 1;
             }
           }
@@ -320,6 +340,7 @@
         // Clear magnetic target
         magneticTarget = null;
         isMagnetLocked = false;
+        startedInContainer = false;
 
         // Check puzzle solution
         checkPuzzleSolution();
@@ -525,6 +546,8 @@
     opacity: 0.25;
   }
 
+
+
   .tangram-piece {
      transition: transform 0.2s;
      will-change: transform;
@@ -670,12 +693,12 @@
     position: fixed;
     top: 10px;
     right: 10px;
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.4);
     color: white;
     padding: 1rem;
     border-radius: 8px;
     font-family: monospace;
-    font-size: 12px;
+    font-size: 10px;
     max-width: 400px;
     z-index: 1000;
     max-height: 50vh;
@@ -721,7 +744,7 @@
 
   <!-- Puzzle area with padding -->
   <div class="h-full">
-    <div class="pt-[80px] puzzle-container {puzzleSolved ? 'puzzle-solved' : ''}"
+    <div class="puzzle-container {puzzleSolved ? 'puzzle-solved' : ''}"
           bind:this={puzzleContainer}
           use:observeResize
           role="main"

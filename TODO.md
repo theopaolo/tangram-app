@@ -26,20 +26,17 @@ Voici le parcours typique d'un visiteur :
 ---
 
 TODO 13-sept
-Transition et lien
-intro -> home -> start
 
 Ajustements puzzle
-
-- Laisse le contour de la piece qui est prises
-- Corriger les shadows
-- Faire en sorte que le losange soit magnet des deux côté
-- Les grande formes quand elle magnet rotate
-- Arranger les décalage
+- Corriger les shadows [done]
+- Arranger les décalage [done]
+- couleur dans les puzzle
 
 Ajustements editor
+- magnet pieces [done]
 
-- magnet pieces
+Page puzzles
+- Centrer premier puzzle
 
-Ajout de page
-Faire Pages avec les 7 puzzles
+Page Indice
+- Scroll issue 
