@@ -47,15 +47,16 @@ input, textarea {
   caret-color: transparent; /* enlève le curseur */
 }
 
-/* html{
-  font-size: 0.875rem;
-} */
+html{
+background-color: #fff;
+}
 
 body{
   font-family: 'Inf Reg';
   line-height: 1.7;
   font-weight: normal;
   font-size: 0.875rem;
+  background-color: #fff;
 }
 
 img{

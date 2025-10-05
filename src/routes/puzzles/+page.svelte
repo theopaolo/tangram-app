@@ -4,7 +4,7 @@
   import Breadcrumb from '$lib/Breadcrumb.svelte';
   import { getAllPuzzles, PIECES_DATA_WITH_VIEWBOX } from '$lib/puzzleData.js';
 
-import { PIECES_DATA } from '$lib/piecesData';
+  import { PIECES_DATA } from '$lib/piecesData';
 
 	let completedPuzzles = $state([]);
 	let allPuzzlesCompleted = $derived(completedPuzzles.length === 7);
