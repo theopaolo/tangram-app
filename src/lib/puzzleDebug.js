@@ -111,6 +111,19 @@ export function checkRotationMatch(pieceId, pieceRotation, targetId, targetRotat
     return result;
   }
 
+  // Parallelogram (piece 5) is rotationally symmetric every 180°
+  if (pieceId === 5) {
+    const diff = Math.abs(pieceRot - targetRot);
+    const normalizedDiff = Math.min(diff, 360 - diff);
+    const result = normalizedDiff % 180 === 0;
+
+    if (enableLogging) {
+      console.log(`    🔄 Parallelogram rotation: ${pieceRotation}° vs ${targetRotation}° (180° symmetric) = ${result}`);
+    }
+
+    return result;
+  }
+
   // For interchangeable pieces, allow any rotation that appears for any member in the interchangeable group
   const allIds = Object.keys(PIECES_DATA).map(Number);
   const inExplicitSameGroup = EXPLICIT_INTERCHANGEABLE_GROUPS.some(g => g.includes(pieceId) && g.includes(targetId));

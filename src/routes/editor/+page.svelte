@@ -16,7 +16,7 @@
   // Use shared, canonical pieces data (with viewBox, width, height)
   const PIECES_DATA_WITH_VIEWBOX = SHARED_PIECES_DATA_WITH_VIEWBOX;
 
-  const noFlipPieces = [1,4,6]; // Les pièces 1, 4, 6 n'ont pas besoin de flip
+  const noFlipPieces = [1,4,5,6]; // Les pièces 1, 4, 5, 6 n'ont pas besoin de flip
 
   // --- HYBRID SNAPPING CONSTANTS ---
   const GRID_SIZE = 2; // Fine grid spacing in pixels
@@ -153,18 +153,62 @@
     return gridSnap;
   }
 
-  // --- AUDIO ---
-  let pickupSound, dropSound;
-  let audioUnlocked = false;
-  let audioContext;
 
   onMount(() => {
-    pickupSound = new Audio('/snd/tap_01.mp3');
-    dropSound = new Audio('/snd/tap_04.mp3');
+    // Add keyboard event listener for arrow keys
+    document.addEventListener('keydown', handleKeyDown);
+
+    // Cleanup function
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   });
 
   function rotateActivePiece() { if (activePiece) { activePiece.rotation = (activePiece.rotation + 45) % 360; activePiece.animationKey += 1; } }
+  function rotateActivePieceCounterClockwise() { if (activePiece) { activePiece.rotation = (activePiece.rotation - 45 + 360) % 360; activePiece.animationKey += 1; } }
   function flipActivePiece() { if (activePiece && !noFlipPieces.includes(activePiece.id)) { activePiece.flipped = !activePiece.flipped; activePiece.animationKey += 1; } }
+
+  // Precise movement with arrow keys
+  function moveActivePiece(dx, dy) {
+    if (!activePiece) return;
+    activePiece.x += dx;
+    activePiece.y += dy;
+    activePiece.animationKey += 1;
+  }
+
+  // Handle arrow key presses and spacebar rotation
+  function handleKeyDown(event) {
+    if (!activePiece) return;
+
+    const moveAmount = event.shiftKey ? 10 : 1; // Shift = 10px, normal = 1px
+
+    switch(event.key) {
+      case 'ArrowUp':
+        event.preventDefault();
+        moveActivePiece(0, -moveAmount);
+        break;
+      case 'ArrowDown':
+        event.preventDefault();
+        moveActivePiece(0, moveAmount);
+        break;
+      case 'ArrowLeft':
+        event.preventDefault();
+        moveActivePiece(-moveAmount, 0);
+        break;
+      case 'ArrowRight':
+        event.preventDefault();
+        moveActivePiece(moveAmount, 0);
+        break;
+      case ' ':
+        event.preventDefault();
+        if (event.shiftKey) {
+          rotateActivePieceCounterClockwise();
+        } else {
+          rotateActivePiece();
+        }
+        break;
+    }
+  }
 
    function exportPuzzleData() {
     // Export canonical coordinates by inverting last fit transform on current on-screen positions
@@ -220,7 +264,6 @@
     const handlePointerDown = createInteractionHandler({
       onDown: (e) => {
         activePieceId = params.pieceId;
-        playSound(pickupSound);
         const piece = pieces.find(p => p.id === params.pieceId);
         if (!piece) return;
 
@@ -252,7 +295,6 @@
         if (wasTap) {
           rotateActivePiece();
         } else if (wasDrag) {
-          playSound(dropSound);
           // Commit to snap target if available
           if (snapIndicator) {
             piece.x = Math.round(snapIndicator.x);
@@ -271,24 +313,6 @@
     };
   }
 
-  function unlockAudio() {
-    if (audioUnlocked) return;
-
-    if (!audioContext) {
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    }
-
-    if (audioContext.state === 'suspended') {
-      audioContext.resume();
-    }
-
-    audioUnlocked = true;
-  }
-
-  function playSound(audio) {
-    audio.currentTime = 0;
-    audio.play();
-  }
 
   function observeResize(node) {
     const observer = new ResizeObserver(entries => {
@@ -348,7 +372,15 @@ function fitPuzzle() {
     flex-direction: column;
     width: 100%;
     height: calc(100dvh - 2rem);
+    position: relative;
   }
+
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
 
   .toolbar {
     padding: 10px;
@@ -369,6 +401,7 @@ function fitPuzzle() {
     flex-grow: 1;
     position: relative;
     background-color: #f0f0f0;
+    overflow: visible;
   }
 
   .editor-canvas.show-grid {
@@ -396,17 +429,6 @@ function fitPuzzle() {
     transition: none;
   }
 
-  @keyframes wiggle {
-    0% { transform: rotate(0deg); }
-    25% { transform: rotate(-2deg); }
-    75% { transform: rotate(2deg); }
-    100% { transform: rotate(0deg); }
-  }
-
-  .tangram-piece.active .tangram-piece-svg,
-  .wiggling-svg {
-    animation: wiggle 0.3s ease-in-out;
-  }
 
   .tangram-piece-svg {
     width: 100%;
@@ -448,96 +470,70 @@ function fitPuzzle() {
     background: #22c55e; /* green-500 for vertex */
   }
 
-  .action-buttons {
-    position: absolute;
-    top: var(--y);
-    left: var(--x);
-    transform: translate(-50%, -150%);
-    display: flex;
-    gap: 4px;
-    z-index: 200;
-  }
-
-  .action-buttons button {
-    pointer-events: auto;
-  }
-
-  .action-buttons button:hover {
-    transform: scale(1.1);
-  }
 </style>
 
-<div class="editor-wrapper" onpointerdown={unlockAudio}>
-  <div
-    bind:this={puzzleContainer}
-    class="editor-canvas"
-    class:show-grid={showGrid}
-    style="--grid-size: {GRID_SIZE}"
-    onpointerdown={() => activePieceId = null}
-    use:observeResize
-  >
+<div class="editor-wrapper">
+  <div class="main-content">
+    <div
+      bind:this={puzzleContainer}
+      class="editor-canvas"
+      class:show-grid={showGrid}
+      style="--grid-size: {GRID_SIZE}"
+      onpointerdown={() => activePieceId = null}
+      use:observeResize
+    >
 
-    {#each pieces as piece (piece.id)}
-      {@const pieceData = PIECES_DATA_WITH_VIEWBOX[piece.id]}
-      <div
-        class="tangram-piece"
-        class:active={activePieceId === piece.id}
-        style="
-          --x: {piece.x};
-          --y: {piece.y};
-          --w: {pieceData.width * puzzleScale}px;
-          --h: {pieceData.height * puzzleScale}px;
-          --rotation: {piece.rotation}deg;
-          --scaleX: {piece.flipped ? -1 : 1};
-        "
-      >
-        {#key piece.animationKey}
-          <svg
-            class="tangram-piece-svg"
-            class:wiggling-svg={activePieceId === piece.id}
-            viewBox={pieceData.viewBox}
-          >
-            <polygon
-              use:draggable={{ pieceId: piece.id }}
-              points={pieceData.points}
-              fill={pieceData.color} />
-          </svg>
-        {/key}
+      {#each pieces as piece (piece.id)}
+        {@const pieceData = PIECES_DATA_WITH_VIEWBOX[piece.id]}
+        <div
+          class="tangram-piece"
+          class:active={activePieceId === piece.id}
+          style="
+            --x: {piece.x};
+            --y: {piece.y};
+            --w: {pieceData.width * puzzleScale}px;
+            --h: {pieceData.height * puzzleScale}px;
+            --rotation: {piece.rotation}deg;
+            --scaleX: {piece.flipped ? -1 : 1};
+          "
+        >
+          {#key piece.animationKey}
+            <svg
+              class="tangram-piece-svg"
+              viewBox={pieceData.viewBox}
+            >
+              <polygon
+                use:draggable={{ pieceId: piece.id }}
+                points={pieceData.points}
+                fill={pieceData.color} />
+            </svg>
+          {/key}
+        </div>
+      {/each}
+
+
+      {#if snapIndicator}
+        <div
+          class="snap-indicator {snapIndicator.type === 'vertex' ? 'vertex' : 'grid'}"
+          style="--x: {snapIndicator.x}; --y: {snapIndicator.y};"
+        >
+          <div class="dot"></div>
+        </div>
+      {/if}
+    </div>
+
+    <div class="toolbar">
+      <textarea bind:value={importJson} placeholder="Paste puzzle data here..."></textarea>
+      <div class="flex gap-2 items-center">
+        <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={handleImport}>Import</button>
+        <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={fitPuzzle}>Fit</button>
+        <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={exportPuzzleData}>Export</button>
+        <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={() => showGrid = !showGrid}>
+          {showGrid ? 'Hide' : 'Show'} Grid
+        </button>
+
       </div>
-    {/each}
-
-    {#if activePiece}
-      <div
-        class="action-buttons"
-        style="--x: {activePiece.x}; --y: {activePiece.y};"
-        onpointerdown={(e) => e.stopPropagation()}
-      >
-        {#if !noFlipPieces.includes(activePiece.id)}
-          <button onclick={flipActivePiece}>↔️</button>
-        {/if}
-      </div>
-    {/if}
-
-    {#if snapIndicator}
-      <div
-        class="snap-indicator {snapIndicator.type === 'vertex' ? 'vertex' : 'grid'}"
-        style="--x: {snapIndicator.x}; --y: {snapIndicator.y};"
-      >
-        <div class="dot"></div>
-      </div>
-    {/if}
-  </div>
-
-  <div class="toolbar">
-    <textarea bind:value={importJson} placeholder="Paste puzzle data here..."></textarea>
-    <div class="flex gap-2 items-center">
-      <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={handleImport}>Import</button>
-      <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={fitPuzzle}>Fit</button>
-      <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={exportPuzzleData}>Export</button>
-      <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={() => showGrid = !showGrid}>
-        {showGrid ? 'Hide' : 'Show'} Grid
-      </button>
-
     </div>
   </div>
+
 </div>
