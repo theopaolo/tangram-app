@@ -6,9 +6,9 @@
   import { fly } from 'svelte/transition';
   import createInteractionHandler from '../../../lib/interaction.js';
 
-  
+
   import Breadcrumb from '$lib/Breadcrumb.svelte';
-  import { getPuzzleById, PIECES_DATA, PIECES_DATA_WITH_VIEWBOX } from '$lib/puzzleData.js';
+  import { getPuzzleById, PIECES_DATA, PIECES_DATA_WITH_VIEWBOX, PIECE_GREY_COLOR } from '$lib/puzzleData.js';
   import {
   	areInterchangeable,
   	checkRotationMatch,
@@ -16,7 +16,7 @@
   	initializeDebugMode
   } from '../../../lib/puzzleDebug.js';
 
-  
+
   let showHelp = $state(true); // rune => re-render quand on assigne
 
   // Get puzzle ID from URL params
@@ -88,6 +88,87 @@
   let puzzleSolved = $state(false);
   let puzzleContainer, piecesContainer;
 
+  // --- PUZZLE PROGRESSION TRACKING ---
+  const PUZZLE_PROGRESS_KEY = `puzzle_${puzzleId}_progress`;
+  const HELP_DISMISSED_KEY = 'tangram_help_dismissed';
+
+  // Save puzzle progress to localStorage
+  function savePuzzleProgress() {
+    if (typeof localStorage === 'undefined') return;
+
+    const progress = {
+      pieces: pieces.map(piece => ({
+        id: piece.id,
+        x: piece.x,
+        y: piece.y,
+        rotation: piece.rotation,
+        inContainer: piece.inContainer,
+        matched: isPieceProperlyPlacedCurrent(piece)
+      })),
+      puzzleId: puzzleId,
+      timestamp: Date.now()
+    };
+
+    localStorage.setItem(PUZZLE_PROGRESS_KEY, JSON.stringify(progress));
+  }
+
+  // Load puzzle progress from localStorage
+  function loadPuzzleProgress() {
+    if (typeof localStorage === 'undefined') return false;
+
+    try {
+      const saved = localStorage.getItem(PUZZLE_PROGRESS_KEY);
+      if (!saved) return false;
+
+      const progress = JSON.parse(saved);
+
+      // Verify this is for the current puzzle
+      if (progress.puzzleId !== puzzleId) return false;
+
+      // Restore piece positions
+      if (progress.pieces && Array.isArray(progress.pieces)) {
+        pieces = progress.pieces.map(savedPiece => {
+          const piece = pieces.find(p => p.id === savedPiece.id);
+          if (piece) {
+            return {
+              ...piece,
+              x: savedPiece.x,
+              y: savedPiece.y,
+              rotation: savedPiece.rotation,
+              inContainer: savedPiece.inContainer,
+              matched: savedPiece.matched ?? false
+            };
+          }
+          return savedPiece;
+        });
+        return true;
+      }
+    } catch (error) {
+      console.warn('Failed to load puzzle progress:', error);
+    }
+
+    return false;
+  }
+
+  // Clear puzzle progress (when puzzle is completed or reset)
+  function clearPuzzleProgress() {
+    if (typeof localStorage === 'undefined') return;
+    localStorage.removeItem(PUZZLE_PROGRESS_KEY);
+  }
+
+  // Check if help has been dismissed before
+  function isHelpDismissed() {
+    if (typeof localStorage === 'undefined') return false;
+    return localStorage.getItem(HELP_DISMISSED_KEY) === 'true';
+  }
+
+  // Save help dismissal state
+  function dismissHelp() {
+    if (typeof localStorage === 'undefined') return;
+    localStorage.setItem(HELP_DISMISSED_KEY, 'true');
+    showHelp = false;
+  }
+
   // --- MAGNETIC EFFECT CONSTANTS ---
   const MAGNETIC_SNAP_DISTANCE = 100; // Distance in pixels to begin attraction
   const MAGNETIC_SMOOTHNESS = 0.2; // Lower = stronger attraction each frame
@@ -107,6 +188,45 @@
 
   // Derived state
   const activePiece = $derived(pieces.find(p => p.id === activePieceId));
+
+  // --- COLORING BASED ON PROGRESS (mirror puzzles list logic) ---
+  function isPieceProperlyPlacedCurrent(piece) {
+    if (!piece || piece.inContainer) return false;
+
+    const tolerance = 25 * puzzleScale; // same as checkPuzzleSolution
+
+    // find a compatible target (exact id or interchangeable)
+    const target = targetPieces.find(t => piece.id === t.id || areInterchangeable(piece.id, t.id, PIECES_DATA));
+    if (!target) return false;
+
+    const distance = Math.hypot(piece.x - target.screenX, piece.y - target.screenY);
+    const rotationMatch = checkRotationMatch(
+      piece.id,
+      piece.rotation,
+      target.id,
+      target.rotation,
+      planePuzzle,
+      PIECES_DATA,
+      false
+    );
+
+    return distance < tolerance && rotationMatch;
+  }
+
+  function getPieceFillColor(pieceId) {
+    const piece = pieces.find(p => p.id === pieceId);
+
+    if (!piece || piece.inContainer) return PIECE_GREY_COLOR;
+
+    if (puzzleSolved || isPieceProperlyPlacedCurrent(piece)) {
+      return PIECES_DATA_WITH_VIEWBOX[pieceId].color;
+    }
+
+    // Placed but not correctly aligned: keep base color; opacity handled separately
+    return PIECES_DATA_WITH_VIEWBOX[pieceId].color;
+  }
+
+  // No opacity variations needed
 
   // Find the closest compatible target for magnetic attraction
   function findMagneticTarget(piece) {
@@ -161,7 +281,7 @@
       Object.keys(PIECES_DATA)
       .map((id) => (
         {
-          id: parseInt(id), x: 0, y: 0, rotation: 0, origX: 0, origY: 0, inContainer: true, animationKey: 0,
+          id: parseInt(id), x: 0, y: 0, rotation: 0, origX: 0, origY: 0, inContainer: true, animationKey: 0, matched: false,
         }
       ));
   }
@@ -291,6 +411,9 @@
           // Rotate on tap
           piece.rotation = (piece.rotation + 45) % 360;
           piece.animationKey += 1;
+
+          // Save progress when piece is rotated
+          savePuzzleProgress();
         } else if (wasDrag) {
           // playSound(dropSound);
 
@@ -305,6 +428,9 @@
               // Don't change rotation - findMagneticTarget already verified rotation compatibility
               // This prevents unnecessary rotation changes for interchangeable pieces (e.g., the two big triangles)
               piece.animationKey += 1;
+
+              // Save progress when piece is properly placed
+              savePuzzleProgress();
             }
           }
 
@@ -318,6 +444,9 @@
               piece.y = 0;
               piece.rotation = 0;
               piece.animationKey += 1;
+
+              // Save progress when piece is returned to container
+              savePuzzleProgress();
             }
           }
         }
@@ -471,14 +600,9 @@
         debugLog("🎉 CONGRATULATIONS! PUZZLE SOLVED! 🎉");
       }
 
-      // Save completion status to localStorage
-      if (typeof localStorage !== 'undefined') {
-        const completedPuzzles = JSON.parse(localStorage.getItem('completedPuzzles') || '[]');
-        if (!completedPuzzles.includes(puzzleId)) {
-          completedPuzzles.push(puzzleId);
-          localStorage.setItem('completedPuzzles', JSON.stringify(completedPuzzles));
-        }
-      }
+      // Save final progress state (all pieces placed) to mark as completed
+      // This will be used by the puzzles page to show completion status
+      savePuzzleProgress();
     }
   }
 
@@ -486,9 +610,35 @@
     goto('/puzzles');
   }
 
+  function resetPuzzle() {
+    // Clear saved progress
+    clearPuzzleProgress();
+
+    // Reset pieces to initial state
+    initializePieces();
+
+    // Reset puzzle solved state
+    puzzleSolved = false;
+
+    // Re-fit targets
+    fitTargets();
+  }
+
   onMount(() => {
     initializePieces();
     fitTargets();
+
+    // Check if help has been dismissed before
+    showHelp = !isHelpDismissed();
+
+    // Try to load saved progress
+    const progressLoaded = loadPuzzleProgress();
+    if (progressLoaded) {
+      // Re-fit targets after loading progress to ensure proper scaling
+      fitTargets();
+      // Check if puzzle is already solved with loaded progress
+      checkPuzzleSolution();
+    }
 
     // Initialize debug mode if enabled
     if (DEBUG_MODE) {
@@ -522,11 +672,6 @@
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
-  }
-
-  .puzzle-solved {
-    /* border-color: #4CAF50;
-    box-shadow: 0 0 20px rgba(76, 175, 80, 0.3); */
   }
 
   .target-outline, .tangram-piece {
@@ -649,7 +794,7 @@
       bottom: 150px;
       right: 40px;
       z-index: 2000;
-     
+
   }
 
   .action-buttons {
@@ -737,13 +882,13 @@
 
 {#if showHelp}
   <div class="fixed inset-0 z-[9999] grid place-items-center">
-    <div class="absolute inset-0 bg-black/30" onclick={() => showHelp = false} />
+    <div class="absolute inset-0 bg-black/30" onclick={dismissHelp} />
     <div class="relative mx-auto w-max border drop-shadow-[var(--my-drop-shadow)] text-bouton px-9 py-10 max-h-max bg-white">
       <button
         type="button"
         class="absolute right-3 top-3 oki"
         aria-label="Fermer l'aide"
-        onclick={() => showHelp = false}
+        onclick={dismissHelp}
       >
         <svg width="16" height="16" viewBox="0 0 29 29" fill="black" xmlns="http://www.w3.org/2000/svg">
           <path d="M28.8613 25.8936L26.0347 28.7238L0.173337 2.83019L3 0L28.8613 25.8936Z" fill="black"/>
@@ -805,7 +950,7 @@
       >
         {#key piece.animationKey}
           <svg class="tangram-piece-svg" class:wiggling-svg={activePieceId === piece.id} viewBox={pieceData.viewBox}>
-            <polygon use:draggable={{ pieceId: piece.id }} points={pieceData.points} fill={pieceData.color} />
+            <polygon use:draggable={{ pieceId: piece.id }} points={pieceData.points} fill={getPieceFillColor(piece.id)} />
           </svg>
         {/key}
       </div>
@@ -849,12 +994,12 @@
     <div class="success-message text-corps" transition:fly={{ y: 20, duration: 300 }}>
       <button class="absolute top-2 right-2 text-white" onclick={() => puzzleSolved = false}>✕</button>
       <div class="mt-2 flex flex-row gap-5">
-        
+
           <!-- <button class="inf-bold w-fit w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]" onclick={() => goto('/puzzles')}>Retour aux tangrams</button> -->
-          <button class="inf-bold w-fit w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">Recommencer<br/>ce tangram ?</button>
+          <button class="inf-bold w-fit w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]" onclick={resetPuzzle}>Recommencer<br/>ce tangram ?</button>
       </div>
     </div>
-      
+
   {/if}
 
     <!-- Debug Panel - Only shown when DEBUG_MODE is true -->

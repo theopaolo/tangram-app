@@ -2,25 +2,101 @@
   import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
   import Breadcrumb from '$lib/Breadcrumb.svelte';
-  import { getAllPuzzles, PIECES_DATA_WITH_VIEWBOX } from '$lib/puzzleData.js';
+  import { getAllPuzzles, PIECES_DATA_WITH_VIEWBOX, PIECE_GREY_COLOR } from '$lib/puzzleData.js';
+  import { PIECES_DATA } from '$lib/piecesData';
 
-import { PIECES_DATA } from '$lib/piecesData';
+	let refreshTrigger = $state(0); // Used to trigger re-rendering of colors
 
-	let completedPuzzles = $state([]);
-	let allPuzzlesCompleted = $derived(completedPuzzles.length === 7);
+	// Get all puzzles
+	const puzzles = getAllPuzzles();
+
+	// Check if a puzzle is completed based on progress data
+	function isPuzzleCompleted(puzzleId) {
+		if (typeof localStorage === 'undefined') return false;
+
+		try {
+			const progressKey = `puzzle_${puzzleId}_progress`;
+			const saved = localStorage.getItem(progressKey);
+			if (!saved) return false;
+
+			const progress = JSON.parse(saved);
+			if (progress.puzzleId !== puzzleId || !progress.pieces) return false;
+
+			// Check if all pieces are placed (not in container)
+			return progress.pieces.every(piece => !piece.inContainer);
+		} catch (error) {
+			return false;
+		}
+	}
+
+	// Get completed puzzles from progress data
+	let completedPuzzles = $derived(puzzles.map(p => p.id).filter(id => isPuzzleCompleted(id)));
+	let allPuzzlesCompleted = $derived(completedPuzzles.length === puzzles.length);
 
 	// --- FUNCTIONS ---
 	onMount(() => {
 		applyCol();
-		loadCompletedPuzzles();
+
+		// Listen for storage changes to refresh colors when returning from puzzle
+		if (typeof window !== 'undefined') {
+			window.addEventListener('storage', handleStorageChange);
+			window.addEventListener('focus', handlePageFocus);
+		}
+
+		return () => {
+			if (typeof window !== 'undefined') {
+				window.removeEventListener('storage', handleStorageChange);
+				window.removeEventListener('focus', handlePageFocus);
+			}
+		};
 	});
 
-	function loadCompletedPuzzles() {
-		if (typeof localStorage !== 'undefined') {
-			const completed = JSON.parse(localStorage.getItem('completedPuzzles') || '[]');
-			completedPuzzles = completed;
+	function handleStorageChange(e) {
+		// Refresh when puzzle progress changes
+		if (e.key?.startsWith('puzzle_')) {
+			refreshTrigger++;
 		}
 	}
+
+	function handlePageFocus() {
+		// Refresh when returning to the page
+		refreshTrigger++;
+	}
+
+  // Get puzzle pieces from progress data or fallback to original puzzle data
+  function getPuzzlePieces(puzzleId, originalPuzzleData) {
+    if (typeof localStorage === 'undefined') return originalPuzzleData;
+
+    try {
+      const progressKey = `puzzle_${puzzleId}_progress`;
+      const saved = localStorage.getItem(progressKey);
+      if (!saved) return originalPuzzleData;
+
+      const progress = JSON.parse(saved);
+      // Compare as strings to handle type mismatch
+      if (progress.puzzleId != puzzleId || !progress.pieces) return originalPuzzleData;
+
+      return progress.pieces;
+    } catch (error) {
+      return originalPuzzleData;
+    }
+  }
+
+  // Get the appropriate color for a puzzle piece based on placement status
+  function getPieceColor(pieceId, puzzleId, _refreshTrigger) {
+    const progressPieces = getPuzzlePieces(puzzleId, []);
+    const piece = progressPieces.find(p => p.id === pieceId);
+
+    if (!piece) return PIECE_GREY_COLOR; // Grey if piece not found
+
+    // If piece is placed (not in container), show full color
+    if (!piece.inContainer) {
+      return PIECES_DATA_WITH_VIEWBOX[pieceId].color;
+    }
+
+    // If piece is in container, show grey
+    return PIECE_GREY_COLOR;
+  }
 
 
 	function applyCol() {
@@ -31,8 +107,6 @@ import { PIECES_DATA } from '$lib/piecesData';
 			);
 		});
 	}
-
-  const puzzles = getAllPuzzles();
 
   // Calculate preview scale for puzzle cards
   function calculatePreviewScale(puzzleData, containerWidth = null, containerHeight = null) {
@@ -200,38 +274,8 @@ import { PIECES_DATA } from '$lib/piecesData';
     pointer-events: auto;
   }
 
-  .puzzle-card h3 {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-    text-align: center;
-  }
-
-  .puzzle-card p {
-    font-size: 0.9rem;
-    text-align: center;
-    color: #666;
-    margin-bottom: 1rem;
-  }
-
   .puzzle-card:last-of-type{
   border: none !important;
-  }
-
-  .puzzle-card .status {
-    padding: 0.25rem 0.75rem;
-    font-size: 0.8rem;
-    font-weight: bold;
-  }
-
-  .puzzle-card .status.completed {
-    background: #fff;
-    color: rgb(0, 0, 0);
-  }
-
-  .puzzle-card .status.incomplete {
-    background: #fff;
-    color: #a6a5a5;
   }
   .blipo{
   animation: blipoColorCycle 4s steps(7) infinite;
@@ -319,15 +363,16 @@ import { PIECES_DATA } from '$lib/piecesData';
     {/if}
 
   <div class="flex flex-col">
-    {#each puzzles as puzzle}
+    {#each puzzles as puzzle (puzzle.id)}
       {@const previewScale = calculatePreviewScale(puzzle.data)}
       <div class="puzzle-card h-svh border-[#ddd] border-b justify-center flex" role="button" tabindex="0"
           onclick={() => selectPuzzle(puzzle.id)}
           onkeydown={(e) => e.key === 'Enter' && selectPuzzle(puzzle.id)}>
         <div class="puzzle-preview w-full">
-          {#each puzzle.data as piece}
-            {@const pieceData = PIECES_DATA_WITH_VIEWBOX[piece.id]}
-            {@const previewPos = calculatePreviewPosition(piece, puzzle.data, previewScale)}
+          {#each puzzle.data as originalPiece}
+            {@const pieceData = PIECES_DATA_WITH_VIEWBOX[originalPiece.id]}
+            {@const previewPos = calculatePreviewPosition(originalPiece, puzzle.data, previewScale)}
+            {@const pieceColor = getPieceColor(originalPiece.id, puzzle.id, refreshTrigger)}
             <div
               class="tangram-piece"
               style="
@@ -335,12 +380,12 @@ import { PIECES_DATA } from '$lib/piecesData';
                 --y: {previewPos.y};
                 --w: {pieceData.width * previewScale}px;
                 --h: {pieceData.height * previewScale}px;
-                --rotation: {piece.rotation}deg;
+                --rotation: {originalPiece.rotation}deg;
                 --scaleX: 1;
               "
             >
               <svg class="tangram-piece-svg w-full" viewBox={pieceData.viewBox}>
-                <polygon points={pieceData.points} fill={pieceData.color} />
+                <polygon points={pieceData.points} fill={pieceColor} />
               </svg>
             </div>
           {/each}
