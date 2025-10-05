@@ -466,9 +466,18 @@
     puzzleSolved = allCorrect;
 
     if (allCorrect) {
-      // Mark current puzzle as completed (would need global state management in a real app)
+      // Mark current puzzle as completed in localStorage
       if (DEBUG_MODE) {
         debugLog("🎉 CONGRATULATIONS! PUZZLE SOLVED! 🎉");
+      }
+
+      // Save completion status to localStorage
+      if (typeof localStorage !== 'undefined') {
+        const completedPuzzles = JSON.parse(localStorage.getItem('completedPuzzles') || '[]');
+        if (!completedPuzzles.includes(puzzleId)) {
+          completedPuzzles.push(puzzleId);
+          localStorage.setItem('completedPuzzles', JSON.stringify(completedPuzzles));
+        }
       }
     }
   }

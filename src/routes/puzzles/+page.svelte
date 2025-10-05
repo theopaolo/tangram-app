@@ -6,11 +6,21 @@
 
 import { PIECES_DATA } from '$lib/piecesData';
 
+	let completedPuzzles = $state([]);
+	let allPuzzlesCompleted = $derived(completedPuzzles.length === 7);
 
 	// --- FUNCTIONS ---
 	onMount(() => {
 		applyCol();
+		loadCompletedPuzzles();
 	});
+
+	function loadCompletedPuzzles() {
+		if (typeof localStorage !== 'undefined') {
+			const completed = JSON.parse(localStorage.getItem('completedPuzzles') || '[]');
+			completedPuzzles = completed;
+		}
+	}
 
 
 	function applyCol() {
@@ -288,21 +298,9 @@ import { PIECES_DATA } from '$lib/piecesData';
 <!-- Puzzle Selection Screen -->
 <!-- <div class="p-5 mt-[90px]"> -->
   <div class="px-10">
-    <div class="text-center absolute top-[100px] m-auto left-0 right-0 z-1 text-center">
-      <!-- {#if puzzle.completed}
-        <p>Bravo tu as completé les 7 tangrams  !<br/>Télécharge un fond d’écran !</p>
-        <div class="">
-          <img
-            src="/images/fond_ecran.svg"
-            alt=""
-            class=""
-        />
-        </div>
-        
-      {:else} -->
-        <!-- <p>Voici les 7 tangrams à compléter selon ton envie !<br/>Scrolle pour les découvrir !</p> -->
-
-        <p>Bravo tu as completé les 7 tangrams  !<br/>Télécharge un fond d’écran !</p>
+    {#if allPuzzlesCompleted}
+      <div class="text-center absolute top-[100px] m-auto left-0 right-0 z-1 text-center">
+        <p>Bravo tu as completé les 7 tangrams  !<br/>Télécharge un fond d'écran !</p>
         <div class="w-[124px] h-[68px] m-auto relative mt-2">
           <div class="blipo w-[26px] h-[42px] bg-black absolute z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex"><img style="width:80%;margin:auto" src="/images/tangrams_b&w.svg"></div>
           <img
@@ -311,8 +309,8 @@ import { PIECES_DATA } from '$lib/piecesData';
             class=""
         />
         </div>
-      <!-- {/if} -->
-    </div>
+      </div>
+    {/if}
 
   <div class="flex flex-col">
     {#each puzzles as puzzle}
@@ -342,7 +340,7 @@ import { PIECES_DATA } from '$lib/piecesData';
           {/each}
           <!-- <div class="absolute bottom-0 left-0 p-5 text-intro leading-none">#{puzzle.id}</div> -->
 
-          {#if puzzle.completed}
+          {#if completedPuzzles.includes(String(puzzle.id))}
             <div class="absolute complet_{puzzle.id}">
               <img
                 src="/images/complet_{puzzle.id}.svg"
