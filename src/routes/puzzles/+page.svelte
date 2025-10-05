@@ -4,6 +4,24 @@
   import Breadcrumb from '$lib/Breadcrumb.svelte';
   import { getAllPuzzles, PIECES_DATA_WITH_VIEWBOX } from '$lib/puzzleData.js';
 
+import { PIECES_DATA } from '$lib/piecesData';
+
+
+	// --- FUNCTIONS ---
+	onMount(() => {
+		applyCol();
+	});
+
+
+	function applyCol() {
+  	if (typeof document === 'undefined') return; // SSR guard
+		Object.keys(PIECES_DATA).forEach((id) => {
+			document.documentElement.style.setProperty(
+				`--c${id}`, PIECES_DATA[id].color
+			);
+		});
+	}
+
   const puzzles = getAllPuzzles();
 
   // Calculate preview scale for puzzle cards
@@ -105,12 +123,9 @@
 			freezeScroll();
 		};
 	});
-
 </script>
 
 <style>
-
-
   /* Puzzle selection styles */
   .puzzle-selection {
     position: absolute;
@@ -208,6 +223,18 @@
     background: #fff;
     color: #a6a5a5;
   }
+  .blipo{
+  animation: blipoColorCycle 4s steps(7) infinite;
+  }
+@keyframes blipoColorCycle {
+  0%, 14% { background-color: var(--c1); }
+  14.01%, 28% { background-color: var(--c2); }
+  28.01%, 42% { background-color: var(--c3); }
+  42.01%, 57% { background-color: var(--c4); }
+  57.01%, 71% { background-color: var(--c5); }
+  71.01%, 85% { background-color: var(--c6); }
+  85.01%, 100% { background-color: var(--c7); }
+}
   .complet_1{
     bottom:10%;
     left:10%;
@@ -220,48 +247,72 @@
     top:10%;
     left:10%;
   }
-    .complet_4{
+  .complet_4{
     bottom:10%;
     left:10%;
   }
-    .complet_5{
+  .complet_5{
     top:10%;
     left:10%;
   }
-    .complet_6{
+  .complet_6{
     top:10%;
     right:10%;
   }
-    .complet_7{
+  .complet_7{
     bottom:10%;
     right:10%;
   }
-
 </style>
 
 <!-- Title -->
+  <header class="fixed left-5 top-0 z-10 flex items-center pt-4 pb-2 bg-white w-full">
+    <a href="/start" class="flex gap-2" aria-label="Retour au Chromogram">
+      <img
+      src="/images/retour_chromo.svg"
+      alt="retour"
+      class="h-auto !w-[162px]"
+        />
+    </a>
 
-		<header class="fixed left-5 top-0 z-10 flex items-center pt-4 pb-2 bg-white w-full">
-			<a href="/start" class="flex gap-2" aria-label="Retour au Chromogram">
-			
-				<!-- <svg  width="32" height="32" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" >
-				<path d="M12.9639 0.700195L13.0068 0.705078C13.0168 0.704069 13.0269 0.700195 13.0371 0.700195H24.9258C25.0915 0.700195 25.2256 0.834315 25.2256 1V25C25.2256 25.0795 25.1939 25.1557 25.1377 25.2119C25.0814 25.2681 25.0053 25.2998 24.9258 25.2998H1C0.83434 25.2998 0.700237 25.1657 0.700195 25V1C0.700195 0.834315 0.834315 0.700195 1 0.700195H12.9639ZM1.72559 24.7002H24.2002L18.7324 19.249C18.7314 19.248 18.7305 19.2471 18.7295 19.2461L12.9629 13.4971L1.72559 24.7002ZM1.2998 24.2764L12.54 13.0713L6.76758 7.21094L1.2998 1.72559V24.2764ZM19.4082 19.0752L24.626 24.2764V13.8408L19.4082 19.0752ZM13.4219 13.042L18.96 18.5967L24.502 13.0713L18.9814 7.46484L13.4219 13.042ZM13.0342 12.5742L18.2275 7.2998H7.74414L13.0342 12.5742ZM19.1816 6.8125H19.2119L24.626 12.2432V1.2998H13.7539L19.1816 6.8125ZM7.14258 6.7002H18.2227L12.8389 1.2998H1.72656L7.14258 6.7002Z" fill="black"/>
-				</svg> -->
+    <!-- <a href="/start" class="right-5 absolute" aria-label="Retour au Chromogram">
+      <img
+      src="/images/retour_chromo.svg"
+      alt="retour"
+      class="h-auto !w-[162px]"
+        />
+    </a> -->
 
-				<img
-				src="/images/retour_chromo.svg"
-				alt="retour"
-				class="h-auto !w-[162px]"
-					/>
-			</a>
-		</header>
+  </header>
 
 <!-- Puzzle Selection Screen -->
 <!-- <div class="p-5 mt-[90px]"> -->
   <div class="px-10">
-  <div class="text-center absolute top-[110px] m-auto left-0 right-0 z-1 ">
-    <p>Voici les 7 tangrams à compléter selon ton envie !<br/>Scrolle pour les découvrir !</p>
-  </div>
+    <div class="text-center absolute top-[100px] m-auto left-0 right-0 z-1 text-center">
+      <!-- {#if puzzle.completed}
+        <p>Bravo tu as completé les 7 tangrams  !<br/>Télécharge un fond d’écran !</p>
+        <div class="">
+          <img
+            src="/images/fond_ecran.svg"
+            alt=""
+            class=""
+        />
+        </div>
+        
+      {:else} -->
+        <!-- <p>Voici les 7 tangrams à compléter selon ton envie !<br/>Scrolle pour les découvrir !</p> -->
+
+        <p>Bravo tu as completé les 7 tangrams  !<br/>Télécharge un fond d’écran !</p>
+        <div class="w-[124px] h-[68px] m-auto relative mt-2">
+          <div class="blipo w-[26px] h-[42px] bg-black absolute z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex"><img style="width:80%;margin:auto" src="/images/tangrams_b&w.svg"></div>
+          <img
+            src="/images/fond_ecran_full.png"
+            alt=""
+            class=""
+        />
+        </div>
+      <!-- {/if} -->
+    </div>
 
   <div class="flex flex-col">
     {#each puzzles as puzzle}
@@ -303,8 +354,7 @@
             <!-- rien -->
           {/if}
 
-
-          <div class="absolute top-0 left-0 p-5 text-intro leading-none">#{puzzle.id}</div>
+          <div class="absolute bottom-0 left-0 p-5 text-intro leading-none">#{puzzle.id}</div>
 
           <!-- <div class="status {puzzle.completed ? 'completed' : 'incomplete'} absolute bottom-0 left-0 right-0 margin-auto p-5 text-intro leading-none"> {puzzle.completed ? 'Terminé' : 'À compléter'}</div> -->
 
