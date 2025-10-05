@@ -16,6 +16,18 @@
   	initializeDebugMode
   } from '../../../lib/puzzleDebug.js';
 
+  // --- FROM PUZZLES PAGE ---
+let completedPuzzles = $state([]);
+let allPuzzlesCompleted = $derived(completedPuzzles.length === 7);
+
+function loadCompletedPuzzles() {
+  if (typeof localStorage !== 'undefined') {
+    const completed = JSON.parse(localStorage.getItem('completedPuzzles') || '[]');
+    completedPuzzles = completed;
+  }
+}
+
+
   
   let showHelp = $state(true); // rune => re-render quand on assigne
 
@@ -489,6 +501,7 @@
   onMount(() => {
     initializePieces();
     fitTargets();
+    loadCompletedPuzzles();
 
     // Initialize debug mode if enabled
     if (DEBUG_MODE) {
@@ -854,7 +867,7 @@
         class="h-[87.08px] !w-[100px] mr-[10%]"
         />
 
-    <!-- {#if allPuzzlesCompleted}
+    {#if allPuzzlesCompleted}
       <a href="/puzzles" class="h-[68.41px" aria-label="Retour à l'accueil">
         <img
         src="/images/continuer_2.svg"
@@ -862,7 +875,7 @@
         class="h-[68.41px] !w-[101px]"
         />
       </a>
-    {/else}
+    {:else}
       <a href="/puzzles" class="h-[68.41px" aria-label="Retour à l'accueil">
         <img
         src="/images/continuer.svg"
@@ -870,14 +883,14 @@
         class="h-[68.41px] !w-[101px]"
         />
       </a>
-    {/if} -->
-      <a href="/puzzles" class="h-[68.41px" aria-label="Retour à l'accueil">
+    {/if}
+      <!-- <a href="/puzzles" class="h-[68.41px" aria-label="Retour à l'accueil">
         <img
         src="/images/continuer.svg"
         alt="retour"
         class="h-[68.41px] !w-[101px]"
         />
-      </a>
+      </a> -->
     </div>
   {/if}
 
