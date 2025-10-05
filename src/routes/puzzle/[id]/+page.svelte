@@ -294,7 +294,7 @@
         } else if (wasDrag) {
           // playSound(dropSound);
 
-          // If near a valid target, snap perfectly into place and override rotation
+          // If near a valid target, snap perfectly into place
           const target = findMagneticTarget(piece);
           if (target) {
             const dist = Math.hypot(piece.x - target.screenX, piece.y - target.screenY);
@@ -302,7 +302,8 @@
               piece.inContainer = false;
               piece.x = target.screenX;
               piece.y = target.screenY;
-              piece.rotation = target.rotation;
+              // Don't change rotation - findMagneticTarget already verified rotation compatibility
+              // This prevents unnecessary rotation changes for interchangeable pieces (e.g., the two big triangles)
               piece.animationKey += 1;
             }
           }
