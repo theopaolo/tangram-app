@@ -1126,7 +1126,7 @@
     </div>
   {/if}
 
-   
+
 
     <!-- Debug Panel - Only shown when DEBUG_MODE is true -->
   {#if DEBUG_MODE}
