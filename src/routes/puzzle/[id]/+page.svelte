@@ -646,10 +646,11 @@
   }
   .success-message {
       position: fixed;
-      bottom: 150px;
-      right: 40px;
+      bottom: 160px;
+      right: 0;
       z-index: 2000;
-     
+      left:0;
+      margin: auto;
   }
 
   .action-buttons {
@@ -847,11 +848,10 @@
 
 {#if puzzleSolved}
     <div class="success-message text-corps" transition:fly={{ y: 20, duration: 300 }}>
-      <button class="absolute top-2 right-2 text-white" onclick={() => puzzleSolved = false}>✕</button>
-      <div class="mt-2 flex flex-row gap-5">
+      <div class="mt-2 flex justify-center">
         
           <!-- <button class="inf-bold w-fit w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]" onclick={() => goto('/puzzles')}>Retour aux tangrams</button> -->
-          <button class="inf-bold w-fit w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">Recommencer<br/>ce tangram ?</button>
+          <button class="inf-bold w-fit w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">Recommencer ce tangram ?</button>
       </div>
     </div>
       
