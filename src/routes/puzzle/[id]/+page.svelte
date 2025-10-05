@@ -6,9 +6,9 @@
   import { fly } from 'svelte/transition';
   import createInteractionHandler from '../../../lib/interaction.js';
 
-  
+
   import Breadcrumb from '$lib/Breadcrumb.svelte';
-  import { getPuzzleById, PIECES_DATA, PIECES_DATA_WITH_VIEWBOX } from '$lib/puzzleData.js';
+  import { getPuzzleById, PIECES_DATA, PIECES_DATA_WITH_VIEWBOX, PIECE_GREY_COLOR } from '$lib/puzzleData.js';
   import {
   	areInterchangeable,
   	checkRotationMatch,
@@ -16,7 +16,7 @@
   	initializeDebugMode
   } from '../../../lib/puzzleDebug.js';
 
-  
+
   let showHelp = $state(true); // rune => re-render quand on assigne
 
   // Get puzzle ID from URL params
@@ -48,7 +48,7 @@
   });
 
   // Toggle debug mode - set to false for production
-  const DEBUG_MODE = false;
+  const DEBUG_MODE = true;
 
   let pickupSound, dropSound;
   let audioUnlocked = false;
@@ -87,6 +87,101 @@
   let puzzleScale = $state(1);
   let puzzleSolved = $state(false);
   let puzzleContainer, piecesContainer;
+  let matchesFromStorage = $state([]); // [{ targetId, pieceId }]
+  let hasAppliedStoredPlacement = $state(false);
+
+  // --- PUZZLE PROGRESSION TRACKING ---
+  const PUZZLE_PROGRESS_KEY = `puzzle_${puzzleId}_progress`;
+  const HELP_DISMISSED_KEY = 'tangram_help_dismissed';
+
+  // Helper: find the target this piece currently matches (within tolerance and rotation rules)
+  function findMatchedTargetForPiece(piece) {
+    if (!piece || piece.inContainer) return null;
+    const tolerance = 25 * puzzleScale;
+    const target = targetPieces.find((t) => {
+      const compatible = piece.id === t.id || areInterchangeable(piece.id, t.id, PIECES_DATA);
+      if (!compatible) return false;
+      const distance = Math.hypot(piece.x - t.screenX, piece.y - t.screenY);
+      if (distance >= tolerance) return false;
+      const rotOk = checkRotationMatch(piece.id, piece.rotation, t.id, t.rotation, planePuzzle, PIECES_DATA, false);
+      return rotOk;
+    });
+    return target || null;
+  }
+
+  // Save puzzle progress to localStorage (matched pairs: targetId <- pieceId)
+  function savePuzzleProgress() {
+    if (typeof localStorage === 'undefined') return;
+
+    const matches = [];
+    const usedTargetIds = new Set();
+    for (const piece of pieces) {
+      const target = findMatchedTargetForPiece(piece);
+      if (target && !usedTargetIds.has(target.id)) {
+        matches.push({ targetId: target.id, pieceId: piece.id, rotation: ((piece.rotation % 360) + 360) % 360 });
+        usedTargetIds.add(target.id);
+      }
+    }
+
+    const progress = {
+      matches,
+      puzzleId: puzzleId,
+      timestamp: Date.now()
+    };
+
+    localStorage.setItem(PUZZLE_PROGRESS_KEY, JSON.stringify(progress));
+  }
+
+  // Load puzzle progress from localStorage (matched pairs)
+  function loadPuzzleProgress() {
+    if (typeof localStorage === 'undefined') return false;
+
+    try {
+      const saved = localStorage.getItem(PUZZLE_PROGRESS_KEY);
+      if (!saved) return false;
+
+      const progress = JSON.parse(saved);
+
+      // Verify this is for the current puzzle
+      if (progress.puzzleId !== puzzleId) return false;
+
+      // Backward compatibility: accept either matches or matchedTargetIds
+      if (Array.isArray(progress.matches)) {
+        matchesFromStorage = progress.matches
+          .filter(m => m && typeof m.targetId !== 'undefined' && typeof m.pieceId !== 'undefined')
+          .map(m => ({ targetId: m.targetId, pieceId: m.pieceId, rotation: typeof m.rotation === 'number' ? ((m.rotation % 360) + 360) % 360 : null }));
+      } else if (Array.isArray(progress.matchedTargetIds)) {
+        matchesFromStorage = progress.matchedTargetIds.map((tid) => ({ targetId: tid, pieceId: null, rotation: null }));
+      } else {
+        matchesFromStorage = [];
+      }
+      hasAppliedStoredPlacement = false;
+      return matchesFromStorage.length > 0;
+    } catch (error) {
+      console.warn('Failed to load puzzle progress:', error);
+    }
+
+    return false;
+  }
+
+  // Clear puzzle progress (when puzzle is completed or reset)
+  function clearPuzzleProgress() {
+    if (typeof localStorage === 'undefined') return;
+    localStorage.removeItem(PUZZLE_PROGRESS_KEY);
+  }
+
+  // Check if help has been dismissed before
+  function isHelpDismissed() {
+    if (typeof localStorage === 'undefined') return false;
+    return localStorage.getItem(HELP_DISMISSED_KEY) === 'true';
+  }
+
+  // Save help dismissal state
+  function dismissHelp() {
+    if (typeof localStorage === 'undefined') return;
+    localStorage.setItem(HELP_DISMISSED_KEY, 'true');
+    showHelp = false;
+  }
 
   // --- MAGNETIC EFFECT CONSTANTS ---
   const MAGNETIC_SNAP_DISTANCE = 100; // Distance in pixels to begin attraction
@@ -107,6 +202,45 @@
 
   // Derived state
   const activePiece = $derived(pieces.find(p => p.id === activePieceId));
+
+  // --- COLORING BASED ON PROGRESS (mirror puzzles list logic) ---
+  function isPieceProperlyPlacedCurrent(piece) {
+    if (!piece || piece.inContainer) return false;
+
+    const tolerance = 25 * puzzleScale; // same as checkPuzzleSolution
+
+    // find a compatible target (exact id or interchangeable)
+    const target = targetPieces.find(t => piece.id === t.id || areInterchangeable(piece.id, t.id, PIECES_DATA));
+    if (!target) return false;
+
+    const distance = Math.hypot(piece.x - target.screenX, piece.y - target.screenY);
+    const rotationMatch = checkRotationMatch(
+      piece.id,
+      piece.rotation,
+      target.id,
+      target.rotation,
+      planePuzzle,
+      PIECES_DATA,
+      false
+    );
+
+    return distance < tolerance && rotationMatch;
+  }
+
+  function getPieceFillColor(pieceId) {
+    const piece = pieces.find(p => p.id === pieceId);
+
+    if (!piece || piece.inContainer) return PIECE_GREY_COLOR;
+
+    if (puzzleSolved || isPieceProperlyPlacedCurrent(piece)) {
+      return PIECES_DATA_WITH_VIEWBOX[pieceId].color;
+    }
+
+    // Placed but not correctly aligned: keep base color; opacity handled separately
+    return PIECES_DATA_WITH_VIEWBOX[pieceId].color;
+  }
+
+  // No opacity variations needed
 
   // Find the closest compatible target for magnetic attraction
   function findMagneticTarget(piece) {
@@ -151,6 +285,27 @@
     });
   }
 
+  // Compute a rotation for pieceId that is compatible with the given target
+  function findCompatibleRotationForPlacement(pieceId, target) {
+    // Try all 8 orientations (45° increments). Prefer exact target rotation first.
+    const candidates = [target.rotation, 0, 45, 90, 135, 180, 225, 270, 315];
+    for (const rot of candidates) {
+      const normalized = ((rot % 360) + 360) % 360;
+      const ok = checkRotationMatch(
+        pieceId,
+        normalized,
+        target.id,
+        target.rotation,
+        planePuzzle,
+        PIECES_DATA,
+        false
+      );
+      if (ok) return normalized;
+    }
+    // Fallback to target rotation
+    return ((target.rotation % 360) + 360) % 360;
+  }
+
   // Store original and transformed bounds for positioning
   let originalBounds = { minX: 0, minY: 0, maxX: 0, maxY: 0 };
   let fitScale = 1;
@@ -161,7 +316,7 @@
       Object.keys(PIECES_DATA)
       .map((id) => (
         {
-          id: parseInt(id), x: 0, y: 0, rotation: 0, origX: 0, origY: 0, inContainer: true, animationKey: 0,
+          id: parseInt(id), x: 0, y: 0, rotation: 0, origX: 0, origY: 0, inContainer: true, animationKey: 0, matched: false,
         }
       ));
   }
@@ -206,6 +361,47 @@
       const screenY = offsetY + (target.y - bounds.minY) * scaleFactor;
       return { ...target, screenX, screenY };
     });
+
+    // If we have stored matched IDs and haven't applied placement yet, do it now
+    if (!hasAppliedStoredPlacement && matchesFromStorage.length > 0) {
+      // Reset all pieces to container by default
+      pieces = pieces.map((piece) => ({
+        ...piece,
+        inContainer: true,
+        x: 0,
+        y: 0,
+        rotation: 0,
+        matched: false
+      }));
+
+      for (const match of matchesFromStorage) {
+        const target = targetPieces.find((t) => t.id === match.targetId);
+        if (!target) continue;
+
+        // Prefer the recorded pieceId if available
+        let candidate = match.pieceId != null ? pieces.find((p) => p.inContainer && p.id === match.pieceId) : null;
+        // Fallbacks: same-id, then any interchangeable
+        if (!candidate) candidate = pieces.find((p) => p.inContainer && p.id === target.id);
+        if (!candidate) candidate = pieces.find((p) => p.inContainer && areInterchangeable(p.id, target.id, PIECES_DATA));
+        if (!candidate) continue;
+
+        candidate.inContainer = false;
+        candidate.x = target.screenX;
+        candidate.y = target.screenY;
+        // If we kept the same piece, prefer the saved rotation; else compute a compatible one
+        if (match.pieceId != null && candidate.id === match.pieceId && typeof match.rotation === 'number') {
+          candidate.rotation = match.rotation;
+        } else {
+          candidate.rotation = findCompatibleRotationForPlacement(candidate.id, target);
+        }
+        candidate.matched = true;
+        candidate.animationKey += 1;
+      }
+
+      hasAppliedStoredPlacement = true;
+      // After applying, re-check solution state
+      checkPuzzleSolution();
+    }
   }
 
   function observeResize(node) {
@@ -222,6 +418,7 @@
   // --- INTERACTION FUNCTIONS ---
   function draggable(node, params) {
     let offsetX, offsetY;
+    let startedInContainer = false;
 
     const handlePointerDown = createInteractionHandler({
       onDown: (e) => {
@@ -233,6 +430,9 @@
         if (!piece) return;
 
         const rect = puzzleContainer.getBoundingClientRect();
+
+        // Track whether this interaction started from the container
+        startedInContainer = piece.inContainer;
 
         if (piece.inContainer) {
           // Moving from container to puzzle area
@@ -288,9 +488,33 @@
         if (!piece) return;
 
         if (wasTap) {
-          // Rotate on tap
-          piece.rotation = (piece.rotation + 45) % 360;
-          piece.animationKey += 1;
+          if (startedInContainer) {
+            // Tap on a container piece: throw it into the puzzle area, just above the container
+            const rect = puzzleContainer.getBoundingClientRect();
+            const containerRect = piecesContainer.getBoundingClientRect();
+            const paddingX = Math.round(rect.width * 0.1);
+            const minX = paddingX;
+            const maxX = rect.width - paddingX;
+            const targetX = Math.round(minX + Math.random() * Math.max(0, maxX - minX));
+            const offsetAbove = 40; // place a bit above the pieces container
+            const computedY = Math.round(containerRect.top - rect.top - offsetAbove);
+            const targetY = Math.max(0, Math.min(rect.height - 1, computedY));
+
+            piece.inContainer = false;
+            piece.x = targetX;
+            piece.y = targetY;
+            piece.animationKey += 1;
+
+            // Save progress when piece is thrown into the puzzle
+            savePuzzleProgress();
+          } else {
+            // Rotate on tap
+            piece.rotation = (piece.rotation + 45) % 360;
+            piece.animationKey += 1;
+
+            // Save progress when piece is rotated
+            savePuzzleProgress();
+          }
         } else if (wasDrag) {
           // playSound(dropSound);
 
@@ -305,6 +529,9 @@
               // Don't change rotation - findMagneticTarget already verified rotation compatibility
               // This prevents unnecessary rotation changes for interchangeable pieces (e.g., the two big triangles)
               piece.animationKey += 1;
+
+              // Save progress when piece is properly placed
+              savePuzzleProgress();
             }
           }
 
@@ -318,6 +545,9 @@
               piece.y = 0;
               piece.rotation = 0;
               piece.animationKey += 1;
+
+              // Save progress when piece is returned to container
+              savePuzzleProgress();
             }
           }
         }
@@ -471,14 +701,8 @@
         debugLog("🎉 CONGRATULATIONS! PUZZLE SOLVED! 🎉");
       }
 
-      // Save completion status to localStorage
-      if (typeof localStorage !== 'undefined') {
-        const completedPuzzles = JSON.parse(localStorage.getItem('completedPuzzles') || '[]');
-        if (!completedPuzzles.includes(puzzleId)) {
-          completedPuzzles.push(puzzleId);
-          localStorage.setItem('completedPuzzles', JSON.stringify(completedPuzzles));
-        }
-      }
+      // Save final progress state (all pieces matched)
+      savePuzzleProgress();
     }
   }
 
@@ -486,9 +710,35 @@
     goto('/puzzles');
   }
 
+  function resetPuzzle() {
+    // Clear saved progress
+    clearPuzzleProgress();
+
+    // Reset pieces to initial state
+    initializePieces();
+
+    // Reset puzzle solved state
+    puzzleSolved = false;
+
+    // Re-fit targets
+    fitTargets();
+  }
+
   onMount(() => {
     initializePieces();
     fitTargets();
+
+    // Check if help has been dismissed before
+    showHelp = !isHelpDismissed();
+
+    // Try to load saved progress (matched pieces only)
+    const progressLoaded = loadPuzzleProgress();
+    if (progressLoaded) {
+      // Re-fit targets after loading progress to ensure proper scaling
+      fitTargets();
+      // Check if puzzle is already solved with loaded progress
+      checkPuzzleSolution();
+    }
 
     // Initialize debug mode if enabled
     if (DEBUG_MODE) {
@@ -522,11 +772,6 @@
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
-  }
-
-  .puzzle-solved {
-    /* border-color: #4CAF50;
-    box-shadow: 0 0 20px rgba(76, 175, 80, 0.3); */
   }
 
   .target-outline, .tangram-piece {
@@ -738,13 +983,13 @@
 
 {#if showHelp}
   <div class="fixed inset-0 z-[9999] grid place-items-center">
-    <div class="absolute inset-0 bg-black/30" onclick={() => showHelp = false} />
-    <div class="text-corps relative mx-auto w-[90%] border drop-shadow-[var(--my-drop-shadow)] text-bouton px-9 py-10 max-h-max bg-white">
+    <div class="absolute inset-0 bg-black/30" onclick={dismissHelp} />
+    <div class="relative mx-auto w-max border drop-shadow-[var(--my-drop-shadow)] text-bouton px-9 py-10 max-h-max bg-white">
       <button
         type="button"
         class="absolute right-3 top-3 oki"
         aria-label="Fermer l'aide"
-        onclick={() => showHelp = false}
+        onclick={dismissHelp}
       >
         <svg width="16" height="16" viewBox="0 0 29 29" fill="black" xmlns="http://www.w3.org/2000/svg">
           <path d="M28.8613 25.8936L26.0347 28.7238L0.173337 2.83019L3 0L28.8613 25.8936Z" fill="black"/>
@@ -806,7 +1051,7 @@
       >
         {#key piece.animationKey}
           <svg class="tangram-piece-svg" class:wiggling-svg={activePieceId === piece.id} viewBox={pieceData.viewBox}>
-            <polygon use:draggable={{ pieceId: piece.id }} points={pieceData.points} fill={pieceData.color} />
+            <polygon use:draggable={{ pieceId: piece.id }} points={pieceData.points} fill={getPieceFillColor(piece.id)} />
           </svg>
         {/key}
       </div>

@@ -1,9 +1,8 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-
 	import { PIECES_DATA } from '$lib/piecesData';
-import { piecesStore } from '$lib/piecesStore.js';
+	import { piecesStore } from '$lib/piecesStore.js';
 
 	let totalFound = $state(0);
 	let foundPieces = $state([]);
@@ -12,17 +11,17 @@ import { piecesStore } from '$lib/piecesStore.js';
 		applyColors();
 	});
 
-function applyColors() {
-	if (typeof document === 'undefined') return; // SSR guard
+	function applyColors() {
+		if (typeof document === 'undefined') return; // SSR guard
 
-	Object.keys(PIECES_DATA).forEach((id) => {
-		const color = PIECES_DATA[id].color;
+		Object.keys(PIECES_DATA).forEach((id) => {
+			const color = PIECES_DATA[id].color;
 
-		document.querySelectorAll(`.p${id} polygon`).forEach((el) => {
-			el.setAttribute("fill", color);
+			document.querySelectorAll(`.p${id} polygon`).forEach((el) => {
+				el.setAttribute("fill", color);
+			});
 		});
-	});
-}
+	}
 
 
 	let gsap; // SSR-safe
@@ -233,8 +232,8 @@ function applyColors() {
 								onComplete: () => {
 									// ⬅️ Dès maintenant, .bt1 agit comme bt2
 									bt1Mode = 'play';
-									// Got to page /home
-									goto('/home');
+									// Got to page /home with state to indicate transition from index
+									goto('/home', { state: { fromIndex: true } });
 								}
 							});
 						}
