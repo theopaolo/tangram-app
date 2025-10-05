@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import createInteractionHandler from '../../lib/interaction.js';
+  import { PIECES_DATA_WITH_VIEWBOX as SHARED_PIECES_DATA_WITH_VIEWBOX } from '../../lib/puzzleData.js';
 
  let pieces = $state([
     { id: 1, x: 50, y: 50, origX: 50, origY: 50, rotation: 0, flipped: false, animationKey: 0 },
@@ -12,17 +13,16 @@
     { id: 7, x: 250, y: 150, origX: 250, origY: 150, rotation: 0, flipped: false, animationKey: 0 },
   ]);
 
-  const PIECES_DATA = {
-    1: {  name: 'Le Grand Triangle',color: '#A9BCC4',story: 'Cette pièce représente la majestuosité de la pyramide de Khéops...',artwork: 'Pyramide de Khéops - Égypte Antique',points: '15,15 150,150 285,15' /* Large right triangle*/},
-    2: {	name: 'Le Triangle Moyen',	color: '#FFF35C',	story: 'Inspiré des voiles des navires vénitiens...',	artwork: 'Les Marchands de Venise - Canaletto',	points: '15,15 150,150 15,285' /* Large left triangle */ },
-    3: { 	name: 'Le Petit Triangle', 	color: '#2B3B6D', 	story: 'Cette petite forme géométrique fait écho...', 	artwork: "Livre d'Heures - Art Médiéval", 	points: '150,150 217,217 217,83' /* Small triangle (top right) */ },
-    4: { 	name: 'Le Carré', 	        color: '#7AC142', 	story: "Le carré parfait représente l'équilibre...", 	artwork: 'Le Parthénon - Grèce Antique', 	points: '150,150 217,217 150,285 83,217' /* Square in center */ },
-    5: { 	name: 'Le Parallélogramme', 	color: '#6B8FD6', 	story: 'Cette oeuvre fait partie de la série...', 	artwork: 'MC Mitout. Les plus belles heures...', 	points: '217,83 217,217 285,150 285,15' /* Parallelogram (right) */ },
-    6: { 	name: 'Le Grand Trapèze', 	color: '#3B5D3A', 	story: 'Inspiré des toitures des pagodes japonaises...', 	artwork: 'Temple Kinkaku-ji - Architecture Japonaise', 	points: '15,285 150,285 83,217' /* Small triangle (bottom left) */ },
-    7: { 	name: 'Le Petit Trapèze', 	color: '#8B83D2', 	story: 'Cette dernière pièce représente les rayons...', 	artwork: 'Impression, soleil levant - Claude Monet', 	points: '150,285 285,150 285,285' /* Triangle (bottom right) */ }
-  };
+  // Use shared, canonical pieces data (with viewBox, width, height)
+  const PIECES_DATA_WITH_VIEWBOX = SHARED_PIECES_DATA_WITH_VIEWBOX;
 
-  const noFlipPieces = [4,6]; // Les pièces Le Grand Triangle id:1, Le Carré id:4, Le Grand Trapèze id:6 n'on pas besoin de flip
+  const noFlipPieces = [1,4,6]; // Les pièces 1, 4, 6 n'ont pas besoin de flip
+
+  // --- HYBRID SNAPPING CONSTANTS ---
+  const GRID_SIZE = 2; // Fine grid spacing in pixels
+  const GRID_SNAP_THRESHOLD = 6; // Distance to start snapping to grid
+  const VERTEX_SNAP_DISTANCE = 15; // Distance to snap to another piece's vertex
+  const VERTEX_SNAP_PRIORITY = 10; // Vertex snapping takes priority within this distance
 
   // --- STATE ---
   let activePieceId = $state(null);
@@ -30,6 +30,10 @@
   let containerSize = $state({ width: 0, height: 0 });
   let puzzleScale = $state(1);
   let puzzleContainer;
+  let showGrid = $state(true); // Toggle grid visibility
+  let snapIndicator = $state(null); // Show where piece will snap {x, y, type: 'grid'|'vertex'}
+  // Track last fit transform so we can export canonical, scale-independent coordinates
+  let lastFit = $state({ minX: 0, minY: 0, scale: 1, gutter: -1 });
 
   // --- DERIVED STATE ---
   const activePiece = $derived(pieces.find(p => p.id === activePieceId));
@@ -66,6 +70,89 @@
     });
   }
 
+  // Snap position to grid
+  function snapToGrid(x, y) {
+    const snappedX = Math.round(x / GRID_SIZE) * GRID_SIZE;
+    const snappedY = Math.round(y / GRID_SIZE) * GRID_SIZE;
+
+    // Only snap if within threshold
+    const distX = Math.abs(x - snappedX);
+    const distY = Math.abs(y - snappedY);
+
+    return {
+      x: distX < GRID_SNAP_THRESHOLD ? snappedX : x,
+      y: distY < GRID_SNAP_THRESHOLD ? snappedY : y,
+      distance: Math.hypot(distX, distY),
+      type: 'grid'
+    };
+  }
+
+  // Find the closest vertex snap point between active piece and other pieces
+  function findVertexSnapPoint(activePiece) {
+    if (!activePiece) return null;
+
+    const activeData = PIECES_DATA_WITH_VIEWBOX[activePiece.id];
+    const activeVertices = getTransformedPoints(activePiece, activeData);
+
+    let closestSnap = null;
+    let minDistance = VERTEX_SNAP_DISTANCE;
+
+    // Check against all other pieces
+    for (const otherPiece of pieces) {
+      if (otherPiece.id === activePiece.id) continue;
+
+      const otherData = PIECES_DATA_WITH_VIEWBOX[otherPiece.id];
+      const otherVertices = getTransformedPoints(otherPiece, otherData);
+
+      // Check all vertex-to-vertex distances
+      for (const activeVertex of activeVertices) {
+        for (const otherVertex of otherVertices) {
+          const distance = Math.hypot(
+            activeVertex.x - otherVertex.x,
+            activeVertex.y - otherVertex.y
+          );
+
+          if (distance < minDistance) {
+            minDistance = distance;
+            // Calculate the offset needed to snap this vertex to the other
+            const offsetX = otherVertex.x - activeVertex.x;
+            const offsetY = otherVertex.y - activeVertex.y;
+            closestSnap = {
+              x: activePiece.x + offsetX,
+              y: activePiece.y + offsetY,
+              distance: distance,
+              type: 'vertex'
+            };
+          }
+        }
+      }
+    }
+
+    return closestSnap;
+  }
+
+  // Hybrid snapping: prioritize vertex snapping, fallback to grid
+  function findBestSnapPoint(piece, rawX, rawY) {
+    // Try vertex snapping first
+    const vertexSnap = findVertexSnapPoint(piece);
+
+    // Try grid snapping
+    const gridSnap = snapToGrid(rawX, rawY);
+
+    // If we have a vertex snap within priority distance, use it
+    if (vertexSnap && vertexSnap.distance < VERTEX_SNAP_PRIORITY) {
+      return vertexSnap;
+    }
+
+    // If we have a vertex snap that's closer than grid, use it
+    if (vertexSnap && (!gridSnap || vertexSnap.distance < gridSnap.distance)) {
+      return vertexSnap;
+    }
+
+    // Otherwise use grid snap
+    return gridSnap;
+  }
+
   // --- AUDIO ---
   let pickupSound, dropSound;
   let audioUnlocked = false;
@@ -77,11 +164,18 @@
   });
 
   function rotateActivePiece() { if (activePiece) { activePiece.rotation = (activePiece.rotation + 45) % 360; activePiece.animationKey += 1; } }
-  function flipActivePiece() { if (activePiece) { activePiece.flipped = !activePiece.flipped; activePiece.animationKey += 1; } }
+  function flipActivePiece() { if (activePiece && !noFlipPieces.includes(activePiece.id)) { activePiece.flipped = !activePiece.flipped; activePiece.animationKey += 1; } }
 
    function exportPuzzleData() {
-    // We should export the unscaled "orig" data so it can be re-imported reliably.
-    const dataToExport = pieces.map(({ id, origX, origY, rotation, flipped }) => ({ x: origX, y: origY, id, rotation, flipped }));
+    // Export canonical coordinates by inverting last fit transform on current on-screen positions
+    const { minX, minY, scale, gutter } = lastFit;
+    const dataToExport = pieces.map(({ id, x, y, rotation, flipped }) => ({
+      id,
+      rotation,
+      flipped,
+      x: ((x - gutter) / scale) + minX,
+      y: ((y - gutter) / scale) + minY
+    }));
     const jsonString = JSON.stringify(dataToExport, null, 2);
     console.log(jsonString);
     navigator.clipboard.writeText(jsonString).then(() => {
@@ -139,16 +233,35 @@
         const piece = pieces.find(p => p.id === params.pieceId);
         if (!piece) return;
 
-        // The new center is simply the current pointer position minus the initial offset.
-        piece.x = Math.round(e.clientX - offsetX);
-        piece.y = Math.round(e.clientY - offsetY);
+        // Calculate the new raw position based on pointer
+        const rawX = e.clientX - offsetX;
+        const rawY = e.clientY - offsetY;
+
+        // Live preview snapping: compute best snap but keep piece following pointer; show indicator
+        const previewPiece = { ...piece, x: Math.round(rawX), y: Math.round(rawY) };
+        const bestSnap = findBestSnapPoint(previewPiece, previewPiece.x, previewPiece.y);
+
+        piece.x = previewPiece.x;
+        piece.y = previewPiece.y;
+        snapIndicator = bestSnap ? { x: bestSnap.x, y: bestSnap.y, type: bestSnap.type } : null;
       },
       onEnd: (e, wasTap, wasDrag) => {
+        const piece = pieces.find(p => p.id === params.pieceId);
+        if (!piece) return;
+
         if (wasTap) {
           rotateActivePiece();
         } else if (wasDrag) {
           playSound(dropSound);
+          // Commit to snap target if available
+          if (snapIndicator) {
+            piece.x = Math.round(snapIndicator.x);
+            piece.y = Math.round(snapIndicator.y);
+          }
         }
+
+        // Clear snap indicator
+        snapIndicator = null;
       }
     });
 
@@ -218,55 +331,14 @@ function fitPuzzle() {
   const availableWidth = containerSize.width - gutter * 2;
   const scaleFactor = availableWidth / puzzleWidth;
   puzzleScale = scaleFactor;
+  // Save transform for canonical export
+  lastFit = { minX: bounds.minX, minY: bounds.minY, scale: scaleFactor, gutter };
 
   for (const piece of pieces) {
     piece.x = Math.round((piece.origX - bounds.minX) * scaleFactor + gutter);
     piece.y = Math.round((piece.origY - bounds.minY) * scaleFactor + gutter);
   }
 }
-
-  function calculateViewBox(pointsStr) {
-    const points = pointsStr.split(' ').map(p => p.split(',').map(Number));
-    const xs = points.map(p => p[0]);
-    const ys = points.map(p => p[1]);
-
-    const minX = Math.min(...xs);
-    const minY = Math.min(...ys);
-    const maxX = Math.max(...xs);
-    const maxY = Math.max(...ys);
-
-    const width = maxX - minX;
-    const height = maxY - minY;
-
-    return {
-      viewBox: `${minX} ${minY} ${width} ${height}`,
-      width,
-      height
-    };
-  }
-
-  const PIECES_DATA_WITH_VIEWBOX = Object.fromEntries(
-    Object.entries(PIECES_DATA).map(([id, piece]) => {
-      return [id, { ...piece, ...calculateViewBox(piece.points) }];
-    })
-  );
-
-  // function centerPuzzle() {
-  //   if (pieces.length === 0) return;
-  //   // Find the average center of all piece anchor points (in virtual coords)
-  //   const sum = pieces.reduce((acc, p) => ({ x: acc.x + p.x, y: acc.y + p.y }), { x: 0, y: 0 });
-  //   const puzzleCenterX = sum.x / pieces.length;
-  //   const puzzleCenterY = sum.y / pieces.length;
-
-  //   // Center in virtual space
-  //   const offsetX = VIRTUAL_SIZE / 2 - puzzleCenterX;
-  //   const offsetY = VIRTUAL_SIZE / 2 - puzzleCenterY;
-
-  //   for (const piece of pieces) {
-  //     piece.x = Math.round(piece.x + offsetX);
-  //     piece.y = Math.round(piece.y + offsetY);
-  //   }
-  // }
 
 </script>
 
@@ -297,6 +369,13 @@ function fitPuzzle() {
     flex-grow: 1;
     position: relative;
     background-color: #f0f0f0;
+  }
+
+  .editor-canvas.show-grid {
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent calc(var(--grid-size) * 1px - 1px), #ddd calc(var(--grid-size) * 1px - 1px), #ddd calc(var(--grid-size) * 1px)),
+      repeating-linear-gradient(90deg, transparent, transparent calc(var(--grid-size) * 1px - 1px), #ddd calc(var(--grid-size) * 1px - 1px), #ddd calc(var(--grid-size) * 1px));
+    background-size: calc(var(--grid-size) * 1px) calc(var(--grid-size) * 1px);
   }
 
   .tangram-piece {
@@ -346,11 +425,27 @@ function fitPuzzle() {
     touch-action: none;
   }
 
-  .tangram-piece.active .tangram-piece-svg polygon {
-    stroke: #ffb3e6;
-    stroke-width: 1px;
-    filter: drop-shadow(0 0 2px #ffd6f5) drop-shadow(0 0 1px #ffb3e6);
-    transition: filter 0.2s, stroke 0.2s, stroke-width 0.2s;
+
+
+  .snap-indicator {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    transform: translate(calc(var(--x) * 1px - 50%), calc(var(--y) * 1px - 50%));
+    pointer-events: none;
+    z-index: 150;
+  }
+
+  .snap-indicator .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 9999px;
+    margin: 1px;
+    background: #0ea5e9; /* sky-500 for grid */
+  }
+
+  .snap-indicator.vertex .dot {
+    background: #22c55e; /* green-500 for vertex */
   }
 
   .action-buttons {
@@ -376,6 +471,8 @@ function fitPuzzle() {
   <div
     bind:this={puzzleContainer}
     class="editor-canvas"
+    class:show-grid={showGrid}
+    style="--grid-size: {GRID_SIZE}"
     onpointerdown={() => activePieceId = null}
     use:observeResize
   >
@@ -420,14 +517,27 @@ function fitPuzzle() {
         {/if}
       </div>
     {/if}
+
+    {#if snapIndicator}
+      <div
+        class="snap-indicator {snapIndicator.type === 'vertex' ? 'vertex' : 'grid'}"
+        style="--x: {snapIndicator.x}; --y: {snapIndicator.y};"
+      >
+        <div class="dot"></div>
+      </div>
+    {/if}
   </div>
 
   <div class="toolbar">
     <textarea bind:value={importJson} placeholder="Paste puzzle data here..."></textarea>
-    <div class="flex gap-2">
+    <div class="flex gap-2 items-center">
       <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={handleImport}>Import</button>
       <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={fitPuzzle}>Fit</button>
       <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={exportPuzzleData}>Export</button>
+      <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={() => showGrid = !showGrid}>
+        {showGrid ? 'Hide' : 'Show'} Grid
+      </button>
+
     </div>
   </div>
 </div>
