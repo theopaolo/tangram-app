@@ -48,7 +48,7 @@
   });
 
   // Toggle debug mode - set to false for production
-  const DEBUG_MODE = true;
+  const DEBUG_MODE = false;
 
   let pickupSound, dropSound;
   let audioUnlocked = false;
