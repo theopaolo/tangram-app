@@ -10,24 +10,30 @@
 	// Get all puzzles
 	const puzzles = getAllPuzzles();
 
-	// Check if a puzzle is completed based on progress data
-	function isPuzzleCompleted(puzzleId) {
-		if (typeof localStorage === 'undefined') return false;
+  // Read progress: matched pairs {targetId, pieceId}
+  function getMatches(puzzleId) {
+    if (typeof localStorage === 'undefined') return [];
+    try {
+      const progressKey = `puzzle_${puzzleId}_progress`;
+      const saved = localStorage.getItem(progressKey);
+      if (!saved) return [];
+      const progress = JSON.parse(saved);
+      if (progress.puzzleId != puzzleId) return [];
+      if (Array.isArray(progress.matches)) return progress.matches;
+      if (Array.isArray(progress.matchedTargetIds)) {
+        return progress.matchedTargetIds.map((tid) => ({ targetId: tid, pieceId: null }));
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
 
-		try {
-			const progressKey = `puzzle_${puzzleId}_progress`;
-			const saved = localStorage.getItem(progressKey);
-			if (!saved) return false;
-
-			const progress = JSON.parse(saved);
-			if (progress.puzzleId !== puzzleId || !progress.pieces) return false;
-
-			// Check if all pieces are placed (not in container)
-			return progress.pieces.every(piece => !piece.inContainer);
-		} catch (error) {
-			return false;
-		}
-	}
+  // Check if a puzzle is completed based on matched piece IDs
+  function isPuzzleCompleted(puzzleId) {
+    const matches = getMatches(puzzleId);
+    return matches.length === Object.keys(PIECES_DATA).length;
+  }
 
 	// Get completed puzzles from progress data
 	let completedPuzzles = $derived(puzzles.map(p => p.id).filter(id => isPuzzleCompleted(id)));
@@ -63,39 +69,13 @@
 		refreshTrigger++;
 	}
 
-  // Get puzzle pieces from progress data or fallback to original puzzle data
-  function getPuzzlePieces(puzzleId, originalPuzzleData) {
-    if (typeof localStorage === 'undefined') return originalPuzzleData;
-
-    try {
-      const progressKey = `puzzle_${puzzleId}_progress`;
-      const saved = localStorage.getItem(progressKey);
-      if (!saved) return originalPuzzleData;
-
-      const progress = JSON.parse(saved);
-      // Compare as strings to handle type mismatch
-      if (progress.puzzleId != puzzleId || !progress.pieces) return originalPuzzleData;
-
-      return progress.pieces;
-    } catch (error) {
-      return originalPuzzleData;
-    }
-  }
-
-  // Get the appropriate color for a puzzle piece based on placement status
-  function getPieceColor(pieceId, puzzleId, _refreshTrigger) {
-    const progressPieces = getPuzzlePieces(puzzleId, []);
-    const piece = progressPieces.find(p => p.id === pieceId);
-
-    if (!piece) return PIECE_GREY_COLOR; // Grey if piece not found
-
-    // If piece is placed (not in container), show full color
-    if (!piece.inContainer) {
-      return PIECES_DATA_WITH_VIEWBOX[pieceId].color;
-    }
-
-    // If piece is in container, show grey
-    return PIECE_GREY_COLOR;
+  // Get the appropriate color for a target slot based on the matched piece that occupies it
+  function getPieceColor(targetId, puzzleId, _refreshTrigger) {
+    const matches = getMatches(puzzleId);
+    const match = matches.find((m) => m.targetId === targetId);
+    if (!match) return PIECE_GREY_COLOR;
+    const pieceId = match.pieceId ?? targetId; // fallback to target id if older format
+    return PIECES_DATA_WITH_VIEWBOX[pieceId].color;
   }
 
 
