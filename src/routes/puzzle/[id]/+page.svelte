@@ -646,7 +646,7 @@
   }
   .success-message {
       position: fixed;
-      bottom: 160px;
+      bottom: 150px;
       right: 0;
       z-index: 2000;
       left:0;
@@ -720,7 +720,7 @@
   }
 </style>
 
-<header class="fixed left-5 top-0 z-10 flex items-center pt-4 mix-blend-difference">
+<header class="fixed left-5 top-0 z-10 flex items-center pt-4 ">
     <a href="/puzzles" class="flex gap-2" aria-label="Retour à l'accueil">
       <!-- <img
       src="/images/chat.svg"
@@ -739,7 +739,7 @@
 {#if showHelp}
   <div class="fixed inset-0 z-[9999] grid place-items-center">
     <div class="absolute inset-0 bg-black/30" onclick={() => showHelp = false} />
-    <div class="relative mx-auto w-max border drop-shadow-[var(--my-drop-shadow)] text-bouton px-9 py-10 max-h-max bg-white">
+    <div class="text-corps relative mx-auto w-[90%] border drop-shadow-[var(--my-drop-shadow)] text-bouton px-9 py-10 max-h-max bg-white">
       <button
         type="button"
         class="absolute right-3 top-3 oki"
@@ -847,15 +847,41 @@
 </footer>
 
 {#if puzzleSolved}
-    <div class="success-message text-corps" transition:fly={{ y: 20, duration: 300 }}>
-      <div class="mt-2 flex justify-center">
-        
-          <!-- <button class="inf-bold w-fit w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]" onclick={() => goto('/puzzles')}>Retour aux tangrams</button> -->
-          <button class="inf-bold w-fit w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">Recommencer ce tangram ?</button>
-      </div>
+    <div class="success-message text-corps flex flex-row justify-center items-end" transition:fly={{ y: 20, duration: 300 }}>
+        <img
+        src="/images/rebuild.svg"
+        alt="retour"
+        class="h-[87.08px] !w-[100px] mr-[10%]"
+        />
+
+    <!-- {#if allPuzzlesCompleted}
+      <a href="/puzzles" class="h-[68.41px" aria-label="Retour à l'accueil">
+        <img
+        src="/images/continuer_2.svg"
+        alt="retour"
+        class="h-[68.41px] !w-[101px]"
+        />
+      </a>
+    {/else}
+      <a href="/puzzles" class="h-[68.41px" aria-label="Retour à l'accueil">
+        <img
+        src="/images/continuer.svg"
+        alt="retour"
+        class="h-[68.41px] !w-[101px]"
+        />
+      </a>
+    {/if} -->
+      <a href="/puzzles" class="h-[68.41px" aria-label="Retour à l'accueil">
+        <img
+        src="/images/continuer.svg"
+        alt="retour"
+        class="h-[68.41px] !w-[101px]"
+        />
+      </a>
     </div>
-      
   {/if}
+
+   
 
     <!-- Debug Panel - Only shown when DEBUG_MODE is true -->
   {#if DEBUG_MODE}
