@@ -299,10 +299,12 @@ import { PIECES_DATA } from '$lib/piecesData';
 <!-- <div class="p-5 mt-[90px]"> -->
   <div class="px-10">
     {#if allPuzzlesCompleted}
-      <div class="text-center absolute top-[100px] m-auto left-0 right-0 z-1 text-center">
+      <div class="text-center absolute top-[100px] m-auto left-0 right-0 z-1">
         <p>Bravo tu as completé les 7 tangrams  !<br/>Télécharge un fond d'écran !</p>
         <div class="w-[124px] h-[68px] m-auto relative mt-2">
-          <div class="blipo w-[26px] h-[42px] bg-black absolute z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex"><img style="width:80%;margin:auto" src="/images/tangrams_b&w.svg"></div>
+          <div class="blipo w-[26px] h-[42px] bg-black absolute z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex">
+            <img style="width:80%;margin:auto" src="/images/tangrams_b&w.svg" alt="tangrams">
+          </div>
           <img
             src="/images/fond_ecran_full.png"
             alt=""
@@ -310,13 +312,17 @@ import { PIECES_DATA } from '$lib/piecesData';
         />
         </div>
       </div>
+    {:else}
+      <div class="text-center absolute top-[100px] m-auto left-0 right-0 z-1">
+        <p>Voici les 7 tangrams à compléter selon ton envie !<br/>Scrolle pour les découvrir !</p>
+      </div>
     {/if}
 
   <div class="flex flex-col">
     {#each puzzles as puzzle}
       {@const previewScale = calculatePreviewScale(puzzle.data)}
       <div class="puzzle-card h-svh border-[#ddd] border-b justify-center flex" role="button" tabindex="0"
-          onclick={() => selectPuzzle(puzzle.id)} 
+          onclick={() => selectPuzzle(puzzle.id)}
           onkeydown={(e) => e.key === 'Enter' && selectPuzzle(puzzle.id)}>
         <div class="puzzle-preview w-full">
           {#each puzzle.data as piece}
@@ -357,7 +363,7 @@ import { PIECES_DATA } from '$lib/piecesData';
           <!-- <div class="status {puzzle.completed ? 'completed' : 'incomplete'} absolute bottom-0 left-0 right-0 margin-auto p-5 text-intro leading-none"> {puzzle.completed ? 'Terminé' : 'À compléter'}</div> -->
 
         </div>
-    
+
         <div class="absolute bottom-[10svh] right-[10svh]">
           <img
             src="/images/clik_tangram.svg"
