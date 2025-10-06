@@ -400,8 +400,9 @@ function fitPuzzle() {
   .editor-canvas {
     flex-grow: 1;
     position: relative;
-    background-color: #f0f0f0;
+    background-color: red;
     overflow: visible;
+    
   }
 
   .editor-canvas.show-grid {
@@ -469,10 +470,35 @@ function fitPuzzle() {
   .snap-indicator.vertex .dot {
     background: #22c55e; /* green-500 for vertex */
   }
+.vertical,
+.horizontal {
+  position: absolute;
+  background: black;
+  z-index: 1000;
+}
 
+/* Trait vertical : centré horizontalement */
+.vertical {
+  width: 1px;
+  height: 100%;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+/* Trait horizontal : centré verticalement */
+.horizontal {
+  width: 100%;
+  height: 1px;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
 </style>
 
 <div class="editor-wrapper">
+      <span class="vertical"></span>
+  <span class="horizontal"></span>
   <div class="main-content">
     <div
       bind:this={puzzleContainer}
@@ -482,7 +508,6 @@ function fitPuzzle() {
       onpointerdown={() => activePieceId = null}
       use:observeResize
     >
-
       {#each pieces as piece (piece.id)}
         {@const pieceData = PIECES_DATA_WITH_VIEWBOX[piece.id]}
         <div
