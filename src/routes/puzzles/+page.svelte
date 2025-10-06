@@ -305,7 +305,7 @@
 </style>
 
 <!-- Title -->
-  <header class="fixed left-5 top-0 z-10 flex items-center pt-4 pb-2 bg-white w-full">
+  <header class="fixed left-5 top-0 z-10 flex items-center pt-4 pb-2 w-full">
     <a href="/start" class="flex gap-2" aria-label="Retour au Chromogram">
       <img
       src="/images/retour_chromo.svg"
@@ -390,18 +390,17 @@
           <!-- <div class="status {puzzle.completed ? 'completed' : 'incomplete'} absolute bottom-0 left-0 right-0 margin-auto p-5 text-intro leading-none"> {puzzle.completed ? 'Terminé' : 'À compléter'}</div> -->
 
         </div>
-
-        <div class="absolute bottom-[10svh] right-[10svh]">
-          <img
-            src="/images/clik_tangram.svg"
-            alt="enter"
-            class=""
-          />
-        </div>
         <!-- <p>{puzzle.description}</p> -->
         <!-- <div class="status {puzzle.completed ? 'completed' : 'incomplete'}"></div> -->
       </div>
     {/each}
+    <div class="absolute bottom-[10svh] right-[10svh]">
+      <img
+        src="/images/clik_tangram.svg"
+        alt="enter"
+        class=""
+      />
+    </div>
   </div>
 </div>
 
