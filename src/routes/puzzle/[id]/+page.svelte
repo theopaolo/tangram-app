@@ -34,6 +34,104 @@
   ];
 
 
+
+
+
+// --- 🎉 EFFET DE PAILLETTES ---
+function triggerConfetti() {
+  const container = document.querySelector('.success-message');
+  if (!container) return;
+
+  const pieces = Object.values(PIECES_DATA_WITH_VIEWBOX);
+  const canvas = document.createElement('canvas');
+  canvas.className = 'confetti-canvas';
+  Object.assign(canvas.style, {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100dvh',
+    pointerEvents: 'none',
+    zIndex: 3000,
+  });
+  document.body.appendChild(canvas);
+
+  const ctx = canvas.getContext('2d');
+  const originX = window.innerWidth / 2;
+  const originY = window.innerHeight * 0.9; // environ 70% du bas de l’écran
+
+  // On crée une "particule" par forme du puzzle, répétée plusieurs fois
+  const total = 150;
+  const particles = Array.from({ length: total }, () => {
+    const piece = pieces[Math.floor(Math.random() * pieces.length)];
+    return {
+      x: originX,
+      y: originY,
+      shape: piece.points,
+      color: piece.color,
+      size: Math.random() * 0.12 + 0.05,
+      rotation: Math.random() * 360,
+      vx: (Math.random() - 0.5) * 14,
+      vy: (Math.random() - 0.8) * 14 - 4,
+      vrot: (Math.random() - 0.5) * 10,
+      life: Math.random() * 100 + 60,
+    };
+  });
+
+  const resize = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  };
+  resize();
+  window.addEventListener('resize', resize);
+
+  function drawPolygon(points, fill, x, y, scale, rotation) {
+    const pts = points.split(' ').map(p => p.split(',').map(Number));
+    const radians = (rotation * Math.PI) / 180;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(radians);
+    ctx.scale(scale, scale);
+    ctx.beginPath();
+    pts.forEach(([px, py], i) => {
+      if (i === 0) ctx.moveTo(px - 150, py - 150);
+      else ctx.lineTo(px - 150, py - 150);
+    });
+    ctx.closePath();
+    ctx.fillStyle = fill;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  let frame = 0;
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.3; // gravité
+      p.rotation += p.vrot;
+      p.life--;
+      drawPolygon(p.shape, p.color, p.x, p.y, p.size, p.rotation);
+    });
+
+    frame++;
+    if (particles.some(p => p.life > 0) && frame < 200) {
+      requestAnimationFrame(animate);
+    } else {
+      canvas.remove();
+    }
+  }
+
+  animate();
+}
+
+
+
+
+
+
   // Update planePuzzle when currentPuzzle changes
   $effect(() => {
     if (currentPuzzle) {
@@ -709,6 +807,9 @@
 
       // Save final progress state (all pieces matched)
       savePuzzleProgress();
+
+      // 🎆 Ajout ici :
+      setTimeout(() => triggerConfetti(), 100);
     }
   }
 
@@ -883,6 +984,18 @@
     height: 100px;
     gap: .5rem;
   }
+.pieces-container {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.pieces-container.hide-container {
+  opacity: 0;
+  transform: translateY(50px);
+  pointer-events: none;
+}
+
 
   .container-piece {
     width: 100px;
@@ -917,7 +1030,7 @@
   }
   .success-message {
       position: fixed;
-      bottom: 150px;
+      bottom: 60px;
       right: 0;
       z-index: 2000;
       left:0;
@@ -1033,7 +1146,7 @@
 
   <!-- Puzzle area with padding -->
   <div class="h-full">
-    <div class="relative top-[65px] h-[calc(100%-220px)] puzzle-container {puzzleSolved ? 'puzzle-solved' : ''}"
+    <div class="relative top-[65px] h-[calc(100%-230px)] puzzle-container {puzzleSolved ? 'puzzle-solved' : ''}"
           bind:this={puzzleContainer}
           use:observeResize
           role="main"
@@ -1093,7 +1206,7 @@
     </div>
   {/if}
 
-  <div class="pieces-container" bind:this={piecesContainer}>
+  <div class="pieces-container" class:hide-container={puzzleSolved} bind:this={piecesContainer}>
     {#each pieces as piece (piece.id)}
       {@const pieceData = PIECES_DATA_WITH_VIEWBOX[piece.id]}
         <div class="container-piece relative z-1" class:is-placeholder={!piece.inContainer}>
