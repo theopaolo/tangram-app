@@ -388,13 +388,15 @@
 
         </div>
 
-        <div class="absolute bottom-[10svh] right-[10svh]">
-          <img
-            src="/images/clik_tangram.svg"
-            alt="enter"
-            class=""
-          />
-        </div>
+        {#if !getProgress(puzzle.id).completed}
+          <div class="absolute bottom-[10svh] right-[10svh]">
+            <img
+              src="/images/clik_tangram.svg"
+              alt="enter"
+              class=""
+            />
+          </div>
+        {/if}
         <!-- <p>{puzzle.description}</p> -->
         <!-- <div class="status {puzzle.completed ? 'completed' : 'incomplete'}"></div> -->
       </div>

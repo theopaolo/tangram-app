@@ -13,7 +13,8 @@
   	areInterchangeable,
   	checkRotationMatch,
   	debugLog,
-  	initializeDebugMode
+  	initializeDebugMode,
+  	getInterchangeRotationOffset
   } from '../../../lib/puzzleDebug.js';
 
 
@@ -276,6 +277,24 @@
     return closestTarget;
   }
 
+  const TRIANGLE_IDS = new Set([1, 2, 3, 6, 7]);
+
+  function normalizeRotation(angle) {
+    return ((angle % 360) + 360) % 360;
+  }
+
+  function getSymmetryStep(pieceId) {
+    if (pieceId === 5) return 180; // parallelogram repeats every 180°
+    if (pieceId === 4) return 90; // square repeats every 90°
+    if (TRIANGLE_IDS.has(pieceId)) return 90; // right triangles repeat every 90°
+    return 360;
+  }
+
+  function getBaseRotationForPiece(pieceId) {
+    const placement = planePuzzle.find((p) => p.id === pieceId);
+    return placement ? normalizeRotation(placement.rotation ?? 0) : null;
+  }
+
   function getTransformedPoints(piece, pieceData) {
     const originX = 150, originY = 150;
     const angle = piece.rotation * (Math.PI / 180);
@@ -293,23 +312,54 @@
 
   // Compute a rotation for pieceId that is compatible with the given target
   function findCompatibleRotationForPlacement(pieceId, target) {
-    // Try all 8 orientations (45° increments). Prefer exact target rotation first.
-    const candidates = [target.rotation, 0, 45, 90, 135, 180, 225, 270, 315];
+    const targetRotation = normalizeRotation(target.rotation ?? 0);
+    const candidates = [];
+    const maybeAddCandidate = (rotation) => {
+      const normalized = normalizeRotation(rotation);
+      if (!candidates.includes(normalized)) {
+        candidates.push(normalized);
+      }
+    };
+
+    const intersectsInterchangeable = areInterchangeable(pieceId, target.id, PIECES_DATA);
+    if (intersectsInterchangeable) {
+      // Get the rotation offset for swapping these interchangeable pieces
+      const rotationOffset = getInterchangeRotationOffset(pieceId, target.id, planePuzzle);
+
+      // Apply the geometric rotation offset to the target rotation
+      const adjustedRotation = normalizeRotation(targetRotation + rotationOffset);
+
+      // For symmetric pieces, add all valid orientations
+      const symmetryStep = getSymmetryStep(pieceId);
+
+      maybeAddCandidate(adjustedRotation);
+
+      if (symmetryStep && symmetryStep > 0 && symmetryStep < 360) {
+        for (let offset = symmetryStep; offset < 360; offset += symmetryStep) {
+          maybeAddCandidate(adjustedRotation + offset);
+        }
+      }
+    }
+
+    // Always ensure we check the target rotation first, then fall back through all tangram orientations.
+    maybeAddCandidate(targetRotation);
+    [0, 45, 90, 135, 180, 225, 270, 315].forEach(maybeAddCandidate);
+
     for (const rot of candidates) {
-      const normalized = ((rot % 360) + 360) % 360;
       const ok = checkRotationMatch(
         pieceId,
-        normalized,
+        rot,
         target.id,
         target.rotation,
         planePuzzle,
         PIECES_DATA,
         false
       );
-      if (ok) return normalized;
+      if (ok) return rot;
     }
-    // Fallback to target rotation
-    return ((target.rotation % 360) + 360) % 360;
+
+    // Fallback to normalized target rotation
+    return targetRotation;
   }
 
   // Store original and transformed bounds for positioning
@@ -524,25 +574,20 @@
         } else if (wasDrag) {
           // playSound(dropSound);
 
-          // If near a valid target, snap perfectly into place
+          // If near a valid target (highlighted/darker), snap perfectly into place
           const target = findMagneticTarget(piece);
           if (target) {
-            const dist = Math.hypot(piece.x - target.screenX, piece.y - target.screenY);
-            if (isMagnetLocked || dist <= SNAP_ON_RELEASE_DISTANCE) {
-              piece.inContainer = false;
-              piece.x = target.screenX;
-              piece.y = target.screenY;
-              // Don't change rotation - findMagneticTarget already verified rotation compatibility
-              // This prevents unnecessary rotation changes for interchangeable pieces (e.g., the two big triangles)
-              piece.animationKey += 1;
+            piece.inContainer = false;
+            piece.x = target.screenX;
+            piece.y = target.screenY;
+            // Find compatible rotation (handles interchangeable pieces correctly)
+            piece.rotation = findCompatibleRotationForPlacement(piece.id, target);
+            piece.animationKey += 1;
 
-              // Save progress when piece is properly placed
-              savePuzzleProgress();
-            }
-          }
-
-          // Check if piece should return to container (only if not snapped)
-          if (!target || !(isMagnetLocked || Math.hypot(piece.x - target.screenX, piece.y - target.screenY) <= SNAP_ON_RELEASE_DISTANCE)) {
+            // Save progress when piece is properly placed
+            savePuzzleProgress();
+          } else {
+            // Check if piece should return to container
             const piecesRect = piecesContainer.getBoundingClientRect();
             if (e.clientY > piecesRect.top - 50) {
               // Return to container

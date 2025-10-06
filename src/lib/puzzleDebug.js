@@ -82,6 +82,68 @@ const EXPLICIT_INTERCHANGEABLE_GROUPS = [
 ];
 
 /**
+ * Canonical rotation mapping for interchangeable pieces
+ * Maps each piece to its "reference" rotation at 0° in the base coordinate system
+ * This helps compute the correct rotation offset when pieces are swapped
+ */
+const CANONICAL_ORIENTATIONS = {
+  // Large triangles (IDs 1, 2) - both are right triangles but mirrored
+  1: { baseRotation: 0, hypotenuseSide: 'bottom-right' },  // points: [[0,0],[5,5],[10,0]]
+  2: { baseRotation: 0, hypotenuseSide: 'left-bottom' },   // points: [[0,0],[5,5],[0,10]]
+
+  // Small triangles (IDs 3, 6) - both are right triangles
+  3: { baseRotation: 0, hypotenuseSide: 'bottom-right' },  // points: [[5,5],[7.5,7.5],[7.5,2.5]]
+  6: { baseRotation: 0, hypotenuseSide: 'left-bottom' },   // points: [[0,10],[5,10],[2.5,7.5]]
+
+  // Medium triangle (ID 7)
+  7: { baseRotation: 0, hypotenuseSide: 'top-right' },     // points: [[5,10],[10,5],[10,10]]
+
+  // Square (ID 4) - symmetric every 90°
+  4: { baseRotation: 0, symmetry: 90 },
+
+  // Parallelogram (ID 5) - symmetric every 180°
+  5: { baseRotation: 0, symmetry: 180 }
+};
+
+/**
+ * Get rotation offset needed when swapping interchangeable pieces
+ * Uses the actual puzzle data to compute the correct offset dynamically
+ *
+ * @param {number} sourcePieceId - The piece being placed
+ * @param {number} targetPieceId - The target slot's original piece
+ * @param {Array} planePuzzle - The puzzle configuration with base rotations
+ * @returns {number} Rotation offset to apply (in degrees)
+ */
+export function getInterchangeRotationOffset(sourcePieceId, targetPieceId, planePuzzle) {
+  // If pieces are the same, no offset needed
+  if (sourcePieceId === targetPieceId) return 0;
+
+  // Check if they're in the same interchangeable group
+  const inSameGroup = EXPLICIT_INTERCHANGEABLE_GROUPS.some(group =>
+    group.includes(sourcePieceId) && group.includes(targetPieceId)
+  );
+
+  if (!inSameGroup) return 0;
+
+  // Find the base rotations for both pieces in this puzzle
+  const sourcePlacement = planePuzzle.find(p => p.id === sourcePieceId);
+  const targetPlacement = planePuzzle.find(p => p.id === targetPieceId);
+
+  if (!sourcePlacement || !targetPlacement) return 0;
+
+  const normalizeRotation = (angle) => ((angle % 360) + 360) % 360;
+
+  const sourceBaseRot = normalizeRotation(sourcePlacement.rotation ?? 0);
+  const targetBaseRot = normalizeRotation(targetPlacement.rotation ?? 0);
+
+  // Calculate the difference between their base rotations in the puzzle
+  // This tells us how they're oriented relative to each other
+  const diff = normalizeRotation(sourceBaseRot - targetBaseRot);
+
+  return diff;
+}
+
+/**
  * Check if rotation is valid for a piece/target combination with smart logic
  * @param {number} pieceId - ID of the piece being placed
  * @param {number} pieceRotation - Current rotation of the piece
