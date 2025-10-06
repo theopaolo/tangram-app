@@ -58,23 +58,31 @@ function triggerConfetti() {
 
   const ctx = canvas.getContext('2d');
   const originX = window.innerWidth / 2;
-  const originY = window.innerHeight * 0.9; // environ 70% du bas de l’écran
+  const originY = window.innerHeight * 0.95; // départ à 90 %
 
-  // On crée une "particule" par forme du puzzle, répétée plusieurs fois
-  const total = 150;
+  const total = 100;
   const particles = Array.from({ length: total }, () => {
     const piece = pieces[Math.floor(Math.random() * pieces.length)];
+
+    // 💥 Ajustement subtil :
+    // on limite la poussée vers le haut à un arc de ~25 % à 70 % de l’écran
+    // sans rallonger l’effet ni tout décaler vers le bas
+    const baseVy = -(Math.random() * 12 + 7); // vitesse initiale vers le haut (modérée)
+    const gravity = 0.32;                    // gravité un peu plus forte pour recentrer
+    const life = Math.random() * 90 + 60;    // durée légèrement raccourcie (~1,2 s)
+
     return {
-      x: originX,
+      x: originX + (Math.random() - 0.5) * 200, // légère largeur de départ
       y: originY,
       shape: piece.points,
       color: piece.color,
       size: Math.random() * 0.12 + 0.05,
-      rotation: Math.random() * 360,
-      vx: (Math.random() - 0.5) * 14,
-      vy: (Math.random() - 0.8) * 14 - 4,
+      rotation: Math.random() * 60,
+      vx: (Math.random() - 0.5) * 13,
+      vy: baseVy,
       vrot: (Math.random() - 0.5) * 10,
-      life: Math.random() * 100 + 60,
+      gravity,
+      life,
     };
   });
 
@@ -110,14 +118,14 @@ function triggerConfetti() {
     particles.forEach(p => {
       p.x += p.vx;
       p.y += p.vy;
-      p.vy += 0.3; // gravité
+      p.vy += p.gravity; // gravité légèrement plus rapide
       p.rotation += p.vrot;
       p.life--;
       drawPolygon(p.shape, p.color, p.x, p.y, p.size, p.rotation);
     });
 
     frame++;
-    if (particles.some(p => p.life > 0) && frame < 200) {
+    if (particles.some(p => p.life > 0) && frame < 180) {
       requestAnimationFrame(animate);
     } else {
       canvas.remove();
@@ -987,12 +995,12 @@ function triggerConfetti() {
 .pieces-container {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition: opacity 0.3s ease, transform 0.4s ease;
 }
 
 .pieces-container.hide-container {
   opacity: 0;
-  transform: translateY(50px);
+  transform: translateY(5px);
   pointer-events: none;
 }
 
