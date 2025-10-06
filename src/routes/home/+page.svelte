@@ -437,11 +437,13 @@
 		height: 100%;
 		width: auto;
 		overflow: visible;
+		fill:#fff,
 	}
 	.piece polygon {
 		stroke: #fff;
 		stroke-width: 0;
 		vector-effect: non-scaling-stroke;
+		fill:#fff,
 	}
 	.p1 {
 		width: 75%;
