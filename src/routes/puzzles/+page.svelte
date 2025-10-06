@@ -299,6 +299,9 @@
     bottom:10%;
     right:10%;
   }
+  .puzzle-card:nth-child(even) {
+  background-color: rgb(248, 248, 248);
+}
 </style>
 
 <!-- Title -->
@@ -323,7 +326,7 @@
 
 <!-- Puzzle Selection Screen -->
 <!-- <div class="p-5 mt-[90px]"> -->
-  <div class="px-10">
+  <div class="">
     {#if allPuzzlesCompleted}
       <div class="text-center absolute top-[100px] m-auto left-0 right-0 z-1">
         <p>Bravo tu as completé les 7 tangrams  !<br/>Télécharge un fond d'écran !</p>
@@ -347,7 +350,7 @@
   <div class="flex flex-col">
     {#each puzzles as puzzle (puzzle.id)}
       {@const previewScale = calculatePreviewScale(puzzle.data)}
-      <div class="puzzle-card h-svh border-[#ddd] border-b justify-center flex" role="button" tabindex="0"
+      <div class="puzzle-card h-dvh justify-center flex px-10" role="button" tabindex="0"
           onclick={() => selectPuzzle(puzzle.id)}
           onkeydown={(e) => e.key === 'Enter' && selectPuzzle(puzzle.id)}>
         <div class="puzzle-preview w-full">
