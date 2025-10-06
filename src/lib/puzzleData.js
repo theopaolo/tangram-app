@@ -97,56 +97,14 @@ export const puzzleConfigs = [
     description: "Un phare veillant sur les marins",
     completed: false,
     data: [
-  {
-    "id": 1,
-    "rotation": 90,
-    "flipped": false,
-    "x": 98.81382102505265,
-    "y": 326.8628532641676
-  },
-  {
-    "id": 2,
-    "rotation": 0,
-    "flipped": false,
-    "x": 233.24171561083452,
-    "y": 328.2138873806076
-  },
-  {
-    "id": 3,
-    "rotation": 90,
-    "flipped": false,
-    "x": 231.8906814943945,
-    "y": 160.0101398838253
-  },
-  {
-    "id": 4,
-    "rotation": 0,
-    "flipped": false,
-    "x": 98.13830396683264,
-    "y": 193.11047573660576
-  },
-  {
-    "id": 5,
-    "rotation": 0,
-    "flipped": false,
-    "x": 200.14137975805406,
-    "y": 68.13981996590402
-  },
-  {
-    "id": 6,
-    "rotation": 90,
-    "flipped": false,
-    "x": 65.03796811405218,
-    "y": 259.9866645003867
-  },
-  {
-    "id": 7,
-    "rotation": 270,
-    "flipped": false,
-    "x": 231.8906814943945,
-    "y": 260.6621815586067
-  }
-]
+      {"id":1,"rotation":90,"flipped":false,"x":98.81382102505265,"y":326.8628532641676},
+      {"id":2,"rotation":0,"flipped":false,"x":233.24171561083452,"y":328.2138873806076},
+      {"id":3,"rotation":90,"flipped":false,"x":231.8906814943945,"y":160.0101398838253},
+      {"id":4,"rotation":0,"flipped":false,"x":98.13830396683264,"y":193.11047573660576},
+      {"id":5,"rotation":0,"flipped":false,"x":200.14137975805406,"y":68.13981996590402},
+      {"id":6,"rotation":90,"flipped":false,"x":65.03796811405218,"y":259.9866645003867},
+      {"id":7,"rotation":270,"flipped":false,"x":231.8906814943945,"y":260.6621815586067}
+    ]
   },
   {
     id: 2,
@@ -184,13 +142,13 @@ export const puzzleConfigs = [
     description: "Un autre nouveau puzzle créatif",
     completed: false,
     data: [
-      {"id":1,"rotation":225,"flipped":false,"x":228.26408400300127,"y":303.27419125656604},
-      {"id":2,"rotation":135,"flipped":false,"x":133.85695394774152,"y":399.0799454607926},
-      {"id":3,"rotation":315,"flipped":false,"x":14.97390128556259,"y":327.05080178900187},
-      {"id":4,"rotation":45,"flipped":false,"x":38.75051181799839,"y":398.3806333863092},
-      {"id":5,"rotation":225,"flipped":false,"x":86.30373288286995,"y":208.1677491268229},
-      {"id":6,"rotation":45,"flipped":false,"x":62.527122350434155,"y":279.4975807241303},
-      {"id":7,"rotation":225,"flipped":false,"x":182.10948708709648,"y":255.72097019169448}
+      {"id":1,"rotation":225,"flipped":false,"x":228.41742420385557,"y":303.60483775767307},
+      {"id":2,"rotation":135,"flipped":false,"x":134.15278888041198,"y":399.2659861970195},
+      {"id":3,"rotation":315,"flipped":false,"x":16.845687144570974,"y":327.34556072802184},
+      {"id":4,"rotation":45,"flipped":false,"x":39.88815355696832,"y":398.56772963906815},
+      {"id":5,"rotation":225,"flipped":false,"x":88.06785605561728,"y":208.64194587627796},
+      {"id":6,"rotation":45,"flipped":false,"x":63.62887652731709,"y":279.8641147873243},
+      {"id":7,"rotation":225,"flipped":false,"x":182.33249137906094,"y":255.42513525902407}
     ]
   },
   {
@@ -229,56 +187,14 @@ export const puzzleConfigs = [
     description: "Un cinquième nouveau puzzle créatif",
     completed: false,
     data: [
-  {
-    "id": 1,
-    "rotation": 45,
-    "flipped": false,
-    "x": 198.04825114759913,
-    "y": 441.05523716430497
-  },
-  {
-    "id": 2,
-    "rotation": 45,
-    "flipped": false,
-    "x": 102.97677366818519,
-    "y": 441.05523716430497
-  },
-  {
-    "id": 3,
-    "rotation": 315,
-    "flipped": false,
-    "x": 268.7991181090234,
-    "y": 369.56738200536586
-  },
-  {
-    "id": 4,
-    "rotation": 225,
-    "flipped": false,
-    "x": 153.82895929670892,
-    "y": 536.126714643719
-  },
-  {
-    "id": 5,
-    "rotation": 225,
-    "flipped": false,
-    "x": 55.80952902723564,
-    "y": 345.24677148737624
-  },
-  {
-    "id": 6,
-    "rotation": 45,
-    "flipped": false,
-    "x": 221.63187346807385,
-    "y": 321.66314916690146
-  },
-  {
-    "id": 7,
-    "rotation": 225,
-    "flipped": false,
-    "x": 150.88100650664956,
-    "y": 298.0795268464267
-  }
-]
+      {"id":1,"rotation":45,"flipped":false,"x":198.04825114759913,"y":441.05523716430497},
+      {"id":2,"rotation":45,"flipped":false,"x":102.97677366818519,"y":441.05523716430497},
+      {"id":3,"rotation":315,"flipped":false,"x":268.7991181090234,"y":369.56738200536586},
+      {"id":4,"rotation":225,"flipped":false,"x":153.82895929670892,"y":536.126714643719},
+      {"id":5,"rotation":225,"flipped":false,"x":55.80952902723564,"y":345.24677148737624},
+      {"id":6,"rotation":45,"flipped":false,"x":221.63187346807385,"y":321.66314916690146},
+      {"id":7,"rotation":225,"flipped":false,"x":150.88100650664956,"y":298.0795268464267}
+    ]
   }
 ];
 
