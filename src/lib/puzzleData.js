@@ -9,7 +9,7 @@ const U = (n) => OFFSET + UNIT * n;
 const P = (pts) => pts.map(([x,y]) => `${U(x)},${U(y)}`).join(' ');
 
 // Color for pieces that are not found or not completed
-export const PIECE_GREY_COLOR = '#a6a5a5';
+export const PIECE_GREY_COLOR = '#000';
 
 export const PIECES_DATA = {
   1: { name: 'Le Grand Triangle', color: PIECES_DATA_SOURCE[1].color, story: PIECES_DATA_SOURCE[1].story, artwork: PIECES_DATA_SOURCE[1].titre_artwork, points: P([[0,0],[5,5],[10,0]]) },
