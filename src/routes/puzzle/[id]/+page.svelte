@@ -365,14 +365,29 @@
     puzzleScale = scaleFactor;
 
     // 4. Calculate final screen positions for each target
-    const scaledPuzzleWidth = puzzleWidth * scaleFactor;
-    const scaledPuzzleHeight = puzzleHeight * scaleFactor;
-    const offsetX = (containerSize.width - scaledPuzzleWidth) / 2;
-    const offsetY = (containerSize.height - 100 - scaledPuzzleHeight) / 2; // Center in the upper area
+    // Center of the original puzzle bounds
+    const puzzleCenterX = (bounds.minX + bounds.maxX) / 2;
+    const puzzleCenterY = (bounds.minY + bounds.maxY) / 2;
+
+    // Center of the available screen space
+    const screenCenterX = containerSize.width / 2;
+    const screenCenterY = (containerSize.height - 100) / 2;
+
+    // Debug logging
+    console.log('Centering Debug:', {
+      bounds,
+      puzzleCenterX,
+      puzzleCenterY,
+      containerWidth: containerSize.width,
+      containerHeight: containerSize.height,
+      screenCenterX,
+      screenCenterY,
+      scaleFactor
+    });
 
     targetPieces = planePuzzle.map(target => {
-      const screenX = offsetX + (target.x - bounds.minX) * scaleFactor;
-      const screenY = offsetY + (target.y - bounds.minY) * scaleFactor;
+      const screenX = screenCenterX + (target.x - puzzleCenterX) * scaleFactor;
+      const screenY = screenCenterY + (target.y - puzzleCenterY) * scaleFactor;
       return { ...target, screenX, screenY };
     });
 
@@ -805,7 +820,8 @@
     left: 0;
     width: var(--w);
     height: var(--h);
-    transform: translate(calc(var(--x) * 1px - 50%), calc(var(--y) * 1px - 50%)) rotate(var(--rotation)) scaleX(var(--scaleX));
+    transform: translate(calc(var(--x) * 1px - var(--w) / 2), calc(var(--y) * 1px - var(--h) / 2)) rotate(var(--rotation)) scaleX(var(--scaleX));
+    transform-origin: 50% 50%;
     pointer-events: none;
   }
 
