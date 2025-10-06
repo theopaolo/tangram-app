@@ -17,6 +17,7 @@
   } from '../../../lib/puzzleDebug.js';
 
 
+
   let showHelp = $state(true); // rune => re-render quand on assigne
 
   // Get puzzle ID from URL params
@@ -728,6 +729,22 @@
     console.log('✅ Puzzle reset complete');
   }
 
+
+  onMount(async () => {
+      if (!browser) return;
+
+      // Import scroll freeze utility
+      const { freezeScroll, unfreezeScroll } = await import('$lib/utils/scrollFreeze.js');
+
+      // Freeze scroll
+      freezeScroll();
+
+      return () => {
+        unfreezeScroll();
+      };
+    });
+
+
   onMount(() => {
     initializePieces();
     fitTargets();
@@ -853,7 +870,8 @@
 
   .pieces-container {
     display: flex;
-    padding: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
     position: absolute;
     bottom: 45px;
     left: 0;
@@ -986,9 +1004,9 @@
 
 
 {#if showHelp}
-  <div class="fixed inset-0 z-[9999] grid place-items-center">
+  <div class="fixed inset-0 z-[9999] grid place-items-center p-10">
     <div class="absolute inset-0 bg-black/30" onclick={dismissHelp} />
-    <div class="relative mx-auto w-max border drop-shadow-[var(--my-drop-shadow)] text-bouton px-9 py-10 max-h-max bg-white">
+    <div class="relative mx-auto w-full border drop-shadow-[var(--my-drop-shadow)] text-13 px-8 py-8 max-h-max bg-white">
       <button
         type="button"
         class="absolute right-3 top-3 oki"
@@ -1000,10 +1018,9 @@
           <path d="M3.13867 28.8936L0.312005 26.0634L26.1733 0.16981L29 3L3.13867 28.8936Z" fill="black"/>
         </svg>
       </button>
-
-      <p>1. Fais glisser une des formes du bas vers le tangram.</p>
-      <p>2. Appuie sur la forme pour la faire pivoter.</p>
-      <p>3. Dépose la forme à son emplacement.</p>
+      1. Fais glisser une des formes du bas vers le tangram.<br/>
+      2. Appuie sur la forme pour la faire pivoter.<br/>
+      3. Dépose la forme à son emplacement.
     </div>
   </div>
 {/if}
