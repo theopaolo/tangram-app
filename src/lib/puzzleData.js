@@ -97,14 +97,56 @@ export const puzzleConfigs = [
     description: "Un phare veillant sur les marins",
     completed: false,
     data: [
-      {  "x": 675,  "y": 421,  "id": 1,  "rotation": 180},
-      {  "x": 947,  "y": 421,  "id": 2,  "rotation": 270},
-      {  "x": 777,  "y": 422,  "id": 3,  "rotation": 0},
-      {  "x": 813,  "y": 537,  "id": 4,  "rotation": 45},
-      {  "x": 845,  "y": 388,  "id": 5,  "rotation": 0},
-      {  "x": 836,  "y": 608,  "id": 6,  "rotation": 45},
-      {  "x": 878,  "y": 286,  "id": 7,  "rotation": 180}
-    ]
+  {
+    "id": 1,
+    "rotation": 90,
+    "flipped": false,
+    "x": 98.81382102505265,
+    "y": 326.8628532641676
+  },
+  {
+    "id": 2,
+    "rotation": 0,
+    "flipped": false,
+    "x": 233.24171561083452,
+    "y": 328.2138873806076
+  },
+  {
+    "id": 3,
+    "rotation": 90,
+    "flipped": false,
+    "x": 231.8906814943945,
+    "y": 160.0101398838253
+  },
+  {
+    "id": 4,
+    "rotation": 0,
+    "flipped": false,
+    "x": 98.13830396683264,
+    "y": 193.11047573660576
+  },
+  {
+    "id": 5,
+    "rotation": 0,
+    "flipped": false,
+    "x": 200.14137975805406,
+    "y": 68.13981996590402
+  },
+  {
+    "id": 6,
+    "rotation": 90,
+    "flipped": false,
+    "x": 65.03796811405218,
+    "y": 259.9866645003867
+  },
+  {
+    "id": 7,
+    "rotation": 270,
+    "flipped": false,
+    "x": 231.8906814943945,
+    "y": 260.6621815586067
+  }
+]
   },
   {
     id: 2,
@@ -112,13 +154,13 @@ export const puzzleConfigs = [
     description: "Un cygne élégant",
     completed: false,
     data: [
-      {  "x": 190.9009433962264,  "y": 482.91981132075466,  "id": 1,  "rotation": 180,  "flipped": false},
-      {  "x": 56.26886792452828,  "y": 482.91981132075466,  "id": 2,  "rotation": 90,  "flipped": false},
-      {  "x": 257.26886792452825,  "y": 380.52358490566036,  "id": 3,  "rotation": 90,  "flipped": false},
-      {  "x": 192.7971698113207,  "y": 346.39150943396226,  "id": 4,  "rotation": 0,  "flipped": false},
-      {  "x": 156.76886792452828,  "y": 245.89150943396226,  "id": 5,  "rotation": 0,  "flipped": false},
-      {  "x": 215.55188679245282,  "y": 217.44811320754712,  "id": 6,  "rotation": 225,  "flipped": false},
-      {  "x": 257.26886792452825,  "y": 482.91981132075466,  "id": 7,  "rotation": 270,  "flipped": false}
+      {"id":1,"rotation":180,"flipped":false,"x":238.36805555555554,"y":308.15972222222223},
+      {"id":2,"rotation":90,"flipped":false,"x":103.4375,"y":308.15972222222223},
+      {"id":3,"rotation":315,"flipped":false,"x":236.81712962962962,"y":447.74305555555554},
+      {"id":4,"rotation":45,"flipped":false,"x":111.19212962962962,"y":98.00925925925927},
+      {"id":5,"rotation":45,"flipped":false,"x":63.888888888888886,"y":193.3912037037037},
+      {"id":6,"rotation":135,"flipped":false,"x":80.94907407407408,"y":446.1921296296297},
+      {"id":7,"rotation":225,"flipped":false,"x":63.113425925925924,"y":50.70601851851853}
     ]
   },
   {
@@ -127,55 +169,13 @@ export const puzzleConfigs = [
     description: "Un nouveau puzzle créatif",
     completed: false,
     data: [
-      {
-        "id": 1,
-        "rotation": 135,
-        "flipped": false,
-        "x": 19.74455040871935,
-        "y": 34.805858310626704
-      },
-      {
-        "id": 2,
-        "rotation": 315,
-        "flipped": false,
-        "x": 305.9094005449591,
-        "y": 34.805858310626704
-      },
-      {
-        "id": 3,
-        "rotation": 225,
-        "flipped": false,
-        "x": 43.02111716621252,
-        "y": 153.92711171662125
-      },
-      {
-        "id": 4,
-        "rotation": 45,
-        "flipped": false,
-        "x": 19.74455040871935,
-        "y": 225.12602179836512
-      },
-      {
-        "id": 5,
-        "rotation": 315,
-        "flipped": false,
-        "x": 305.9094005449591,
-        "y": 178.57288828337875
-      },
-      {
-        "id": 6,
-        "rotation": 225,
-        "flipped": false,
-        "x": 281.2636239782016,
-        "y": 251.1410081743869
-      },
-      {
-        "id": 7,
-        "rotation": 225,
-        "flipped": false,
-        "x": 163.5115803814714,
-        "y": 84.09741144414167
-      }
+      {"id":1,"rotation":135,"flipped":false,"x":24.068061856121787,"y":120.01478823636174},
+      {"id":2,"rotation":315,"flipped":false,"x":308.9044117457954,"y":120.01478823636174},
+      {"id":3,"rotation":315,"flipped":false,"x":285.1680492549893,"y":334.34017896217006},
+      {"id":4,"rotation":45,"flipped":false,"x":24.068061856121787,"y":310.603816471364},
+      {"id":5,"rotation":315,"flipped":false,"x":308.9044117457954,"y":263.1310914897517},
+      {"id":6,"rotation":135,"flipped":false,"x":47.80442434692793,"y":239.39472899894557},
+      {"id":7,"rotation":225,"flipped":false,"x":166.48623680095864,"y":168.18564152652712}
     ]
   },
   {
@@ -184,55 +184,13 @@ export const puzzleConfigs = [
     description: "Un autre nouveau puzzle créatif",
     completed: false,
     data: [
-      {
-        "id": 1,
-        "rotation": 135,
-        "flipped": false,
-        "x": 151.18869209809264,
-        "y": 349.7241144414169
-      },
-      {
-        "id": 2,
-        "rotation": 45,
-        "flipped": false,
-        "x": 247.033378746594,
-        "y": 444.8841961852861
-      },
-      {
-        "id": 3,
-        "rotation": 315,
-        "flipped": false,
-        "x": 32.752043596730246,
-        "y": 374.36989100817436
-      },
-      {
-        "id": 4,
-        "rotation": 45,
-        "flipped": false,
-        "x": 56.02861035422342,
-        "y": 444.8841961852861
-      },
-      {
-        "id": 5,
-        "rotation": 45,
-        "flipped": false,
-        "x": 103.26634877384194,
-        "y": 253.87942779291552
-      },
-      {
-        "id": 6,
-        "rotation": 45,
-        "flipped": false,
-        "x": 79.98978201634876,
-        "y": 326.4475476839237
-      },
-      {
-        "id": 7,
-        "rotation": 225,
-        "flipped": false,
-        "x": 197.74182561307902,
-        "y": 301.8017711171662
-      }
+      {"id":1,"rotation":225,"flipped":false,"x":228.26408400300127,"y":303.27419125656604},
+      {"id":2,"rotation":135,"flipped":false,"x":133.85695394774152,"y":399.0799454607926},
+      {"id":3,"rotation":315,"flipped":false,"x":14.97390128556259,"y":327.05080178900187},
+      {"id":4,"rotation":45,"flipped":false,"x":38.75051181799839,"y":398.3806333863092},
+      {"id":5,"rotation":225,"flipped":false,"x":86.30373288286995,"y":208.1677491268229},
+      {"id":6,"rotation":45,"flipped":false,"x":62.527122350434155,"y":279.4975807241303},
+      {"id":7,"rotation":225,"flipped":false,"x":182.10948708709648,"y":255.72097019169448}
     ]
   },
   {
@@ -241,55 +199,13 @@ export const puzzleConfigs = [
     description: "Un troisième nouveau puzzle créatif",
     completed: false,
     data: [
-      {
-        "id": 1,
-        "rotation": 180,
-        "flipped": false,
-        "x": 319.81466227347613,
-        "y": 374.4522240527183
-      },
-      {
-        "id": 2,
-        "rotation": 270,
-        "flipped": false,
-        "x": 49.93822075782538,
-        "y": 374.4522240527183
-      },
-      {
-        "id": 3,
-        "rotation": 180,
-        "flipped": false,
-        "x": 285.8731466227348,
-        "y": 307.39703459637565
-      },
-      {
-        "id": 4,
-        "rotation": 0,
-        "flipped": false,
-        "x": 184.87644151565075,
-        "y": 238.6861614497529
-      },
-      {
-        "id": 5,
-        "rotation": 0,
-        "flipped": false,
-        "x": 219.64579901153212,
-        "y": 339.6828665568369
-      },
-      {
-        "id": 6,
-        "rotation": 0,
-        "flipped": false,
-        "x": 117.82125205930808,
-        "y": 272.6276771004942
-      },
-      {
-        "id": 7,
-        "rotation": 270,
-        "flipped": false,
-        "x": 117.82125205930808,
-        "y": 374.4522240527183
-      }
+      {"id":1,"rotation":180,"flipped":false,"x":319.0124092379035,"y":374.6439685154677},
+      {"id":2,"rotation":270,"flipped":false,"x":50.740473793398024,"y":373.8108258588078},
+      {"id":3,"rotation":180,"flipped":false,"x":285.68670297150527,"y":307.15941332601136},
+      {"id":4,"rotation":0,"flipped":false,"x":184.87644151565078,"y":239.67485813655503},
+      {"id":5,"rotation":0,"flipped":false,"x":219.03529043870893,"y":339.65197693574964},
+      {"id":6,"rotation":0,"flipped":false,"x":118.22502898285438,"y":273.0005644029532},
+      {"id":7,"rotation":270,"flipped":false,"x":118.22502898285438,"y":373.8108258588078}
     ]
   },
   {
@@ -298,55 +214,13 @@ export const puzzleConfigs = [
     description: "Un quatrième nouveau puzzle créatif",
     completed: false,
     data: [
-      {
-        "id": 1,
-        "rotation": 90,
-        "flipped": false,
-        "x": 150.9349258649094,
-        "y": 272.6276771004942
-      },
-      {
-        "id": 2,
-        "rotation": 270,
-        "flipped": false,
-        "x": 150.9349258649094,
-        "y": 407.5658978583196
-      },
-      {
-        "id": 3,
-        "rotation": 180,
-        "flipped": false,
-        "x": 117.82125205930808,
-        "y": 339.6828665568369
-      },
-      {
-        "id": 4,
-        "rotation": 45,
-        "flipped": false,
-        "x": 155.9019769357496,
-        "y": 24.275123558484353
-      },
-      {
-        "id": 5,
-        "rotation": 270,
-        "flipped": false,
-        "x": 114.50988467874794,
-        "y": 104.57578253706754
-      },
-      {
-        "id": 6,
-        "rotation": 180,
-        "flipped": false,
-        "x": 217.16227347611203,
-        "y": 105.4036243822076
-      },
-      {
-        "id": 7,
-        "rotation": 180,
-        "flipped": false,
-        "x": 149.27924217462933,
-        "y": 207.22817133443164
-      }
+      {"id":1,"rotation":90,"flipped":false,"x":168.25623216113783,"y":272.52715751220273},
+      {"id":2,"rotation":270,"flipped":false,"x":168.25623216113783,"y":407.87466363080534},
+      {"id":3,"rotation":180,"flipped":false,"x":135.13321378612116,"y":339.9153673096504},
+      {"id":4,"rotation":315,"flipped":false,"x":167.11405911372347,"y":22.962346652163347},
+      {"id":5,"rotation":270,"flipped":false,"x":135.13321378612116,"y":104.05663301858345},
+      {"id":6,"rotation":180,"flipped":false,"x":236.2155284822927,"y":104.05663301858345},
+      {"id":7,"rotation":180,"flipped":false,"x":168.827318684845,"y":205.138947714755}
     ]
   },
   {
@@ -355,56 +229,56 @@ export const puzzleConfigs = [
     description: "Un cinquième nouveau puzzle créatif",
     completed: false,
     data: [
-      {
-        "id": 1,
-        "rotation": 45,
-        "flipped": false,
-        "x": 222.9571663920923,
-        "y": 440.6795716639209
-      },
-      {
-        "id": 2,
-        "rotation": 45,
-        "flipped": false,
-        "x": 127.75535420098848,
-        "y": 440.6795716639209
-      },
-      {
-        "id": 3,
-        "rotation": 315,
-        "flipped": false,
-        "x": 294.9794069192751,
-        "y": 370.31301482701815
-      },
-      {
-        "id": 4,
-        "rotation": 45,
-        "flipped": false,
-        "x": 172.45881383855027,
-        "y": 535.0535420098847
-      },
-      {
-        "id": 5,
-        "rotation": 225,
-        "flipped": false,
-        "x": 78.08484349258649,
-        "y": 346.30560131795716
-      },
-      {
-        "id": 6,
-        "rotation": 45,
-        "flipped": false,
-        "x": 247.79242174629326,
-        "y": 322.2981878088962
-      },
-      {
-        "id": 7,
-        "rotation": 225,
-        "flipped": false,
-        "x": 175.77018121911038,
-        "y": 298.2907742998353
-      }
-    ]
+  {
+    "id": 1,
+    "rotation": 45,
+    "flipped": false,
+    "x": 198.04825114759913,
+    "y": 441.05523716430497
+  },
+  {
+    "id": 2,
+    "rotation": 45,
+    "flipped": false,
+    "x": 102.97677366818519,
+    "y": 441.05523716430497
+  },
+  {
+    "id": 3,
+    "rotation": 315,
+    "flipped": false,
+    "x": 268.7991181090234,
+    "y": 369.56738200536586
+  },
+  {
+    "id": 4,
+    "rotation": 225,
+    "flipped": false,
+    "x": 153.82895929670892,
+    "y": 536.126714643719
+  },
+  {
+    "id": 5,
+    "rotation": 225,
+    "flipped": false,
+    "x": 55.80952902723564,
+    "y": 345.24677148737624
+  },
+  {
+    "id": 6,
+    "rotation": 45,
+    "flipped": false,
+    "x": 221.63187346807385,
+    "y": 321.66314916690146
+  },
+  {
+    "id": 7,
+    "rotation": 225,
+    "flipped": false,
+    "x": 150.88100650664956,
+    "y": 298.0795268464267
+  }
+]
   }
 ];
 
