@@ -249,7 +249,7 @@
 				bottom: `${0.12 * r['.p1'].height}px`,
 				width: '71%'
 			},
-			{ cls: '.p2', width: '75%' },
+			// { cls: '.p2', width: '75%' },
 			{ cls: '.p3', width: '75%' },
 			{ cls: '.p4', left: `${-0.6 * r['.p4'].width}px`, rotate: 45, width: '40%' },
 			{ cls: '.p5', rotate: -45, width: '70%' },
@@ -283,8 +283,8 @@
 		gsap = mod.gsap;
 
 		// Import dynamique du TextPlugin
-		const { TextPlugin } = await import('gsap/TextPlugin');
-		gsap.registerPlugin(TextPlugin);
+		// const { TextPlugin } = await import('gsap/TextPlugin');
+		// gsap.registerPlugin(TextPlugin);
 
 		// aller directement au layout2 sans animation
 		toLayout2Instant();
@@ -437,13 +437,13 @@
 		height: 100%;
 		width: auto;
 		overflow: visible;
-		fill:#fff,
+		fill:#fff;
 	}
 	.piece polygon {
 		stroke: #fff;
 		stroke-width: 0;
 		vector-effect: non-scaling-stroke;
-		fill:#fff,
+		fill:#fff;
 	}
 	.p1 {
 		width: 75%;
@@ -458,6 +458,7 @@
 		height: 50%;
 		top: initial;
 		right: initial;
+		z-index: 100;
 	}
 	.p3 {
 		height: 100%;
@@ -474,6 +475,7 @@
 		top: initial;
 		left: initial; */
 		top: 16%;
+		z-index: 10;
 		/* rotate: 0; */
 	}
 	.p5 {
@@ -498,6 +500,7 @@
 		right: initial;
 		top: 25%;
 		margin: auto;
+		z-index: 1;
 		/* transform: translateY(-50%); */
 	}
 	/* Couleurs (optionnel) */
