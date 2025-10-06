@@ -10,11 +10,9 @@
   import Breadcrumb from '$lib/Breadcrumb.svelte';
   import { getPuzzleById, PIECES_DATA, PIECES_DATA_WITH_VIEWBOX, PIECE_GREY_COLOR } from '$lib/puzzleData.js';
   import {
-  	areInterchangeable,
   	checkRotationMatch,
   	debugLog,
-  	initializeDebugMode,
-  	getInterchangeRotationOffset
+  	initializeDebugMode
   } from '../../../lib/puzzleDebug.js';
 
 
@@ -101,8 +99,8 @@
     if (!piece || piece.inContainer) return null;
     const tolerance = 25 * puzzleScale;
     const target = targetPieces.find((t) => {
-      const compatible = piece.id === t.id || areInterchangeable(piece.id, t.id, PIECES_DATA);
-      if (!compatible) return false;
+      // Only exact ID matches - no interchangeable pieces
+      if (piece.id !== t.id) return false;
       const distance = Math.hypot(piece.x - t.screenX, piece.y - t.screenY);
       if (distance >= tolerance) return false;
       const rotOk = checkRotationMatch(piece.id, piece.rotation, t.id, t.rotation, planePuzzle, PIECES_DATA, false);
@@ -216,8 +214,8 @@
 
     const tolerance = 25 * puzzleScale;
 
-    // find a compatible target (exact id or interchangeable)
-    const target = targetPieces.find(t => piece.id === t.id || areInterchangeable(piece.id, t.id, PIECES_DATA));
+    // Only exact ID matches - no interchangeable pieces
+    const target = targetPieces.find(t => piece.id === t.id);
     if (!target) return false;
 
     const distance = Math.hypot(piece.x - target.screenX, piece.y - target.screenY);
@@ -257,9 +255,8 @@
     let minDistance = MAGNETIC_SNAP_DISTANCE;
 
     for (const target of targetPieces) {
-      // Check if piece can go in this target (same ID or interchangeable)
-      const canFitTarget = piece.id === target.id || areInterchangeable(piece.id, target.id, PIECES_DATA);
-      if (!canFitTarget) continue;
+      // Only exact ID matches - no interchangeable pieces
+      if (piece.id !== target.id) continue;
 
       // Check rotation compatibility
       const rotationMatch = checkRotationMatch(piece.id, piece.rotation, target.id, target.rotation, planePuzzle, PIECES_DATA, false);
@@ -313,52 +310,13 @@
   // Compute a rotation for pieceId that is compatible with the given target
   function findCompatibleRotationForPlacement(pieceId, target) {
     const targetRotation = normalizeRotation(target.rotation ?? 0);
-    const candidates = [];
-    const maybeAddCandidate = (rotation) => {
-      const normalized = normalizeRotation(rotation);
-      if (!candidates.includes(normalized)) {
-        candidates.push(normalized);
-      }
-    };
 
-    const intersectsInterchangeable = areInterchangeable(pieceId, target.id, PIECES_DATA);
-    if (intersectsInterchangeable) {
-      // Get the rotation offset for swapping these interchangeable pieces
-      const rotationOffset = getInterchangeRotationOffset(pieceId, target.id, planePuzzle);
-
-      // Apply the geometric rotation offset to the target rotation
-      const adjustedRotation = normalizeRotation(targetRotation + rotationOffset);
-
-      // For symmetric pieces, add all valid orientations
-      const symmetryStep = getSymmetryStep(pieceId);
-
-      maybeAddCandidate(adjustedRotation);
-
-      if (symmetryStep && symmetryStep > 0 && symmetryStep < 360) {
-        for (let offset = symmetryStep; offset < 360; offset += symmetryStep) {
-          maybeAddCandidate(adjustedRotation + offset);
-        }
-      }
+    // Only exact matches - piece must match target ID
+    if (pieceId !== target.id) {
+      return targetRotation;
     }
 
-    // Always ensure we check the target rotation first, then fall back through all tangram orientations.
-    maybeAddCandidate(targetRotation);
-    [0, 45, 90, 135, 180, 225, 270, 315].forEach(maybeAddCandidate);
-
-    for (const rot of candidates) {
-      const ok = checkRotationMatch(
-        pieceId,
-        rot,
-        target.id,
-        target.rotation,
-        planePuzzle,
-        PIECES_DATA,
-        false
-      );
-      if (ok) return rot;
-    }
-
-    // Fallback to normalized target rotation
+    // For exact matches, just use the target rotation
     return targetRotation;
   }
 
@@ -434,21 +392,19 @@
         const target = targetPieces.find((t) => t.id === match.targetId);
         if (!target) continue;
 
-        // Prefer the recorded pieceId if available
+        // Only restore exact ID matches - no interchangeable pieces
         let candidate = match.pieceId != null ? pieces.find((p) => p.inContainer && p.id === match.pieceId) : null;
-        // Fallbacks: same-id, then any interchangeable
         if (!candidate) candidate = pieces.find((p) => p.inContainer && p.id === target.id);
-        if (!candidate) candidate = pieces.find((p) => p.inContainer && areInterchangeable(p.id, target.id, PIECES_DATA));
         if (!candidate) continue;
 
         candidate.inContainer = false;
         candidate.x = target.screenX;
         candidate.y = target.screenY;
-        // If we kept the same piece, prefer the saved rotation; else compute a compatible one
+        // Use saved rotation if available, else use target rotation
         if (match.pieceId != null && candidate.id === match.pieceId && typeof match.rotation === 'number') {
           candidate.rotation = match.rotation;
         } else {
-          candidate.rotation = findCompatibleRotationForPlacement(candidate.id, target);
+          candidate.rotation = target.rotation;
         }
         candidate.matched = true;
         candidate.animationKey += 1;
@@ -663,7 +619,7 @@
         debugLog(`\n🎯 Checking target ${target.id} at (${Math.round(target.screenX)}, ${Math.round(target.screenY)}) rotation: ${target.rotation}°`);
       }
 
-      // Find a piece that can fill this target position (either exact match or interchangeable)
+      // Find a piece that can fill this target position (exact match only)
       const validPiece = pieces.find(piece => {
         // Skip if this piece is already matched
         if (matchedPieceIds.has(piece.id)) {
@@ -673,11 +629,10 @@
           return false;
         }
 
-        // Check if piece can go in this target (same ID or interchangeable)
-        const canFitTarget = piece.id === target.id || areInterchangeable(piece.id, target.id, PIECES_DATA);
-        if (!canFitTarget) {
+        // Only exact ID matches - no interchangeable pieces
+        if (piece.id !== target.id) {
           if (DEBUG_MODE) {
-            debugLog(`  ❌ Piece ${piece.id} cannot fit target ${target.id} (not compatible)`);
+            debugLog(`  ❌ Piece ${piece.id} cannot fit target ${target.id} (not same ID)`);
           }
           return false;
         }
@@ -723,7 +678,7 @@
           }, null);
 
           if (closestPiece) {
-            const canFit = closestPiece.piece.id === target.id || areInterchangeable(closestPiece.piece.id, target.id, PIECES_DATA);
+            const canFit = closestPiece.piece.id === target.id;
             const rotMatch = checkRotationMatch(closestPiece.piece.id, closestPiece.piece.rotation, target.id, target.rotation, planePuzzle, PIECES_DATA, false);
             const rotInfo = `${closestPiece.piece.rotation}°→${target.rotation}°`;
             matchResults.push(`❌ Target ${target.id}: closest is piece ${closestPiece.piece.id} (dist: ${Math.round(closestPiece.distance)}, fit: ${canFit}, rot: ${rotMatch ? '✓' : '✗'}${rotInfo})`);

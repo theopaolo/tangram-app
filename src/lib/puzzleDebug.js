@@ -155,6 +155,11 @@ export function getInterchangeRotationOffset(sourcePieceId, targetPieceId, plane
  * @returns {boolean} Whether the rotation is acceptable
  */
 export function checkRotationMatch(pieceId, pieceRotation, targetId, targetRotation, planePuzzle, PIECES_DATA, enableLogging = false) {
+  // Only check if piece and target IDs match (no interchangeable pieces)
+  if (pieceId !== targetId) {
+    return false;
+  }
+
   // Normalize rotations to 0-359 range
   const normalizeDegrees = (deg) => ((deg % 360) + 360) % 360;
   const pieceRot = normalizeDegrees(pieceRotation);
@@ -186,42 +191,21 @@ export function checkRotationMatch(pieceId, pieceRotation, targetId, targetRotat
     return result;
   }
 
-  // For interchangeable pieces, allow any rotation that appears for any member in the interchangeable group
-  const allIds = Object.keys(PIECES_DATA).map(Number);
-  const inExplicitSameGroup = EXPLICIT_INTERCHANGEABLE_GROUPS.some(g => g.includes(pieceId) && g.includes(targetId));
-  const inDynamicSameGroup = getTriangleSimilarityGroups(PIECES_DATA, false).some(g => g.includes(pieceId) && g.includes(targetId));
-
-  if (inExplicitSameGroup || inDynamicSameGroup) {
-    const groupIds = allIds.filter(id => {
-      const inExplicit = EXPLICIT_INTERCHANGEABLE_GROUPS.some(g => g.includes(id) && (g.includes(pieceId) || g.includes(targetId)));
-      const inDynamic = getTriangleSimilarityGroups(PIECES_DATA, false).some(g => g.includes(id) && (g.includes(pieceId) || g.includes(targetId)));
-      return inExplicit || inDynamic;
-    });
-
-    const baseRotations = groupIds.map(id => {
-      const target = planePuzzle.find(t => t.id === id);
-      return target ? normalizeDegrees(target.rotation) : null;
-    }).filter(rot => rot !== null);
-
-    // For interchangeable right triangles, allow any 90°-spaced orientation derived from any group's target
-    const allowed = new Set();
-    baseRotations.forEach(r => {
-      allowed.add(r);
-      allowed.add((r + 90) % 360);
-      allowed.add((r + 180) % 360);
-      allowed.add((r + 270) % 360);
-    });
-
-    const result = allowed.has(pieceRot);
+  // All triangles (1, 2, 3, 6, 7) are right triangles with 90° rotational symmetry
+  const TRIANGLE_IDS = [1, 2, 3, 6, 7];
+  if (TRIANGLE_IDS.includes(pieceId)) {
+    const diff = Math.abs(pieceRot - targetRot);
+    const normalizedDiff = Math.min(diff, 360 - diff);
+    const result = normalizedDiff % 90 === 0;
 
     if (enableLogging) {
-      console.log(`    🔄 Interchangeable group rotation: piece ${pieceId}@${pieceRotation}° → target ${targetId} (allowed: ${Array.from(allowed).sort((a,b)=>a-b).join('°, ')}°) = ${result}`);
+      console.log(`    🔄 Triangle rotation: ${pieceRotation}° vs ${targetRotation}° (90° symmetric) = ${result}`);
     }
 
     return result;
   }
 
-  // Default: exact rotation match
+  // Default: exact rotation match for unknown pieces
   const result = pieceRot === targetRot;
 
   if (enableLogging) {
