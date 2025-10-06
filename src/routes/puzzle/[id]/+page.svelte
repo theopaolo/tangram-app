@@ -781,7 +781,6 @@
   }
 
   .puzzle-container {
-    height: 100%;
     border-radius: 8px;
     /* Prevent scrolling/zooming when interacting with pieces */
     touch-action: pan-x pan-y;
@@ -1029,7 +1028,7 @@
 
   <!-- Puzzle area with padding -->
   <div class="h-full">
-    <div class="puzzle-container {puzzleSolved ? 'puzzle-solved' : ''}"
+    <div class="relative top-[65px] h-[calc(100%-220px)] puzzle-container {puzzleSolved ? 'puzzle-solved' : ''}"
           bind:this={puzzleContainer}
           use:observeResize
           role="main"
