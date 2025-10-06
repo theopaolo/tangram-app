@@ -256,8 +256,7 @@
 
   <div class="controls fixed z-20 right-[50px] bottom-[35px]">
     <div
-      on:click={handleBt1}
-      on:touchstart={handleBt1}
+      onclick={handleBt1}
       class="bt1 z-10 text-bouton inf-bold w-fit bg-white border py-[7px] px-[15px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">
       ENTRER
     </div>
