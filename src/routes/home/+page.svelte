@@ -465,14 +465,14 @@
 		left: -100%;
 	}
 	.p4 {
-		width: initial;
+		/* width: initial; */
 		height: 50%;
-		bottom: initial;
+		/* bottom: initial;
 		right: initial;
 		top: initial;
-		left: initial;
+		left: initial; */
 		top: 16%;
-		rotate: 0;
+		/* rotate: 0; */
 	}
 	.p5 {
 		left: 56%;
