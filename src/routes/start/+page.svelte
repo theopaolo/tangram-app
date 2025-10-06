@@ -96,17 +96,16 @@
 
 
 <div class="bloc_one pointer-events-none absolute top-0 left-0 z-30 flex h-svh w-screen flex-col items-center justify-evenly py-[80px] text-center" >
-	<div class="w-[80dvw]">
+	<div class="w-[90dvw]">
 		<p>
 			{#if totalFound === 0}
 				Pars à la recherche des 7 couleurs du tangram pour débloquer le CHROMOGRAM !
 			{:else if totalFound === 7}
-				Bravo ! Tu as débloqué toutes les couleurs !<br/>Les tangrams sont maintenant disponibles en
-				cliquant en bas de page !<br/>
+				Bravo ! Tu as débloqué toutes les couleurs ! Les tangrams sont disponibles en cliquant en bas de page !
 			{:else if totalFound === 1}
-				Tu as découvert 1 couleur.<br />Rassemble les 7 formes pour débloquer le CHROMOGRAM !
+				Tu as découvert 1 couleur. Rassemble les 7 formes pour débloquer le CHROMOGRAM !
 			{:else}
-				Tu as déjà découvert {totalFound} couleurs.<br />Rassemble les 7 formes pour débloquer le
+				Tu as déjà découvert {totalFound} couleurs. Rassemble les 7 formes pour débloquer le
 				CHROMOGRAM !
 			{/if}
 		</p>
