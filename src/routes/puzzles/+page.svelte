@@ -365,7 +365,7 @@
               "
             >
               <svg class="tangram-piece-svg w-full" viewBox={pieceData.viewBox}>
-                <polygon points={pieceData.points} fill={pieceColor} opacity={pieceColor === PIECE_GREY_COLOR ? 0.1 : 1} />
+                <polygon points={pieceData.points} fill={pieceColor} opacity={pieceColor === PIECE_GREY_COLOR ? 1 : 1} />
               </svg>
             </div>
           {/each}

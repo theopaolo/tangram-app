@@ -9,16 +9,57 @@ const U = (n) => OFFSET + UNIT * n;
 const P = (pts) => pts.map(([x,y]) => `${U(x)},${U(y)}`).join(' ');
 
 // Color for pieces that are not found or not completed
-export const PIECE_GREY_COLOR = '#000';
+export const PIECE_GREY_COLOR = '#e7e7e7';
 
 export const PIECES_DATA = {
-  1: { name: 'Le Grand Triangle', color: PIECES_DATA_SOURCE[1].color, story: PIECES_DATA_SOURCE[1].story, artwork: PIECES_DATA_SOURCE[1].titre_artwork, points: P([[0,0],[5,5],[10,0]]) },
-  2: { name: 'Le Second Grand Triangle', color: PIECES_DATA_SOURCE[2].color, story: PIECES_DATA_SOURCE[2].story, artwork: PIECES_DATA_SOURCE[2].titre_artwork, points: P([[0,0],[5,5],[0,10]]) },
-  3: { name: 'Le Petit Triangle', color: PIECES_DATA_SOURCE[3].color, story: PIECES_DATA_SOURCE[3].story, artwork: PIECES_DATA_SOURCE[3].titre_artwork, points: P([[5,5],[7.5,7.5],[7.5,2.5]]) },
-  4: { name: 'Le Carré', color: PIECES_DATA_SOURCE[4].color, story: PIECES_DATA_SOURCE[4].story, artwork: PIECES_DATA_SOURCE[4].titre_artwork, points: P([[5,5],[7.5,7.5],[5,10],[2.5,7.5]]) },
-  5: { name: 'Le Parallélogramme', color: PIECES_DATA_SOURCE[5].color, story: PIECES_DATA_SOURCE[5].story, artwork: PIECES_DATA_SOURCE[5].titre_artwork, points: P([[7.5,2.5],[7.5,7.5],[10,5],[10,0]]) },
-  6: { name: 'Le Grand Trapèze', color: PIECES_DATA_SOURCE[6].color, story: PIECES_DATA_SOURCE[6].story, artwork: PIECES_DATA_SOURCE[6].titre_artwork, points: P([[0,10],[5,10],[2.5,7.5]]) },
-  7: { name: 'Le Petit Trapèze', color: PIECES_DATA_SOURCE[7].color, story: PIECES_DATA_SOURCE[7].story, artwork: PIECES_DATA_SOURCE[7].titre_artwork, points: P([[5,10],[10,5],[10,10]]) }
+  1: {
+    name: 'Le Grand Triangle',
+    color: PIECES_DATA_SOURCE[3].color,
+    story: PIECES_DATA_SOURCE[3].story,
+    artwork: PIECES_DATA_SOURCE[3].titre_artwork,
+    points: P([[0,0],[5,5],[10,0]])
+  },
+  2: { 
+    name: 'Le Second Grand Triangle', 
+    color: PIECES_DATA_SOURCE[5].color, 
+    story: PIECES_DATA_SOURCE[5].story, 
+    artwork: PIECES_DATA_SOURCE[5].titre_artwork, 
+    points: P([[0,0],[5,5],[0,10]]) 
+  },
+  3: { 
+    name: 'Le Petit Triangle', 
+    color: PIECES_DATA_SOURCE[4].color, 
+    story: PIECES_DATA_SOURCE[4].story, 
+    artwork: PIECES_DATA_SOURCE[4].titre_artwork, 
+    points: P([[5,5],[7.5,7.5],[7.5,2.5]]) 
+  },
+  4: { 
+    name: 'Le Carré', 
+    color: PIECES_DATA_SOURCE[6].color, 
+    story: PIECES_DATA_SOURCE[6].story, 
+    artwork: PIECES_DATA_SOURCE[6 ].titre_artwork, 
+    points: P([[5,5],[7.5,7.5],[5,10],[2.5,7.5]]) 
+  },
+  5: { 
+    name: 'Le Parallélogramme', 
+    color: PIECES_DATA_SOURCE[1].color, 
+    story: PIECES_DATA_SOURCE[1].story, 
+    artwork: PIECES_DATA_SOURCE[1].titre_artwork, 
+    points: P([[7.5,2.5],[7.5,7.5],[10,5],[10,0]]) 
+  },
+  6: { 
+    name: 'Le 2e Petit Triangle', 
+    color: PIECES_DATA_SOURCE[2].color, 
+    story: PIECES_DATA_SOURCE[2].story, 
+    artwork: PIECES_DATA_SOURCE[2].titre_artwork, 
+    points: P([[0,10],[5,10],[2.5,7.5]]) 
+  },
+  7: { 
+    name: 'Le Moyen Triangle', 
+    color: PIECES_DATA_SOURCE[7].color, 
+    story: PIECES_DATA_SOURCE[7].story, 
+    artwork: PIECES_DATA_SOURCE[7].titre_artwork, points: P([[5,10],[10,5],[10,10]]) 
+  }
 };
 
 // Calculate viewBox for each piece

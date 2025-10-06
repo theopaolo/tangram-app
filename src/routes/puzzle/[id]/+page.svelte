@@ -806,8 +806,8 @@
   }
 
   .target-outline.magnetic-target svg polygon {
-    stroke: #1c1c1c;
-    opacity: 0.25;
+    /* stroke: #1c1c1c; */
+    fill: #8e8e8e;
   }
 
   .tangram-piece {
@@ -1050,7 +1050,7 @@
           --scaleX: 1;"
         >
         <svg class="tangram-piece-svg" viewBox={pieceData.viewBox}>
-          <polygon points={pieceData.points} fill="#000" opacity="0.1" stroke="#555" stroke-width="2" />
+          <polygon points={pieceData.points} fill="#e7e7e7" stroke-width="0" />
         </svg>
       </div>
     {/each}
