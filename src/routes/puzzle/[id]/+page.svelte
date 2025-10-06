@@ -124,10 +124,15 @@
       }
     }
 
+    // Determine completion state directly here for easier consumption elsewhere
+    const allPiecesOutOfContainer = pieces.every((p) => !p.inContainer);
+    const completed = allPiecesOutOfContainer && matches.length === targetPieces.length;
+
     const progress = {
       matches,
       puzzleId: puzzleId,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      completed
     };
 
     localStorage.setItem(PUZZLE_PROGRESS_KEY, JSON.stringify(progress));
@@ -204,11 +209,11 @@
   // Derived state
   const activePiece = $derived(pieces.find(p => p.id === activePieceId));
 
-  // --- COLORING BASED ON PROGRESS (mirror puzzles list logic) ---
+  // --- COLORING BASED ON PROGRESS ---
   function isPieceProperlyPlacedCurrent(piece) {
     if (!piece || piece.inContainer) return false;
 
-    const tolerance = 25 * puzzleScale; // same as checkPuzzleSolution
+    const tolerance = 25 * puzzleScale;
 
     // find a compatible target (exact id or interchangeable)
     const target = targetPieces.find(t => piece.id === t.id || areInterchangeable(piece.id, t.id, PIECES_DATA));
@@ -496,7 +501,7 @@
             const paddingX = Math.round(rect.width * 0.1);
             const minX = paddingX;
             const maxX = rect.width - paddingX;
-            const targetX = Math.round(minX + Math.random() * Math.max(0, maxX - minX));
+            const targetX = Math.max(minX, Math.min(maxX, Math.round(e.clientX - rect.left)));
             const offsetAbove = 40; // place a bit above the pieces container
             const computedY = Math.round(containerRect.top - rect.top - offsetAbove);
             const targetY = Math.max(0, Math.min(rect.height - 1, computedY));

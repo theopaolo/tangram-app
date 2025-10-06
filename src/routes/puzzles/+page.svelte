@@ -5,34 +5,36 @@
   import { getAllPuzzles, PIECES_DATA_WITH_VIEWBOX, PIECE_GREY_COLOR } from '$lib/puzzleData.js';
   import { PIECES_DATA } from '$lib/piecesData';
 
-	let refreshTrigger = $state(0); // Used to trigger re-rendering of colors
+	let refreshTrigger = $state(0);
 
 	// Get all puzzles
 	const puzzles = getAllPuzzles();
 
-  // Read progress: matched pairs {targetId, pieceId}
-  function getMatches(puzzleId) {
-    if (typeof localStorage === 'undefined') return [];
+  // Read progress: includes completed flag and matches
+  function getProgress(puzzleId) {
+    if (typeof localStorage === 'undefined') return { matches: [], completed: false };
     try {
       const progressKey = `puzzle_${puzzleId}_progress`;
       const saved = localStorage.getItem(progressKey);
-      if (!saved) return [];
+      if (!saved) return { matches: [], completed: false };
       const progress = JSON.parse(saved);
-      if (progress.puzzleId != puzzleId) return [];
-      if (Array.isArray(progress.matches)) return progress.matches;
-      if (Array.isArray(progress.matchedTargetIds)) {
-        return progress.matchedTargetIds.map((tid) => ({ targetId: tid, pieceId: null }));
-      }
-      return [];
+      if (progress.puzzleId != puzzleId) return { matches: [], completed: false };
+      const matches = Array.isArray(progress.matches)
+        ? progress.matches
+        : Array.isArray(progress.matchedTargetIds)
+          ? progress.matchedTargetIds.map((tid) => ({ targetId: tid, pieceId: null }))
+          : [];
+      const completed = Boolean(progress.completed) || matches.length === Object.keys(PIECES_DATA).length;
+      return { matches, completed };
     } catch (e) {
-      return [];
+      return { matches: [], completed: false };
     }
   }
 
-  // Check if a puzzle is completed based on matched piece IDs
+  // Check if a puzzle is completed using saved completed flag (fallback: match count)
   function isPuzzleCompleted(puzzleId) {
-    const matches = getMatches(puzzleId);
-    return matches.length === Object.keys(PIECES_DATA).length;
+    const { completed } = getProgress(puzzleId);
+    return completed;
   }
 
 	// Get completed puzzles from progress data
@@ -71,8 +73,8 @@
 
   // Get the appropriate color for a target slot based on the matched piece that occupies it
   function getPieceColor(targetId, puzzleId, _refreshTrigger) {
-    const matches = getMatches(puzzleId);
-    const match = matches.find((m) => m.targetId === targetId);
+    const { matches } = getProgress(puzzleId);
+    const match = matches.find((m) => m && m.targetId === targetId);
     if (!match) return PIECE_GREY_COLOR;
     const pieceId = match.pieceId ?? targetId; // fallback to target id if older format
     return PIECES_DATA_WITH_VIEWBOX[pieceId].color;
@@ -369,9 +371,8 @@
               </svg>
             </div>
           {/each}
-          <!-- <div class="absolute bottom-0 left-0 p-5 text-intro leading-none">#{puzzle.id}</div> -->
 
-          {#if completedPuzzles.includes(String(puzzle.id))}
+          {#if getProgress(puzzle.id).completed}
             <div class="absolute complet_{puzzle.id}">
               <img
                 src="/images/complet_{puzzle.id}.svg"
@@ -379,8 +380,6 @@
                 class=""
               />
             </div>
-          {:else}
-            <!-- rien -->
           {/if}
 
           <div class="absolute bottom-0 left-0 p-5 text-intro leading-none">#{puzzle.id}</div>
