@@ -711,17 +711,21 @@
   }
 
   function resetPuzzle() {
+    console.log('🔄 Resetting puzzle...');
+
     // Clear saved progress
     clearPuzzleProgress();
+
+    // Reset puzzle solved state first
+    puzzleSolved = false;
 
     // Reset pieces to initial state
     initializePieces();
 
-    // Reset puzzle solved state
-    puzzleSolved = false;
-
     // Re-fit targets
     fitTargets();
+
+    console.log('✅ Puzzle reset complete');
   }
 
   onMount(() => {
@@ -1093,11 +1097,13 @@
 
 {#if puzzleSolved}
     <div class="success-message text-corps flex flex-row justify-center items-end" transition:fly={{ y: 20, duration: 300 }}>
-        <img
-        src="/images/rebuild.svg"
-        alt="retour"
-        class="h-[87.08px] !w-[100px] mr-[10%]"
-        />
+        <button onclick={resetPuzzle} class="h-[87.08px] !w-[100px] mr-[10%] bg-transparent border-none cursor-pointer hover:opacity-80 transition-opacity">
+          <img
+          src="/images/rebuild.svg"
+          alt="Recommencer ce tangram"
+          class="h-[87.08px] !w-[100px]"
+          />
+        </button>
 
     <!-- {#if allPuzzlesCompleted}
       <a href="/puzzles" class="h-[68.41px" aria-label="Retour à l'accueil">
@@ -1116,10 +1122,10 @@
         />
       </a>
     {/if} -->
-      <a href="/puzzles" class="h-[68.41px" aria-label="Retour à l'accueil">
+      <a href="/puzzles" class="h-[68.41px" aria-label="Continuer">
         <img
         src="/images/continuer.svg"
-        alt="retour"
+        alt="Continuer"
         class="h-[68.41px] !w-[101px]"
         />
       </a>
