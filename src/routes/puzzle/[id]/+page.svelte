@@ -1231,9 +1231,9 @@ function triggerConfetti() {
   {/if}
 
   <div class="pieces-container" class:hide-container={puzzleSolved} bind:this={piecesContainer}>
-    {#each pieces as piece (piece.id)}
+    {#each pieces.map(p => p.id === 3 ? pieces.find(x => x.id === 4) : p.id === 4 ? pieces.find(x => x.id === 3) : p) as piece (piece.id)}
       {@const pieceData = PIECES_DATA_WITH_VIEWBOX[piece.id]}
-        <div class="container-piece relative z-1" class:is-placeholder={!piece.inContainer}>
+        <div class="container-piece relative z-1 numero-{piece.id}" class:is-placeholder={!piece.inContainer}>
           <svg viewBox={pieceData.viewBox}>
             <polygon
               use:draggable={piece.inContainer && { pieceId: piece.id }}
