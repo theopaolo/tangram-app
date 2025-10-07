@@ -10,6 +10,124 @@
 	// Get all puzzles
 	const puzzles = getAllPuzzles();
 
+
+
+// --- 🎉 EFFET DE PAILLETTES ---
+function triggerConfetti() {
+  // const container = document.querySelector('.success-message');
+  // if (!container) return;
+
+  const pieces = Object.values(PIECES_DATA_WITH_VIEWBOX);
+  const canvas = document.createElement('canvas');
+  canvas.className = 'confetti-canvas';
+  Object.assign(canvas.style, {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100dvh',
+    pointerEvents: 'none',
+    zIndex: 3000,
+  });
+  document.body.appendChild(canvas);
+
+  const ctx = canvas.getContext('2d');
+  const originX = window.innerWidth / 2;
+  const originY = + 200; // départ à 90 %
+
+  const total = 150;
+  const particles = Array.from({ length: total }, () => {
+  const piece = pieces[Math.floor(Math.random() * pieces.length)];
+
+    // 💥 Ajustement subtil :
+    // on limite la poussée vers le haut à un arc de ~25 % à 70 % de l’écran
+    // sans rallonger l’effet ni tout décaler vers le bas
+    const gravity = 0.2;                    // gravité un peu plus forte pour recentrer
+    const life = Math.random() * 94 + 90;    // durée légèrement raccourcie (~1,2 s)
+
+    return {
+      x: originX + (Math.random() - 0.5) * 2, // légère largeur de départ
+      y: originY,
+      shape: piece.points,
+      color: piece.color,
+      size: Math.random() * 0.01 + 0.05,
+      rotation: Math.random() * 60,
+      vx: (Math.random() - 0.5) * 13,
+      vy: -(Math.random() * 8 + 1),
+      vrot: (Math.random() - 0.5) * 1,
+      gravity,
+      life,
+    };
+  });
+
+  const resize = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  };
+  resize();
+  window.addEventListener('resize', resize);
+
+  function drawPolygon(points, fill, x, y, scale, rotation) {
+    const pts = points.split(' ').map(p => p.split(',').map(Number));
+    const radians = (rotation * Math.PI) / 360;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(radians);
+    ctx.scale(scale, scale);
+    ctx.beginPath();
+    pts.forEach(([px, py], i) => {
+      if (i === 0) ctx.moveTo(px - 50, py - 150);
+      else ctx.lineTo(px - 50, py - 150);
+    });
+    ctx.closePath();
+    ctx.fillStyle = fill;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  let frame = 0;
+
+
+    function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // cycle de couleurs basé sur le temps pour synchroniser avec blipo (4s, 7 étapes)
+    const cycleDuration = 4000; // ms
+    const colors = [
+      getComputedStyle(document.documentElement).getPropertyValue('--c1'),
+      getComputedStyle(document.documentElement).getPropertyValue('--c2'),
+      getComputedStyle(document.documentElement).getPropertyValue('--c3'),
+      getComputedStyle(document.documentElement).getPropertyValue('--c4'),
+      getComputedStyle(document.documentElement).getPropertyValue('--c5'),
+      getComputedStyle(document.documentElement).getPropertyValue('--c6'),
+      getComputedStyle(document.documentElement).getPropertyValue('--c7'),
+    ].map(c => c.trim());
+
+    const now = performance.now();
+    const cycleIndex = Math.floor((now % cycleDuration) / (cycleDuration / colors.length));
+
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += p.gravity;
+      p.rotation += p.vrot;
+      p.life--;
+
+      // 💫 changer la couleur dynamiquement au même rythme que blipo
+      const flashColor = colors[cycleIndex] || p.color;
+      drawPolygon(p.shape, flashColor, p.x, p.y, p.size, p.rotation);
+    });
+
+    frame++;
+    if (particles.some(p => p.life > 0) && frame < 180) {
+      requestAnimationFrame(animate);
+    } else {
+      canvas.remove();
+    }
+  }
+  animate();
+}
+
   // Read progress: includes completed flag and matches
   function getProgress(puzzleId) {
     if (typeof localStorage === 'undefined') return { matches: [], completed: false };
@@ -40,6 +158,13 @@
 	// Get completed puzzles from progress data
 	let completedPuzzles = $derived(puzzles.map(p => p.id).filter(id => isPuzzleCompleted(id)));
 	let allPuzzlesCompleted = $derived(completedPuzzles.length === puzzles.length);
+
+  // 🔥 Lance les confettis automatiquement quand tous les puzzles sont terminés
+  $effect(() => {
+  if (allPuzzlesCompleted) {
+    triggerConfetti();
+  }
+});
 
 	// --- FUNCTIONS ---
 	onMount(() => {
@@ -228,9 +353,14 @@
 
   .puzzle-preview {
     width: 100%;
-    height: 550px;
+    height: 100%;
     position: relative;
     overflow: hidden;
+    margin-bottom: 100px;
+    margin-top: 160px;
+  }
+  .puzzle-preview.completed {
+    margin-top: 210px;
   }
 
   .puzzle-preview .tangram-piece {
@@ -328,7 +458,7 @@
 <!-- <div class="p-5 mt-[90px]"> -->
   <div class="">
     {#if allPuzzlesCompleted}
-      <div class="text-center absolute top-[100px] m-auto left-0 right-0 z-1">
+      <div onclick={triggerConfetti} class="text-center absolute top-[100px] m-auto left-0 right-0 z-1">
         <p>Bravo tu as completé les 7 tangrams  !<br/>Télécharge un fond d'écran !</p>
         <div class="w-[124px] h-[68px] m-auto relative mt-2">
           <div class="blipo w-[26px] h-[42px] bg-black absolute z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex">
@@ -353,7 +483,7 @@
       <div class="puzzle-card h-dvh justify-center flex px-10" role="button" tabindex="0"
           onclick={() => selectPuzzle(puzzle.id)}
           onkeydown={(e) => e.key === 'Enter' && selectPuzzle(puzzle.id)}>
-        <div class="puzzle-preview w-full">
+        <div class={allPuzzlesCompleted ? 'puzzle-preview w-full completed' : 'puzzle-preview w-full'}>
           {#each puzzle.data as originalPiece}
             {@const pieceData = PIECES_DATA_WITH_VIEWBOX[originalPiece.id]}
             {@const previewPos = calculatePreviewPosition(originalPiece, puzzle.data, previewScale)}
