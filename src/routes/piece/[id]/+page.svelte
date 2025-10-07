@@ -42,7 +42,7 @@
 		<div class="mb-4 h-80 w-full" style="background-color: {currentPiece.color};">
 			<img src="" alt="" />
 		</div>
-
+<!-- 
 		<div class="mb-4 flex flex-col gap-4">
 			<p>{currentPiece.artwork}</p>
 			<p>{currentPiece.story}</p>
@@ -61,7 +61,7 @@
 					<title>{piece.name}</title>
 				</polygon>
 			{/each}
-		</svg>
+		</svg> -->
 
 		<div class="mx-auto flex flex-col gap-2 border-t border-gray-600 pt-8 text-center">
 		
