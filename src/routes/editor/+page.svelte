@@ -314,6 +314,20 @@
   }
 
 
+function getPieceGreyShade(id) {
+  const shades = [
+'#000000', // 1 - noir pur
+  '#080808', // 2 - noir dense
+  '#111111', // 3 - noir profond
+  '#1a1a1a', // 4 - gris charbon
+  '#242424', // 5 - gris anthracite
+  '#2e2e2e', // 6 - gris foncé
+  '#383838'  // 7 - gris acier foncé
+  ];
+  return shades[(id - 1) % shades.length];
+}
+
+
   function observeResize(node) {
     const observer = new ResizeObserver(entries => {
       // Get the new dimensions from the resize event
@@ -473,8 +487,8 @@ function fitPuzzle() {
 .vertical,
 .horizontal {
   position: absolute;
-  background: black;
-  z-index: 1000;
+  background: rgba(255, 255, 255, 0.472);
+  z-index: 1;
 }
 
 /* Trait vertical : centré horizontalement */
@@ -530,7 +544,7 @@ function fitPuzzle() {
               <polygon
                 use:draggable={{ pieceId: piece.id }}
                 points={pieceData.points}
-                fill={pieceData.color} />
+                fill={getPieceGreyShade(piece.id)} />
             </svg>
           {/key}
         </div>

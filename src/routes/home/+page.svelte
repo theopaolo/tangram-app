@@ -304,8 +304,7 @@
 	</div>
 	<div class="controls fixed right-[initial] bottom-[35px] left-[50%] z-20 -translate-x-[50%]">
 		<div
-			on:click={handleBt1}
-			on:touchstart={handleBt1}
+			onclick={handleBt1}
 			class="bt1 text-bouton inf-bold z-10 w-fit border bg-white px-[15px] py-[7px] tracking-[4%] drop-shadow-[var(--my-drop-shadow)]"
 		>
 			<span>JOUER</span>

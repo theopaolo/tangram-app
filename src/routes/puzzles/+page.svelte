@@ -1,9 +1,9 @@
 <script>
   import { goto } from '$app/navigation';
-  import { onMount } from 'svelte';
   import Breadcrumb from '$lib/Breadcrumb.svelte';
-  import { getAllPuzzles, PIECES_DATA_WITH_VIEWBOX, PIECE_GREY_COLOR } from '$lib/puzzleData.js';
   import { PIECES_DATA } from '$lib/piecesData';
+  import { getAllPuzzles, PIECE_GREY_COLOR, PIECES_DATA_WITH_VIEWBOX } from '$lib/puzzleData.js';
+  import { onMount } from 'svelte';
 
 	let refreshTrigger = $state(0);
 
@@ -299,10 +299,13 @@
     bottom:10%;
     right:10%;
   }
+  .puzzle-card:nth-child(even) {
+  background-color: rgb(248, 248, 248);
+}
 </style>
 
 <!-- Title -->
-  <header class="fixed left-5 top-0 z-10 flex items-center pt-4 pb-2 bg-white w-full">
+  <header class="fixed left-5 top-0 z-10 flex items-center pt-4 pb-2 w-full">
     <a href="/start" class="flex gap-2" aria-label="Retour au Chromogram">
       <img
       src="/images/retour_chromo.svg"
@@ -323,7 +326,7 @@
 
 <!-- Puzzle Selection Screen -->
 <!-- <div class="p-5 mt-[90px]"> -->
-  <div class="px-10">
+  <div class="">
     {#if allPuzzlesCompleted}
       <div class="text-center absolute top-[100px] m-auto left-0 right-0 z-1">
         <p>Bravo tu as completé les 7 tangrams  !<br/>Télécharge un fond d'écran !</p>
@@ -347,7 +350,7 @@
   <div class="flex flex-col">
     {#each puzzles as puzzle (puzzle.id)}
       {@const previewScale = calculatePreviewScale(puzzle.data)}
-      <div class="puzzle-card h-svh border-[#ddd] border-b justify-center flex" role="button" tabindex="0"
+      <div class="puzzle-card h-dvh justify-center flex px-10" role="button" tabindex="0"
           onclick={() => selectPuzzle(puzzle.id)}
           onkeydown={(e) => e.key === 'Enter' && selectPuzzle(puzzle.id)}>
         <div class="puzzle-preview w-full">
@@ -401,6 +404,13 @@
         <!-- <div class="status {puzzle.completed ? 'completed' : 'incomplete'}"></div> -->
       </div>
     {/each}
+    <div class="absolute bottom-[10svh] right-[10svh]">
+      <img
+        src="/images/clik_tangram.svg"
+        alt="enter"
+        class=""
+      />
+    </div>
   </div>
 </div>
 
