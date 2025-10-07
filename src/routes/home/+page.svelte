@@ -249,7 +249,7 @@
 				bottom: `${0.12 * r['.p1'].height}px`,
 				width: '71%'
 			},
-			// { cls: '.p2', width: '75%' },
+			{ cls: '.p2', width: '75%' },
 			{ cls: '.p3', width: '75%' },
 			{ cls: '.p4', left: `${-0.6 * r['.p4'].width}px`, rotate: 45, width: '40%' },
 			{ cls: '.p5', rotate: -45, width: '70%' },
@@ -466,15 +466,15 @@
 		left: -100%;
 	}
 	.p4 {
-		/* width: initial; */
+		width: initial;
 		height: 50%;
-		/* bottom: initial;
+		bottom: initial;
 		right: initial;
 		top: initial;
-		left: initial; */
+		left: initial;
 		top: 16%;
 		z-index: 10;
-		/* rotate: 0; */
+		rotate: 0;
 	}
 	.p5 {
 		left: 56%;
