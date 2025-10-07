@@ -394,14 +394,14 @@
         <!-- <div class="status {puzzle.completed ? 'completed' : 'incomplete'}"></div> -->
       </div>
     {/each}
-    <div class="absolute bottom-[10svh] right-[10svh]">
+  </div>
+      <div class="absolute bottom-[10svh] right-[10svh]">
       <img
         src="/images/clik_tangram.svg"
         alt="enter"
-        class=""
+        class=" "
       />
     </div>
-  </div>
 </div>
 
 <footer class="fixed bottom-0 left-0 z-40 flex w-full items-center justify-between px-5 py-2">
