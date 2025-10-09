@@ -63,7 +63,7 @@
 	const breadcrumbItems = [
 		{ label: 'Accueil', href: '/home' },
 		{ label: 'Le Chromogram', current: true },
-		{ label: 'Les Tangrams', disabled: true }
+		// { label: 'Les Tangrams', disabled: true }
 	];
 
 	onMount(async () => {
