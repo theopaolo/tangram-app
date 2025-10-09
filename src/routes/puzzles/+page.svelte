@@ -353,10 +353,10 @@ function triggerConfetti() {
 
   .puzzle-preview {
     width: 100%;
-    height: 100%;
+    height: 600px;
     position: relative;
     overflow: hidden;
-    margin-bottom: 100px;
+    margin-bottom: 50px;
     margin-top: 160px;
   }
   .puzzle-preview.completed {
