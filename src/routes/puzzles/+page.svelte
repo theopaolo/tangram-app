@@ -480,7 +480,7 @@ function triggerConfetti() {
   <div class="flex flex-col">
     {#each puzzles as puzzle (puzzle.id)}
       {@const previewScale = calculatePreviewScale(puzzle.data)}
-      <div class="puzzle-card h-dvh justify-center flex px-10" role="button" tabindex="0"
+      <div class="puzzle-card h-svh justify-center flex px-10" role="button" tabindex="0"
           onclick={() => selectPuzzle(puzzle.id)}
           onkeydown={(e) => e.key === 'Enter' && selectPuzzle(puzzle.id)}>
         <div class={allPuzzlesCompleted ? 'puzzle-preview w-full completed' : 'puzzle-preview w-full'}>
