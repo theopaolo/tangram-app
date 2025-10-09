@@ -1170,7 +1170,7 @@ function triggerConfetti() {
 
   <!-- Puzzle area with padding -->
   <div class="h-full">
-    <div class="relative top-[65px] h-[calc(100%-230px)] puzzle-container {puzzleSolved ? 'puzzle-solved' : ''}"
+    <div class="relative top-[65px] h-[calc(100svh-220px)] puzzle-container {puzzleSolved ? 'puzzle-solved' : ''}"
           bind:this={puzzleContainer}
           use:observeResize
           role="main"
