@@ -17,11 +17,8 @@
 			// Add piece to store (saves to localStorage)
 			piecesStore.addPiece(pieceId);
 
-			// Redirect to animation page
-			goto(`/animation/${pieceId}`);
-		} else {
-			// Invalid piece - redirect to home
-			goto('/home');
+			// Redirect to index page
+			goto('/');
 		}
 	});
 </script>
