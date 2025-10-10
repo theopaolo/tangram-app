@@ -903,9 +903,9 @@ function triggerConfetti() {
     position: relative;
     display: flex;
     flex-direction: column;
-    width: 90%;
+    width: 100%;
     height: 100dvh;
-    padding: auto;
+    padding: 0 20px;
     margin:auto;
   }
 
@@ -999,13 +999,13 @@ function triggerConfetti() {
 
   .pieces-container {
     display: flex;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 20px;
+    padding-right: 20px;
     position: absolute;
     bottom: 45px;
     left: 0;
     right: 0;
-    height: 100px;
+    height: 60px;
     gap: .5rem;
   }
 .pieces-container {
@@ -1170,7 +1170,7 @@ function triggerConfetti() {
 
   <!-- Puzzle area with padding -->
   <div class="h-full">
-    <div class="relative top-[65px] h-[calc(100svh-220px)] puzzle-container {puzzleSolved ? 'puzzle-solved' : ''}"
+    <div class="relative top-0 h-svh mt-[60px] pb-[160px] puzzle-container {puzzleSolved ? 'puzzle-solved' : ''}"
           bind:this={puzzleContainer}
           use:observeResize
           role="main"
