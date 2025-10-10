@@ -265,6 +265,17 @@
 		// init title
 		fitTitle(-45, 0.82, 'center', false);
 
+		// Fade out the loading overlay after logo is positioned
+		gsap.to('.loading-overlay', {
+			opacity: 0,
+			duration: 0.4,
+			delay: 0.2,
+			onComplete: () => {
+				// Remove from DOM to avoid blocking clicks
+				document.querySelector('.loading-overlay')?.remove();
+			}
+		});
+
 		const onRez = () => fitTitle(curAngle, curFrac, curPlace, false);
 		window.addEventListener('resize', onRez);
 
@@ -276,6 +287,9 @@
 </script>
 
 <div class="h-svh">
+	<!-- White overlay to hide initial logo positioning -->
+	<div class="loading-overlay fixed inset-0 z-50 bg-white"></div>
+
 	<div
 		class="title text-intro inf-bold fixed z-10 mx-auto w-fit w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]"
 	>
