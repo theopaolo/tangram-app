@@ -16,6 +16,15 @@
 
 	let isScanning = $state(true);
 
+	// Debug state
+	let debugData = $state({
+		rawData: null,
+		extractedId: null,
+		isValid: false,
+		timestamp: null,
+		fullData: null
+	});
+
 	onMount(async () => {
 		// Initialize pieces store
 		piecesStore.initialize();
@@ -41,6 +50,15 @@
 
 		// Extract piece ID from format "X/Y" (e.g., "1/1" -> "1")
 		const scannedId = scannedData.split('/')[0];
+
+		// Update debug data
+		debugData = {
+			rawData: scannedData,
+			extractedId: scannedId,
+			isValid: !!PIECES_DATA[scannedId],
+			timestamp: new Date().toLocaleTimeString(),
+			fullData: event.detail
+		};
 
 		if (PIECES_DATA[scannedId]) {
 			// Add the scanned piece to the store
@@ -74,6 +92,27 @@
 		z-index: 30;
 		background: #fff;
 	}
+
+	.debug-panel {
+		font-family: 'Inf Reg', monospace;
+		max-height: calc(100vh - 100px);
+		overflow-y: auto;
+	}
+
+	.debug-panel h3 {
+		font-family: 'Inf Bold', sans-serif;
+	}
+
+	.debug-content strong {
+		font-family: 'Inf Bold', sans-serif;
+	}
+
+	@media (max-width: 640px) {
+		.debug-panel {
+			max-width: calc(100vw - 100px);
+			right: 10px;
+		}
+	}
 </style>
 
 
@@ -93,6 +132,42 @@
 		on:error={handleScannerError}
 		on:close={handleClose}
 	/>
+</div>
+
+<!-- Debug Panel -->
+<div class="debug-panel fixed top-20 right-5 z-50 bg-white border-2 border-black p-3 shadow-lg max-w-xs">
+	<h3 class="text-sm font-bold mb-2 inf-bold">QR Debug Info</h3>
+	{#if debugData.rawData}
+		<div class="debug-content text-xs space-y-1 inf-reg">
+			<div>
+				<strong>Time:</strong> {debugData.timestamp}
+			</div>
+			<div>
+				<strong>Raw Data:</strong>
+				<div class="bg-gray-100 p-1 mt-1 break-all font-mono text-[10px]">
+					{debugData.rawData}
+				</div>
+			</div>
+			<div>
+				<strong>Extracted ID:</strong>
+				<span class="bg-yellow-100 px-1">{debugData.extractedId}</span>
+			</div>
+			<div>
+				<strong>Valid:</strong>
+				<span class={debugData.isValid ? 'text-green-600' : 'text-red-600'}>
+					{debugData.isValid ? '✓ Yes' : '✗ No'}
+				</span>
+			</div>
+			{#if debugData.fullData}
+				<details class="mt-2">
+					<summary class="cursor-pointer hover:text-blue-600">Full Event Data</summary>
+					<pre class="bg-gray-100 p-1 mt-1 text-[9px] overflow-auto max-h-32">{JSON.stringify(debugData.fullData, null, 2)}</pre>
+				</details>
+			{/if}
+		</div>
+	{:else}
+		<p class="text-xs text-gray-500 inf-reg">No QR code scanned yet</p>
+	{/if}
 </div>
 
 <footer class="fixed bottom-0 left-0 z-40 flex w-full items-center justify-between px-5 py-2">
