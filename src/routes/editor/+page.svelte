@@ -33,7 +33,11 @@
   let showGrid = $state(true); // Toggle grid visibility
   let snapIndicator = $state(null); // Show where piece will snap {x, y, type: 'grid'|'vertex'}
   // Track last fit transform so we can export canonical, scale-independent coordinates
-  let lastFit = $state({ minX: 0, minY: 0, scale: 1, gutter: -1 });
+  let lastFit = $state({
+    minX: 0, minY: 0, scale: 1, gutter: -1,
+    puzzleCenterX: 0, puzzleCenterY: 0,
+    screenCenterX: 0, screenCenterY: 0
+  });
 
   // --- DERIVED STATE ---
   const activePiece = $derived(pieces.find(p => p.id === activePieceId));
@@ -212,13 +216,13 @@
 
    function exportPuzzleData() {
     // Export canonical coordinates by inverting last fit transform on current on-screen positions
-    const { minX, minY, scale, gutter } = lastFit;
+    const { puzzleCenterX, puzzleCenterY, screenCenterX, screenCenterY, scale } = lastFit;
     const dataToExport = pieces.map(({ id, x, y, rotation, flipped }) => ({
       id,
       rotation,
       flipped,
-      x: ((x - gutter) / scale) + minX,
-      y: ((y - gutter) / scale) + minY
+      x: ((x - screenCenterX) / scale) + puzzleCenterX,
+      y: ((y - screenCenterY) / scale) + puzzleCenterY
     }));
     const jsonString = JSON.stringify(dataToExport, null, 2);
     console.log(jsonString);
@@ -365,16 +369,39 @@ function fitPuzzle() {
     minY: Math.min(...ys),
     maxY: Math.max(...ys),
   };
-  const puzzleWidth  = bounds.maxX - bounds.minX;
-  const availableWidth = containerSize.width - gutter * 2;
-  const scaleFactor = availableWidth / puzzleWidth;
-  puzzleScale = scaleFactor;
-  // Save transform for canonical export
-  lastFit = { minX: bounds.minX, minY: bounds.minY, scale: scaleFactor, gutter };
 
+  // Calculate both dimensions for aspect-ratio-aware scaling
+  const puzzleWidth = bounds.maxX - bounds.minX;
+  const puzzleHeight = bounds.maxY - bounds.minY;
+  const availableWidth = containerSize.width - gutter * 2;
+  const availableHeight = containerSize.height - gutter * 2;
+
+  // Use minimum scale factor to fit both dimensions (like puzzle page)
+  const scaleFactor = Math.min(availableWidth / puzzleWidth, availableHeight / puzzleHeight);
+  puzzleScale = scaleFactor;
+
+  // Calculate centers for centered positioning (like puzzle page)
+  const puzzleCenterX = (bounds.minX + bounds.maxX) / 2;
+  const puzzleCenterY = (bounds.minY + bounds.maxY) / 2;
+  const screenCenterX = containerSize.width / 2;
+  const screenCenterY = containerSize.height / 2;
+
+  // Save transform for canonical export
+  lastFit = {
+    minX: bounds.minX,
+    minY: bounds.minY,
+    scale: scaleFactor,
+    gutter,
+    puzzleCenterX,
+    puzzleCenterY,
+    screenCenterX,
+    screenCenterY
+  };
+
+  // Position pieces using centered positioning (like puzzle page)
   for (const piece of pieces) {
-    piece.x = Math.round((piece.origX - bounds.minX) * scaleFactor + gutter);
-    piece.y = Math.round((piece.origY - bounds.minY) * scaleFactor + gutter);
+    piece.x = Math.round(screenCenterX + (piece.origX - puzzleCenterX) * scaleFactor);
+    piece.y = Math.round(screenCenterY + (piece.origY - puzzleCenterY) * scaleFactor);
   }
 }
 
@@ -416,7 +443,7 @@ function fitPuzzle() {
     position: relative;
     background-color: red;
     overflow: visible;
-    
+
   }
 
   .editor-canvas.show-grid {
