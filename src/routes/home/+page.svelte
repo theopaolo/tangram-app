@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
+	import { goto, preloadCode } from '$app/navigation';
 
 	let gsap; // SSR-safe
 	let found = $state([]);
@@ -28,7 +28,7 @@
 			);
 		});
 	}
-	
+
 	function applyColors() {
 		Object.keys(PIECES_DATA).forEach((id) => {
 			const isFound = foundPieces.includes(id);
@@ -279,6 +279,9 @@
 		// Freeze scroll
 		freezeScroll();
 
+		// Preload start page for better performance
+		preloadCode('/start');
+
 		const mod = await import('gsap');
 		gsap = mod.gsap;
 
@@ -328,7 +331,7 @@
 		</p>
 	</div>
 	<div class="h-[80dvw] bg-transparent"></div>
-	
+
 	<div>
 		<svg width="52" height="43" viewBox="0 0 52 43" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<g clip-path="url(#clip0_2041_26)">
@@ -337,7 +340,7 @@
 			</g>
 		</svg>
 	</div>
-	
+
 </div>
 
 <div

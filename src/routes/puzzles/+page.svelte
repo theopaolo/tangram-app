@@ -298,6 +298,18 @@ function triggerConfetti() {
     goto(`/puzzle/${id}`);
   }
 
+  // Check if any puzzle progress exists in localStorage
+  function hasAnyPuzzleProgress() {
+    if (typeof localStorage === 'undefined') return false;
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.match(/^puzzle_\d+_progress$/)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
 	const breadcrumbItems = [
 		{ label: 'Accueil', href: '/home' },
 		{ label: 'Le Chromogram', href: '/start' },
@@ -516,24 +528,18 @@ function triggerConfetti() {
           {/if}
 
           <div class="absolute bottom-0 left-0 p-5 text-intro leading-none">#{puzzle.id}</div>
-
-          <!-- <div class="status {puzzle.completed ? 'completed' : 'incomplete'} absolute bottom-0 left-0 right-0 margin-auto p-5 text-intro leading-none"> {puzzle.completed ? 'Terminé' : 'À compléter'}</div> -->
-
         </div>
-
-        {#if !getProgress(puzzle.id).completed}
-          <div class="absolute bottom-[10svh] right-[10svh]">
-            <img
-              src="/images/clik_tangram.svg"
-              alt="enter"
-              class=""
-            />
-          </div>
-        {/if}
-        <!-- <p>{puzzle.description}</p> -->
-        <!-- <div class="status {puzzle.completed ? 'completed' : 'incomplete'}"></div> -->
       </div>
     {/each}
+    {#if !hasAnyPuzzleProgress()}
+      <div class="absolute bottom-[10svh] right-[10svh]">
+        <img
+          src="/images/clik_tangram.svg"
+          alt="enter"
+          class=""
+        />
+      </div>
+    {/if}
   </div>
 </div>
 

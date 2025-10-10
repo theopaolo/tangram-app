@@ -1,5 +1,5 @@
 <script>
-	import { goto } from '$app/navigation';
+	import { goto, preloadCode } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { PIECES_DATA } from '$lib/piecesData';
 	import { piecesStore } from '$lib/piecesStore.js';
@@ -252,6 +252,9 @@
 
 		// Freeze scroll
 		freezeScroll();
+
+		// Preload home page for better performance
+		preloadCode('/home');
 
 		// GSAP + TextPlugin (SSR-safe)
 		const mod = await import('gsap');

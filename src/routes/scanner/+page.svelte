@@ -37,7 +37,10 @@
 
 	function handleQRDetected(event) {
 		const { data } = event.detail;
-		const scannedId = data.toString().trim();
+		const scannedData = data.toString().trim();
+
+		// Extract piece ID from format "X/Y" (e.g., "1/1" -> "1")
+		const scannedId = scannedData.split('/')[0];
 
 		if (PIECES_DATA[scannedId]) {
 			// Add the scanned piece to the store
@@ -61,7 +64,7 @@
 	/* html,body{
 		height: 100svh;
 	} */
-	
+
 	.scanner-fullscreen {
 		position: fixed;
 		top: 0;
@@ -78,13 +81,6 @@
 <div class="title text-title inf-bold fixed top-5 left-5 z-40 mx-aut w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">
 	<a href="/start">CHROMOGRAM #1</a>
 </div>
-
-<!-- <div class="fixed top-3 right-5 z-40">
-	<button onclick={() => isAideOpen.open()} aria-label="Aide" class="flex bg-transparent border-none cursor-pointer flex flex-row gap-2">
-		<img class="mt-2" src="/images/quoi.svg" alt="camera" />
-		<div class="text-inter inf-bold">?</div>
-	</button>
-</div> -->
 
 <div class="scanner-fullscreen">
 	<OptimizedQRScanner
