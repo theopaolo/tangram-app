@@ -423,7 +423,7 @@ function triggerConfetti(originEl, color = '#FF0000') {
 				{currentPiece.titre_artwork}
 			</h2>
 			<p>{currentPiece.artiste} - {currentPiece.date}</p>
-			<p class="mt-3">{currentPiece.story}</p>
+			<p class="mt-3">{@html currentPiece.story}</p>
 		</div>
 
 		<!-- Bloc "D'après toi..." -->
