@@ -49,7 +49,7 @@
 		const scannedData = data.toString().trim();
 
 		// Extract piece ID from URL format "@https://chromogramrac.com/X/Y"
-		// Remove @ if present, then extract the path and get the first number
+		// Remove @ if present, then extract the path and get the second number (Y)
 		let scannedId = null;
 
 		const cleanData = scannedData.replace(/^@/, ''); // Remove leading @
@@ -58,10 +58,11 @@
 			// Try to parse as URL
 			const url = new URL(cleanData);
 			const pathParts = url.pathname.split('/').filter(Boolean); // Remove empty strings
-			scannedId = pathParts[0]; // Get first number (e.g., "1" from "/1/1")
+			scannedId = pathParts[1]; // Get second number (e.g., "2" from "/1/2")
 		} catch (e) {
 			// If not a valid URL, try to extract from plain format "X/Y"
-			scannedId = cleanData.split('/')[0];
+			const parts = cleanData.split('/');
+			scannedId = parts[1] || parts[0]; // Try second part, fallback to first
 		}
 
 		// Update debug data
