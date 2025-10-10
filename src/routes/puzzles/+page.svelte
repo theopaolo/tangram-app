@@ -462,13 +462,17 @@ function triggerConfetti() {
         <p>Bravo tu as completé les 7 tangrams  !<br/>Télécharge un fond d'écran !</p>
         <div class="w-[124px] h-[68px] m-auto relative mt-2">
           <div class="blipo w-[26px] h-[42px] bg-black absolute z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex">
-            <img style="width:80%;margin:auto" src="/images/tangrams_b&w.svg" alt="tangrams">
+            <a href="/download/Chromogram_Wallpaper_MRAC.zip">
+              <img style="width:80%;margin:auto" src="/images/tangrams_b&w.svg" alt="tangrams">
+            </a>
           </div>
-          <img
-            src="/images/fond_ecran_full.png"
-            alt=""
-            class=""
-        />
+          <a href="/download/Chromogram_Wallpaper_MRAC.zip">
+            <img
+              src="/images/fond_ecran_full.png"
+              alt=""
+              class=""
+            />
+          </a>
         </div>
       </div>
     {:else}
