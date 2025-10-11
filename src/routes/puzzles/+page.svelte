@@ -393,11 +393,11 @@ function triggerConfetti() {
   }
 
 .puzzle-card:first-of-type .puzzle-preview {
-    margin-top: 85px;
+    margin-top: 60px;
   }
 
   .puzzle-card:first-of-type .puzzle-preview.completed {
-    margin-top: 60px;
+    margin-top: 85px;
   }
 
   .puzzle-preview .tangram-piece {
@@ -443,7 +443,7 @@ function triggerConfetti() {
     left:0;
   }
   .complet_2{
-    top:14Ò%;
+    top:14%;
     right:0;
   }
   .complet_3{
