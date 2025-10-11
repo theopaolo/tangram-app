@@ -387,7 +387,7 @@ function triggerConfetti() {
     width: 100%;
     height: 100%;
     position: relative;
-    overflow: hidden;
+    /* overflow: hidden; */
     /* margin-bottom: 50px;
     margin-top: 160px; */
   }
@@ -434,28 +434,28 @@ function triggerConfetti() {
   85.01%, 100% { background-color: var(--c7); }
 }
   .complet_1{
-    bottom:10%;
-    left:10%;
+    bottom:12%;
+    left:0;
   }
   .complet_2{
     bottom:10%;
-    right:10%;
+    right:0;
   }
   .complet_3{
     top:10%;
-    left:10%;
+    left:0;
   }
   .complet_4{
     bottom:10%;
-    left:10%;
+    left:0;
   }
   .complet_5{
     top:10%;
-    left:10%;
+    left:0;
   }
   .complet_6{
     top:10%;
-    right:10%;
+    right:0;
   }
   .complet_7{
     bottom:10%;
@@ -549,7 +549,7 @@ function triggerConfetti() {
             </div>
           {/if}
 
-          <div class="absolute bottom-0 left-0 p-5 text-intro leading-none">#{puzzle.id}</div>
+          <div class="absolute bottom-13 left-[-20px] text-intro leading-none">#{puzzle.id}</div>
         </div>
       </div>
     {/each}
