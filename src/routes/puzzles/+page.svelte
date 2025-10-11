@@ -392,7 +392,7 @@ function triggerConfetti() {
     margin-top: 160px; */
   }
   .puzzle-card:first-of-type .puzzle-preview.completed {
-    margin-top: 10px;
+    margin-top: 20px;
   }
 
   .puzzle-preview .tangram-piece {
