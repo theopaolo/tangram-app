@@ -391,9 +391,9 @@ function triggerConfetti() {
     /* margin-bottom: 50px;
     margin-top: 160px; */
   }
-  /* .puzzle-preview.completed {
-    margin-top: 210px;
-  } */
+  .puzzle-card:first-of-type .puzzle-preview .completed {
+    margin-top: 10px;
+  }
 
   .puzzle-preview .tangram-piece {
     position: absolute;
@@ -490,7 +490,7 @@ function triggerConfetti() {
 <!-- <div class="p-5 mt-[90px]"> -->
   <div class="">
     {#if allPuzzlesCompleted}
-      <div onclick={triggerConfetti} class="text-center absolute top-[90px] m-auto left-0 right-0 z-1">
+      <div onclick={triggerConfetti} class="text-center absolute top-[80px] m-auto left-0 right-0 z-1">
         <p>Bravo tu as completé les 7 tangrams  !<br/>Télécharge un fond d'écran !</p>
         <a href="/download/Chromogram_Wallpaper_MRAC.jpg" download class="block">
         <div class="w-[124px] h-[68px] m-auto relative mt-2">
