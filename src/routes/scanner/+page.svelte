@@ -7,6 +7,9 @@
 	import Breadcrumb from '$lib/Breadcrumb.svelte';
 	import { isAideOpen } from '$lib/stores/aideStore.js';
 
+	// Set to true to show debug panel (for development only)
+	const DEV_MODE = false;
+
 	const breadcrumbItems = [
 		{ label: 'Accueil', href: '/home' },
 		{ label: 'Le Chromogram', href: '/start' },
@@ -148,6 +151,7 @@
 	/>
 </div>
 
+{#if DEV_MODE}
 <!-- Debug Panel -->
 <div class="debug-panel fixed top-20 right-5 z-50 bg-white border-2 border-black p-3 shadow-lg max-w-xs">
 	<h3 class="text-sm font-bold mb-2 inf-bold">QR Debug Info</h3>
@@ -183,6 +187,7 @@
 		<p class="text-xs text-gray-500 inf-reg">No QR code scanned yet</p>
 	{/if}
 </div>
+{/if}
 
 <footer class="fixed bottom-0 left-0 z-40 flex w-full items-center justify-between px-5 py-2">
 	<Breadcrumb items={breadcrumbItems} />
