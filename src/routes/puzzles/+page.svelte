@@ -443,19 +443,19 @@ function triggerConfetti() {
     left:0;
   }
   .complet_2{
-    top:15%;
+    top:14Ò%;
     right:0;
   }
   .complet_3{
-    bottom:10%;
+    bottom:14%;
     right:0;
   }
   .complet_4{
-    bottom:13%;
+    bottom:14%;
     left:0;
   }
   .complet_5{
-    top:12%;
+    top:15%;
     left:0;
   }
   .complet_6{
