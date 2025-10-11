@@ -6,6 +6,8 @@
   import { onMount } from 'svelte';
 
 	let refreshTrigger = $state(0);
+	let windowWidth = $state(0);
+	let windowHeight = $state(0);
 
 	// Get all puzzles
 	const puzzles = getAllPuzzles();
@@ -170,16 +172,24 @@ function triggerConfetti() {
 	onMount(() => {
 		applyCol();
 
+		// Initialize window dimensions
+		if (typeof window !== 'undefined') {
+			windowWidth = window.innerWidth;
+			windowHeight = window.innerHeight;
+		}
+
 		// Listen for storage changes to refresh colors when returning from puzzle
 		if (typeof window !== 'undefined') {
 			window.addEventListener('storage', handleStorageChange);
 			window.addEventListener('focus', handlePageFocus);
+			window.addEventListener('resize', handleWindowResize);
 		}
 
 		return () => {
 			if (typeof window !== 'undefined') {
 				window.removeEventListener('storage', handleStorageChange);
 				window.removeEventListener('focus', handlePageFocus);
+				window.removeEventListener('resize', handleWindowResize);
 			}
 		};
 	});
@@ -194,6 +204,14 @@ function triggerConfetti() {
 	function handlePageFocus() {
 		// Refresh when returning to the page
 		refreshTrigger++;
+	}
+
+	function handleWindowResize() {
+		// Update window dimensions when resizing
+		if (typeof window !== 'undefined') {
+			windowWidth = window.innerWidth;
+			windowHeight = window.innerHeight;
+		}
 	}
 
   // Get the appropriate color for a target slot based on the matched piece that occupies it
@@ -216,7 +234,7 @@ function triggerConfetti() {
 	}
 
   // Calculate preview scale for puzzle cards
-  function calculatePreviewScale(puzzleData, containerWidth = null, containerHeight = null) {
+  function calculatePreviewScale(puzzleData, _windowWidth, _windowHeight, containerWidth = null, containerHeight = null) {
     // Get transformed points for all pieces
     const allVertices = puzzleData.flatMap(pieceState => {
       const pieceData = PIECES_DATA_WITH_VIEWBOX[pieceState.id];
@@ -245,15 +263,17 @@ function triggerConfetti() {
     const puzzleWidth = bounds.maxX - bounds.minX;
     const puzzleHeight = bounds.maxY - bounds.minY;
 
-    // Use container dimensions if provided, otherwise use window width as fallback
-    const availableWidth = containerWidth || (typeof window !== 'undefined' ? window.innerWidth - 80 : 350); // 80px for padding and margins
-    const availableHeight = containerHeight || 520; // Leave some margin from 550px container height
+    // Use container dimensions if provided, otherwise calculate from window
+    // Account for px-10 padding (40px each side) = 80px total horizontal padding
+    const availableWidth = containerWidth || (_windowWidth ? _windowWidth - 80 : 350);
+    // Use full preview container height (600px) with some margin
+    const availableHeight = containerHeight || 580;
 
-    return Math.min(availableWidth / puzzleWidth, availableHeight / puzzleHeight) * 0.8;
+    return Math.min(availableWidth / puzzleWidth, availableHeight / puzzleHeight) * 0.85;
   }
 
   // Calculate preview position for puzzle pieces
-  function calculatePreviewPosition(piece, puzzleData, scale, containerWidth = null, containerHeight = null) {
+  function calculatePreviewPosition(piece, puzzleData, scale, _windowWidth, _windowHeight, containerWidth = null, containerHeight = null) {
     // Get transformed points for all pieces to find bounds
     const allVertices = puzzleData.flatMap(pieceState => {
       const pieceData = PIECES_DATA_WITH_VIEWBOX[pieceState.id];
@@ -283,8 +303,8 @@ function triggerConfetti() {
     const centerY = (bounds.minY + bounds.maxY) / 2;
 
     // Use dynamic center coordinates based on container dimensions
-    const availableWidth = containerWidth || (typeof window !== 'undefined' ? window.innerWidth - 80 : 350);
-    const availableHeight = containerHeight || 520;
+    const availableWidth = containerWidth || (_windowWidth ? _windowWidth - 80 : 350);
+    const availableHeight = containerHeight || 580;
     const previewCenterX = availableWidth / 2;
     const previewCenterY = availableHeight / 2;
 
@@ -493,14 +513,14 @@ function triggerConfetti() {
 
   <div class="flex flex-col">
     {#each puzzles as puzzle (puzzle.id)}
-      {@const previewScale = calculatePreviewScale(puzzle.data)}
+      {@const previewScale = calculatePreviewScale(puzzle.data, windowWidth, windowHeight)}
       <div class="puzzle-card h-svh justify-center flex px-10" role="button" tabindex="0"
           onclick={() => selectPuzzle(puzzle.id)}
           onkeydown={(e) => e.key === 'Enter' && selectPuzzle(puzzle.id)}>
         <div class={allPuzzlesCompleted ? 'puzzle-preview w-full completed' : 'puzzle-preview w-full'}>
           {#each puzzle.data as originalPiece}
             {@const pieceData = PIECES_DATA_WITH_VIEWBOX[originalPiece.id]}
-            {@const previewPos = calculatePreviewPosition(originalPiece, puzzle.data, previewScale)}
+            {@const previewPos = calculatePreviewPosition(originalPiece, puzzle.data, previewScale, windowWidth, windowHeight)}
             {@const pieceColor = getPieceColor(originalPiece.id, puzzle.id, refreshTrigger)}
             <div
               class="tangram-piece"
