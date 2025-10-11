@@ -8,7 +8,7 @@
 
 
   import Breadcrumb from '$lib/Breadcrumb.svelte';
-  import { getPuzzleById, PIECES_DATA, PIECES_DATA_WITH_VIEWBOX, PIECE_GREY_COLOR } from '$lib/puzzleData.js';
+  import { getPuzzleById, puzzleConfigs, PIECES_DATA, PIECES_DATA_WITH_VIEWBOX, PIECE_GREY_COLOR } from '$lib/puzzleData.js';
   import {
   	checkRotationMatch,
   	debugLog,
