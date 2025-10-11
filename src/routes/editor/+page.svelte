@@ -209,18 +209,37 @@ let pieces = $state([
   }
 
    function exportPuzzleData() {
-    // Export current positions directly - what you see is what you get
-    const dataToExport = pieces.map(({ id, x, y, rotation, flipped }) => ({
+    // Calculate bounding box for container
+    const bounds = getPuzzleBounds();
+    if (!bounds) {
+      alert('No pieces to export');
+      return;
+    }
+
+    const containerWidth = bounds.width;
+    const containerHeight = bounds.height;
+
+    // Normalize coordinates to 0-1 range relative to container
+    const normalizedPieces = pieces.map(({ id, x, y, rotation, flipped }) => ({
       id,
       rotation,
       flipped,
-      x: Math.round(x),
-      y: Math.round(y)
+      x: (x - bounds.minX) / containerWidth,
+      y: (y - bounds.minY) / containerHeight
     }));
-    const jsonString = JSON.stringify(dataToExport, null, 2);
+
+    const exportData = {
+      container: {
+        width: Math.round(containerWidth),
+        height: Math.round(containerHeight)
+      },
+      pieces: normalizedPieces
+    };
+
+    const jsonString = JSON.stringify(exportData, null, 2);
     console.log(jsonString);
     navigator.clipboard.writeText(jsonString).then(() => {
-        alert('Puzzle data copied to clipboard!');
+        alert('Puzzle data copied to clipboard!\n\nNew format with container and normalized coordinates.');
     }, () => {
         alert('Puzzle data logged to console.');
     });
@@ -233,15 +252,38 @@ let pieces = $state([
       }
       try {
         const importedData = JSON.parse(importJson);
-        if (Array.isArray(importedData) && importedData.length > 0 && 'id' in importedData[0]) {
-          // Import positions directly - no transformation
+
+        // Detect format: new format has container property, old format is array
+        const isNewFormat = importedData.container && importedData.pieces;
+
+        if (isNewFormat) {
+          // New format with container and normalized coordinates
+          const { container, pieces: normalizedPieces } = importedData;
+
+          // Denormalize coordinates back to absolute positions for editor
+          // Place in center of editor canvas (assume 500x500 working area)
+          const editorCenterX = 400;
+          const editorCenterY = 400;
+
+          pieces = normalizedPieces.map(p => ({
+            id: p.id,
+            rotation: p.rotation,
+            flipped: p.flipped,
+            x: p.x * container.width + editorCenterX - container.width / 2,
+            y: p.y * container.height + editorCenterY - container.height / 2,
+            animationKey: 0
+          }));
+
+          puzzleScale = 1;
+          alert('Puzzle imported successfully! (New container format)');
+        } else if (Array.isArray(importedData) && importedData.length > 0 && 'id' in importedData[0]) {
+          // Old format with absolute coordinates
           pieces = importedData.map(p => ({
             ...p,
             animationKey: 0
           }));
-          // Reset scale to 1.0 for consistency
           puzzleScale = 1;
-          alert('Puzzle imported successfully!');
+          alert('Puzzle imported successfully! (Legacy format)');
         } else {
           alert('Invalid puzzle data format.');
         }

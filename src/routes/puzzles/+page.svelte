@@ -234,84 +234,117 @@ function triggerConfetti() {
 	}
 
   // Calculate preview scale for puzzle cards
-  function calculatePreviewScale(puzzleData, _windowWidth, _windowHeight, containerWidth = null, containerHeight = null) {
-    // Get transformed points for all pieces
-    const allVertices = puzzleData.flatMap(pieceState => {
-      const pieceData = PIECES_DATA_WITH_VIEWBOX[pieceState.id];
-      const originX = 150, originY = 150;
-      const angle = pieceState.rotation * (Math.PI / 180);
-      const cos = Math.cos(angle), sin = Math.sin(angle);
-      const basePoints = pieceData.points.split(' ').map((p) => p.split(',').map(Number));
-
-      return basePoints.map(([px, py]) => {
-        let x = px - originX, y = py - originY;
-        const rx = x * cos - y * sin;
-        const ry = x * sin + y * cos;
-        return { x: rx + pieceState.x, y: ry + pieceState.y };
-      });
-    });
-
-    const xs = allVertices.map(p => p.x);
-    const ys = allVertices.map(p => p.y);
-    const bounds = {
-      minX: Math.min(...xs),
-      maxX: Math.max(...xs),
-      minY: Math.min(...ys),
-      maxY: Math.max(...ys),
-    };
-
-    const puzzleWidth = bounds.maxX - bounds.minX;
-    const puzzleHeight = bounds.maxY - bounds.minY;
-
+  function calculatePreviewScale(puzzle, _windowWidth, _windowHeight, containerWidth = null, containerHeight = null) {
     // Use container dimensions if provided, otherwise calculate from window
-    // Account for px-10 padding (40px each side) = 80px total horizontal padding
     const availableWidth = containerWidth || (_windowWidth ? _windowWidth - 80 : 350);
-    // Use full preview container height (600px) with some margin
     const availableHeight = containerHeight || 580;
 
-    return Math.min(availableWidth / puzzleWidth, availableHeight / puzzleHeight) * 0.85;
+    // Check if puzzle uses new container format
+    const hasContainer = puzzle.container;
+
+    if (hasContainer) {
+      // New format: use container dimensions directly
+      return Math.min(
+        availableWidth / puzzle.container.width,
+        availableHeight / puzzle.container.height
+      ) * 0.85;
+    } else {
+      // Legacy format: calculate from piece positions
+      const puzzleData = puzzle.data;
+      if (!puzzleData || !Array.isArray(puzzleData)) {
+        console.error('Invalid puzzle data:', puzzle);
+        return 0.85; // Fallback scale
+      }
+      const allVertices = puzzleData.flatMap(pieceState => {
+        const pieceData = PIECES_DATA_WITH_VIEWBOX[pieceState.id];
+        const originX = 150, originY = 150;
+        const angle = pieceState.rotation * (Math.PI / 180);
+        const cos = Math.cos(angle), sin = Math.sin(angle);
+        const basePoints = pieceData.points.split(' ').map((p) => p.split(',').map(Number));
+
+        return basePoints.map(([px, py]) => {
+          let x = px - originX, y = py - originY;
+          const rx = x * cos - y * sin;
+          const ry = x * sin + y * cos;
+          return { x: rx + pieceState.x, y: ry + pieceState.y };
+        });
+      });
+
+      const xs = allVertices.map(p => p.x);
+      const ys = allVertices.map(p => p.y);
+      const bounds = {
+        minX: Math.min(...xs),
+        maxX: Math.max(...xs),
+        minY: Math.min(...ys),
+        maxY: Math.max(...ys),
+      };
+
+      const puzzleWidth = bounds.maxX - bounds.minX;
+      const puzzleHeight = bounds.maxY - bounds.minY;
+
+      return Math.min(availableWidth / puzzleWidth, availableHeight / puzzleHeight) * 0.85;
+    }
   }
 
   // Calculate preview position for puzzle pieces
-  function calculatePreviewPosition(piece, puzzleData, scale, _windowWidth, _windowHeight, containerWidth = null, containerHeight = null) {
-    // Get transformed points for all pieces to find bounds
-    const allVertices = puzzleData.flatMap(pieceState => {
-      const pieceData = PIECES_DATA_WITH_VIEWBOX[pieceState.id];
-      const originX = 150, originY = 150;
-      const angle = pieceState.rotation * (Math.PI / 180);
-      const cos = Math.cos(angle), sin = Math.sin(angle);
-      const basePoints = pieceData.points.split(' ').map((p) => p.split(',').map(Number));
-
-      return basePoints.map(([px, py]) => {
-        let x = px - originX, y = py - originY;
-        const rx = x * cos - y * sin;
-        const ry = x * sin + y * cos;
-        return { x: rx + pieceState.x, y: ry + pieceState.y };
-      });
-    });
-
-    const xs = allVertices.map(p => p.x);
-    const ys = allVertices.map(p => p.y);
-    const bounds = {
-      minX: Math.min(...xs),
-      maxX: Math.max(...xs),
-      minY: Math.min(...ys),
-      maxY: Math.max(...ys),
-    };
-
-    const centerX = (bounds.minX + bounds.maxX) / 2;
-    const centerY = (bounds.minY + bounds.maxY) / 2;
-
+  function calculatePreviewPosition(piece, puzzle, scale, _windowWidth, _windowHeight, containerWidth = null, containerHeight = null) {
     // Use dynamic center coordinates based on container dimensions
     const availableWidth = containerWidth || (_windowWidth ? _windowWidth - 80 : 350);
     const availableHeight = containerHeight || 580;
     const previewCenterX = availableWidth / 2;
     const previewCenterY = availableHeight / 2;
 
-    return {
-      x: (piece.x - centerX) * scale + previewCenterX,
-      y: (piece.y - centerY) * scale + previewCenterY
-    };
+    // Check if puzzle uses new container format
+    const hasContainer = puzzle.container;
+
+    if (hasContainer) {
+      // New format: use normalized coordinates
+      const containerWidth = puzzle.container.width;
+      const containerHeight = puzzle.container.height;
+
+      return {
+        x: previewCenterX - (containerWidth * scale / 2) + (piece.x * containerWidth * scale),
+        y: previewCenterY - (containerHeight * scale / 2) + (piece.y * containerHeight * scale)
+      };
+    } else {
+      // Legacy format: calculate from absolute coordinates
+      const puzzleData = puzzle.data;
+      if (!puzzleData || !Array.isArray(puzzleData)) {
+        console.error('Invalid puzzle data for position calculation:', puzzle);
+        return { x: previewCenterX, y: previewCenterY }; // Fallback to center
+      }
+      const allVertices = puzzleData.flatMap(pieceState => {
+        const pieceData = PIECES_DATA_WITH_VIEWBOX[pieceState.id];
+        const originX = 150, originY = 150;
+        const angle = pieceState.rotation * (Math.PI / 180);
+        const cos = Math.cos(angle), sin = Math.sin(angle);
+        const basePoints = pieceData.points.split(' ').map((p) => p.split(',').map(Number));
+
+        return basePoints.map(([px, py]) => {
+          let x = px - originX, y = py - originY;
+          const rx = x * cos - y * sin;
+          const ry = x * sin + y * cos;
+          return { x: rx + pieceState.x, y: ry + pieceState.y };
+        });
+      });
+
+      const xs = allVertices.map(p => p.x);
+      const ys = allVertices.map(p => p.y);
+      const bounds = {
+        minX: Math.min(...xs),
+        maxX: Math.max(...xs),
+        minY: Math.min(...ys),
+        maxY: Math.max(...ys),
+      };
+
+      const centerX = (bounds.minX + bounds.maxX) / 2;
+      const centerY = (bounds.minY + bounds.maxY) / 2;
+
+      return {
+        x: (piece.x - centerX) * scale + previewCenterX,
+        y: (piece.y - centerY) * scale + previewCenterY
+      };
+    }
   }
 
   function selectPuzzle(id) {
@@ -513,14 +546,14 @@ function triggerConfetti() {
 
   <div class="flex flex-col">
     {#each puzzles as puzzle (puzzle.id)}
-      {@const previewScale = calculatePreviewScale(puzzle.data, windowWidth, windowHeight)}
+      {@const previewScale = calculatePreviewScale(puzzle, windowWidth, windowHeight)}
       <div class="puzzle-card h-svh justify-center flex px-10" role="button" tabindex="0"
           onclick={() => selectPuzzle(puzzle.id)}
           onkeydown={(e) => e.key === 'Enter' && selectPuzzle(puzzle.id)}>
         <div class={allPuzzlesCompleted ? 'puzzle-preview w-full completed' : 'puzzle-preview w-full'}>
           {#each puzzle.data as originalPiece}
             {@const pieceData = PIECES_DATA_WITH_VIEWBOX[originalPiece.id]}
-            {@const previewPos = calculatePreviewPosition(originalPiece, puzzle.data, previewScale, windowWidth, windowHeight)}
+            {@const previewPos = calculatePreviewPosition(originalPiece, puzzle, previewScale, windowWidth, windowHeight)}
             {@const pieceColor = getPieceColor(originalPiece.id, puzzle.id, refreshTrigger)}
             <div
               class="tangram-piece"

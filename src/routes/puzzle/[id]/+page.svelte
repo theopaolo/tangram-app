@@ -444,60 +444,71 @@ function triggerConfetti() {
   function fitTargets() {
     if (!containerSize.width || planePuzzle.length === 0) return;
 
-    const gutter = 40; // The padding around the puzzle (balanced for good size and spacing)
-
-    // 1. Get ALL transformed vertices for the solved puzzle
-    const allFinalVertices = planePuzzle.flatMap(pieceState =>
-      getTransformedPoints(pieceState, PIECES_DATA_WITH_VIEWBOX[pieceState.id])
-    );
-
-    // 2. Calculate the TRUE bounding box from these vertices
-    const xs = allFinalVertices.map(p => p.x);
-    const ys = allFinalVertices.map(p => p.y);
-    const bounds = {
-      minX: Math.min(...xs),
-      maxX: Math.max(...xs),
-      minY: Math.min(...ys),
-      maxY: Math.max(...ys),
-    };
-
-    // 3. Calculate the scale factor using the correct dimensions
-    const puzzleWidth = bounds.maxX - bounds.minX;
-    const puzzleHeight = bounds.maxY - bounds.minY;
+    const gutter = 40;
     const availableWidth = containerSize.width - gutter * 2;
-    // Container height already excludes the pieces container padding
     const availableHeight = containerSize.height - gutter * 2;
-
-    // Apply 0.85 multiplier for better breathing room (slightly bigger than listing page)
-    const scaleFactor = Math.min(availableWidth / puzzleWidth, availableHeight / puzzleHeight) * 0.85;
-    puzzleScale = scaleFactor;
-
-    // 4. Calculate final screen positions for each target
-    // Center of the original puzzle bounds
-    const puzzleCenterX = (bounds.minX + bounds.maxX) / 2;
-    const puzzleCenterY = (bounds.minY + bounds.maxY) / 2;
-
-    // Center of the available screen space (container is now limited and centered)
     const screenCenterX = containerSize.width / 2;
     const screenCenterY = containerSize.height / 2;
 
-    // Debug logging
-    console.log('Centering Debug:', {
-      bounds,
-      puzzleCenterX,
-      puzzleCenterY,
-      containerWidth: containerSize.width,
-      containerHeight: containerSize.height,
-      screenCenterX,
-      screenCenterY,
-      scaleFactor
-    });
+    // Check if puzzle uses new container format
+    const currentConfig = puzzleConfigs.find(p => p.id === parseInt(puzzleId));
+    const hasContainer = currentConfig && currentConfig.container;
 
-    targetPieces = planePuzzle.map(target => {
-      const screenX = screenCenterX + (target.x - puzzleCenterX) * scaleFactor;
-      const screenY = screenCenterY + (target.y - puzzleCenterY) * scaleFactor;
-      return { ...target, screenX, screenY };
-    });
+    let scaleFactor, containerWidth, containerHeight;
+
+    if (hasContainer) {
+      // New format: use container dimensions
+      containerWidth = currentConfig.container.width;
+      containerHeight = currentConfig.container.height;
+
+      // Scale container to fit available space
+      scaleFactor = Math.min(
+        availableWidth / containerWidth,
+        availableHeight / containerHeight
+      ) * 0.85;
+
+      puzzleScale = scaleFactor;
+
+      // Convert normalized coordinates to screen coordinates
+      targetPieces = planePuzzle.map(target => {
+        const screenX = screenCenterX - (containerWidth * scaleFactor / 2) + (target.x * containerWidth * scaleFactor);
+        const screenY = screenCenterY - (containerHeight * scaleFactor / 2) + (target.y * containerHeight * scaleFactor);
+        return { ...target, screenX, screenY };
+      });
+    } else {
+      // Legacy format: calculate bounds from absolute coordinates
+      const allFinalVertices = planePuzzle.flatMap(pieceState =>
+        getTransformedPoints(pieceState, PIECES_DATA_WITH_VIEWBOX[pieceState.id])
+      );
+
+      const xs = allFinalVertices.map(p => p.x);
+      const ys = allFinalVertices.map(p => p.y);
+      const bounds = {
+        minX: Math.min(...xs),
+        maxX: Math.max(...xs),
+        minY: Math.min(...ys),
+        maxY: Math.max(...ys),
+      };
+
+      const puzzleWidth = bounds.maxX - bounds.minX;
+      const puzzleHeight = bounds.maxY - bounds.minY;
+
+      scaleFactor = Math.min(
+        availableWidth / puzzleWidth,
+        availableHeight / puzzleHeight
+      ) * 0.85;
+
+      puzzleScale = scaleFactor;
+
+      const puzzleCenterX = (bounds.minX + bounds.maxX) / 2;
+      const puzzleCenterY = (bounds.minY + bounds.maxY) / 2;
+
+      targetPieces = planePuzzle.map(target => {
+        const screenX = screenCenterX + (target.x - puzzleCenterX) * scaleFactor;
+        const screenY = screenCenterY + (target.y - puzzleCenterY) * scaleFactor;
+        return { ...target, screenX, screenY };
+      });
+    }
 
     // If we have stored matched IDs and haven't applied placement yet, do it now
     if (!hasAppliedStoredPlacement && matchesFromStorage.length > 0) {

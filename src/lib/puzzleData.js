@@ -90,6 +90,30 @@ export const PIECES_DATA_WITH_VIEWBOX = Object.fromEntries(
 );
 
 // Different puzzle configurations
+//
+// Two formats are supported:
+//
+// 1. NEW FORMAT (Container-based, responsive):
+//    {
+//      id: 1,
+//      name: "Puzzle Name",
+//      container: { width: 300, height: 500 },  // Bounding box dimensions
+//      data: [
+//        { id: 1, rotation: 0, flipped: false, x: 0.25, y: 0.6 }  // Normalized 0-1 coordinates
+//      ]
+//    }
+//
+// 2. LEGACY FORMAT (Absolute coordinates):
+//    {
+//      id: 1,
+//      name: "Puzzle Name",
+//      data: [
+//        { id: 1, rotation: 0, flipped: false, x: 100, y: 200 }  // Absolute pixel coordinates
+//      ]
+//    }
+//
+// Both formats are automatically supported. Use the editor to export puzzles in the new format.
+//
 export const puzzleConfigs = [
   {
     id: 1,
@@ -213,55 +237,59 @@ export const puzzleConfigs = [
     name: "Nouveau Puzzle 4",
     description: "Un quatrième nouveau puzzle créatif",
     completed: false,
+    container: {
+      width: 304,
+      height: 517
+    },
     data: [
       {
-        "id": 1,
-        "rotation": 90,
-        "flipped": false,
-        "x": 225,
-        "y": 445
+        id: 1,
+        rotation: 90,
+        flipped: false,
+        x: 0.5526315789473685,
+        y: 0.47775628626692457
       },
       {
-        "id": 2,
-        "rotation": 270,
-        "flipped": false,
-        "x": 224,
-        "y": 578
+        id: 2,
+        rotation: 270,
+        flipped: false,
+        x: 0.555921052631579,
+        y: 0.7388781431334622
       },
       {
-        "id": 3,
-        "rotation": 270,
-        "flipped": false,
-        "x": 293,
-        "y": 278
+        id: 3,
+        rotation: 270,
+        flipped: false,
+        x: 0.7763157894736842,
+        y: 0.15473887814313347
       },
       {
-        "id": 4,
-        "rotation": 315,
-        "flipped": false,
-        "x": 224,
-        "y": 197
+        id: 4,
+        rotation: 45,
+        flipped: false,
+        x: 0.5657894736842105,
+        y: 0
       },
       {
-        "id": 5,
-        "rotation": 270,
-        "flipped": false,
-        "x": 192,
-        "y": 277
+        id: 5,
+        rotation: 90,
+        flipped: false,
+        x: 0.4407894736842105,
+        y: 0.1528046421663443
       },
       {
-        "id": 6,
-        "rotation": 90,
-        "flipped": false,
-        "x": 192,
-        "y": 511
+        id: 6,
+        rotation: 90,
+        flipped: false,
+        x: 0.4440789473684211,
+        y: 0.6092843326885881
       },
       {
-        "id": 7,
-        "rotation": 180,
-        "flipped": false,
-        "x": 226,
-        "y": 378
+        id: 7,
+        rotation: 180,
+        flipped: false,
+        x: 0.5526315789473685,
+        y: 0.3481624758220503
       }
     ]
   },
