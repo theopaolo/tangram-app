@@ -391,9 +391,9 @@ function triggerConfetti() {
     /* margin-bottom: 50px;
     margin-top: 160px; */
   }
-  .puzzle-preview.completed {
+  /* .puzzle-preview.completed {
     margin-top: 210px;
-  }
+  } */
 
   .puzzle-preview .tangram-piece {
     position: absolute;
