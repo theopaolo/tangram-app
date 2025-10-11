@@ -112,13 +112,55 @@ export const puzzleConfigs = [
     description: "Un cygne élégant",
     completed: false,
     data: [
-      {"id":1,"rotation":180,"flipped":false,"x":238.36805555555554,"y":308.15972222222223},
-      {"id":2,"rotation":90,"flipped":false,"x":103.4375,"y":308.15972222222223},
-      {"id":3,"rotation":315,"flipped":false,"x":236.81712962962962,"y":447.74305555555554},
-      {"id":4,"rotation":45,"flipped":false,"x":111.19212962962962,"y":98.00925925925927},
-      {"id":5,"rotation":45,"flipped":false,"x":63.888888888888886,"y":193.3912037037037},
-      {"id":6,"rotation":135,"flipped":false,"x":80.94907407407408,"y":446.1921296296297},
-      {"id":7,"rotation":225,"flipped":false,"x":63.113425925925924,"y":50.70601851851853}
+      {
+        "id": 1,
+        "rotation": 180,
+        "flipped": false,
+        "x": 443,
+        "y": 507
+      },
+      {
+        "id": 2,
+        "rotation": 90,
+        "flipped": false,
+        "x": 309,
+        "y": 507
+      },
+      {
+        "id": 3,
+        "rotation": 315,
+        "flipped": false,
+        "x": 443,
+        "y": 646
+      },
+      {
+        "id": 4,
+        "rotation": 45,
+        "flipped": false,
+        "x": 319,
+        "y": 298
+      },
+      {
+        "id": 5,
+        "rotation": 45,
+        "flipped": false,
+        "x": 271,
+        "y": 393
+      },
+      {
+        "id": 6,
+        "rotation": 135,
+        "flipped": false,
+        "x": 286,
+        "y": 646
+      },
+      {
+        "id": 7,
+        "rotation": 225,
+        "flipped": false,
+        "x": 272,
+        "y": 251
+      }
     ]
   },
   {
@@ -174,52 +216,52 @@ export const puzzleConfigs = [
     data: [
       {
         "id": 1,
-        "rotation": 180,
+        "rotation": 90,
         "flipped": false,
-        "x": 318.80419647658096,
-        "y": 466.0605483015255
+        "x": 225,
+        "y": 445
       },
       {
         "id": 2,
-        "rotation": 180,
+        "rotation": 270,
         "flipped": false,
-        "x": 320.1799419920016,
-        "y": 332.61323330572236
+        "x": 224,
+        "y": 578
       },
       {
         "id": 3,
-        "rotation": 180,
+        "rotation": 270,
         "flipped": false,
-        "x": 285.7863041064853,
-        "y": 398.64901804591364
+        "x": 293,
+        "y": 278
       },
       {
         "id": 4,
-        "rotation": 45,
+        "rotation": 315,
         "flipped": false,
-        "x": 318.80419647658096,
-        "y": 83.60329501458443
+        "x": 224,
+        "y": 197
       },
       {
         "id": 5,
-        "rotation": 90,
+        "rotation": 270,
         "flipped": false,
-        "x": 287.16204962190596,
-        "y": 164.77228042440285
+        "x": 192,
+        "y": 277
       },
       {
         "id": 6,
-        "rotation": 180,
+        "rotation": 90,
         "flipped": false,
-        "x": 387.5914722476135,
-        "y": 164.77228042440285
+        "x": 192,
+        "y": 511
       },
       {
         "id": 7,
         "rotation": 180,
         "flipped": false,
-        "x": 320.1799419920016,
-        "y": 265.2017030501104
+        "x": 226,
+        "y": 378
       }
     ]
   },

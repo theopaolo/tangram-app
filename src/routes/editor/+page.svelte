@@ -3,14 +3,14 @@
   import createInteractionHandler from '../../lib/interaction.js';
   import { PIECES_DATA_WITH_VIEWBOX as SHARED_PIECES_DATA_WITH_VIEWBOX } from '../../lib/puzzleData.js';
 
- let pieces = $state([
-    { id: 1, x: 50, y: 50, origX: 50, origY: 50, rotation: 0, flipped: false, animationKey: 0 },
-    { id: 2, x: 150, y: 50, origX: 150, origY: 50, rotation: 0, flipped: false, animationKey: 0 },
-    { id: 3, x: 250, y: 50, origX: 250, origY: 50, rotation: 0, flipped: false, animationKey: 0 },
-    { id: 4, x: 350, y: 50, origX: 350, origY: 50, rotation: 0, flipped: false, animationKey: 0 },
-    { id: 5, x: 50, y: 150, origX: 50, origY: 150, rotation: 0, flipped: false, animationKey: 0 },
-    { id: 6, x: 150, y: 150, origX: 150, origY: 150, rotation: 0, flipped: false, animationKey: 0 },
-    { id: 7, x: 250, y: 150, origX: 250, origY: 150, rotation: 0, flipped: false, animationKey: 0 },
+let pieces = $state([
+   { id: 1, x: 50, y: 50, rotation: 0, flipped: false, animationKey: 0 },
+   { id: 2, x: 150, y: 50, rotation: 0, flipped: false, animationKey: 0 },
+   { id: 3, x: 250, y: 50, rotation: 0, flipped: false, animationKey: 0 },
+   { id: 4, x: 350, y: 50, rotation: 0, flipped: false, animationKey: 0 },
+   { id: 5, x: 50, y: 150, rotation: 0, flipped: false, animationKey: 0 },
+   { id: 6, x: 150, y: 150, rotation: 0, flipped: false, animationKey: 0 },
+   { id: 7, x: 250, y: 150, rotation: 0, flipped: false, animationKey: 0 },
   ]);
 
   // Use shared, canonical pieces data (with viewBox, width, height)
@@ -32,12 +32,6 @@
   let puzzleContainer;
   let showGrid = $state(true); // Toggle grid visibility
   let snapIndicator = $state(null); // Show where piece will snap {x, y, type: 'grid'|'vertex'}
-  // Track last fit transform so we can export canonical, scale-independent coordinates
-  let lastFit = $state({
-    minX: 0, minY: 0, scale: 1, gutter: -1,
-    puzzleCenterX: 0, puzzleCenterY: 0,
-    screenCenterX: 0, screenCenterY: 0
-  });
 
   // --- DERIVED STATE ---
   const activePiece = $derived(pieces.find(p => p.id === activePieceId));
@@ -178,13 +172,6 @@
     activePiece.x += dx;
     activePiece.y += dy;
     activePiece.animationKey += 1;
-
-    // Update canonical coordinates to stay in sync
-    const { puzzleCenterX, puzzleCenterY, screenCenterX, screenCenterY, scale } = lastFit;
-    if (scale > 0) {
-      activePiece.origX = ((activePiece.x - screenCenterX) / scale) + puzzleCenterX;
-      activePiece.origY = ((activePiece.y - screenCenterY) / scale) + puzzleCenterY;
-    }
   }
 
   // Handle arrow key presses and spacebar rotation
@@ -222,14 +209,13 @@
   }
 
    function exportPuzzleData() {
-    // Export canonical coordinates by inverting last fit transform on current on-screen positions
-    const { puzzleCenterX, puzzleCenterY, screenCenterX, screenCenterY, scale } = lastFit;
+    // Export current positions directly - what you see is what you get
     const dataToExport = pieces.map(({ id, x, y, rotation, flipped }) => ({
       id,
       rotation,
       flipped,
-      x: ((x - screenCenterX) / scale) + puzzleCenterX,
-      y: ((y - screenCenterY) / scale) + puzzleCenterY
+      x: Math.round(x),
+      y: Math.round(y)
     }));
     const jsonString = JSON.stringify(dataToExport, null, 2);
     console.log(jsonString);
@@ -248,35 +234,13 @@
       try {
         const importedData = JSON.parse(importJson);
         if (Array.isArray(importedData) && importedData.length > 0 && 'id' in importedData[0]) {
-          // Check if we have valid fit parameters from a previous fit
-          const hasValidFit = lastFit.scale > 0 && lastFit.screenCenterX !== 0;
-
-          if (hasValidFit) {
-            // Use existing fit parameters to convert canonical → screen coordinates
-            // This maintains perfect stability for export/import cycles
-            const { puzzleCenterX, puzzleCenterY, screenCenterX, screenCenterY, scale } = lastFit;
-            pieces = importedData.map(p => ({
-              ...p,
-              origX: p.x,
-              origY: p.y,
-              x: Math.round(screenCenterX + (p.x - puzzleCenterX) * scale),
-              y: Math.round(screenCenterY + (p.y - puzzleCenterY) * scale),
-              animationKey: 0
-            }));
-          } else {
-            // First import - need to call fitPuzzle to establish coordinate system
-            pieces = importedData.map(p => ({
-              ...p,
-              origX: p.x,
-              origY: p.y,
-              animationKey: 0
-            }));
-
-            requestAnimationFrame(() => {
-              fitPuzzle();
-            });
-          }
-
+          // Import positions directly - no transformation
+          pieces = importedData.map(p => ({
+            ...p,
+            animationKey: 0
+          }));
+          // Reset scale to 1.0 for consistency
+          puzzleScale = 1;
           alert('Puzzle imported successfully!');
         } else {
           alert('Invalid puzzle data format.');
@@ -329,14 +293,6 @@
             piece.x = Math.round(snapIndicator.x);
             piece.y = Math.round(snapIndicator.y);
           }
-
-          // CRITICAL FIX: Update canonical coordinates (origX/origY) after drag
-          // This keeps them in sync with screen coordinates for stable export/import
-          const { puzzleCenterX, puzzleCenterY, screenCenterX, screenCenterY, scale } = lastFit;
-          if (scale > 0) {
-            piece.origX = ((piece.x - screenCenterX) / scale) + puzzleCenterX;
-            piece.origY = ((piece.y - screenCenterY) / scale) + puzzleCenterY;
-          }
         }
 
         // Clear snap indicator
@@ -372,8 +328,6 @@ function getPieceGreyShade(id) {
       // Update the container size state
       containerSize.width = rect.width;
       containerSize.height = rect.height;
-      // Call fitPuzzle directly from here
-      fitPuzzle();
     });
     observer.observe(node);
 
@@ -384,61 +338,103 @@ function getPieceGreyShade(id) {
     };
   }
 
-function fitPuzzle() {
-  if (pieces.length === 0 || !containerSize.width) return;
-  const gutter = -1;
+  // Get the bounding box of all pieces in their current positions
+  function getPuzzleBounds() {
+    if (pieces.length === 0) return null;
 
-  const allPts = pieces.flatMap(p =>
-    getTransformedPoints(
-      { ...p, x: p.origX, y: p.origY },
-      PIECES_DATA_WITH_VIEWBOX[p.id]
-    )
-  );
-  const xs = allPts.map(p => p.x),
-        ys = allPts.map(p => p.y);
-  const bounds = {
-    minX: Math.min(...xs),
-    maxX: Math.max(...xs),
-    minY: Math.min(...ys),
-    maxY: Math.max(...ys),
-  };
+    const allPts = pieces.flatMap(p =>
+      getTransformedPoints(p, PIECES_DATA_WITH_VIEWBOX[p.id])
+    );
+    const xs = allPts.map(p => p.x);
+    const ys = allPts.map(p => p.y);
 
-  // Calculate both dimensions for aspect-ratio-aware scaling
-  const puzzleWidth = bounds.maxX - bounds.minX;
-  const puzzleHeight = bounds.maxY - bounds.minY;
-  const availableWidth = containerSize.width - gutter * 2;
-  // Match puzzle page: reserve space for bottom toolbar/container
-  const availableHeight = containerSize.height - (gutter * 2 + 100);
-
-  // Use minimum scale factor to fit both dimensions (like puzzle page)
-  const scaleFactor = Math.min(availableWidth / puzzleWidth, availableHeight / puzzleHeight);
-  puzzleScale = scaleFactor;
-
-  // Calculate centers for centered positioning (like puzzle page)
-  const puzzleCenterX = (bounds.minX + bounds.maxX) / 2;
-  const puzzleCenterY = (bounds.minY + bounds.maxY) / 2;
-  const screenCenterX = containerSize.width / 2;
-  // Match puzzle page: center above the bottom toolbar/container (100px)
-  const screenCenterY = (containerSize.height - 100) / 2;
-
-  // Save transform for canonical export
-  lastFit = {
-    minX: bounds.minX,
-    minY: bounds.minY,
-    scale: scaleFactor,
-    gutter,
-    puzzleCenterX,
-    puzzleCenterY,
-    screenCenterX,
-    screenCenterY
-  };
-
-  // Position pieces using centered positioning (like puzzle page)
-  for (const piece of pieces) {
-    piece.x = Math.round(screenCenterX + (piece.origX - puzzleCenterX) * scaleFactor);
-    piece.y = Math.round(screenCenterY + (piece.origY - puzzleCenterY) * scaleFactor);
+    return {
+      minX: Math.min(...xs),
+      maxX: Math.max(...xs),
+      minY: Math.min(...ys),
+      maxY: Math.max(...ys),
+      width: Math.max(...xs) - Math.min(...xs),
+      height: Math.max(...ys) - Math.min(...ys)
+    };
   }
-}
+
+  // Center puzzle horizontally
+  function centerHorizontally() {
+    const bounds = getPuzzleBounds();
+    if (!bounds) return;
+
+    // Get current container size (fallback to reading from DOM if not set)
+    const width = containerSize.width || puzzleContainer?.clientWidth || 0;
+    if (!width) return;
+
+    const puzzleCenterX = (bounds.minX + bounds.maxX) / 2;
+    const screenCenterX = width / 2;
+    const offsetX = screenCenterX - puzzleCenterX;
+
+    for (const piece of pieces) {
+      piece.x += offsetX;
+    }
+  }
+
+  // Center puzzle vertically
+  function centerVertically() {
+    const bounds = getPuzzleBounds();
+    if (!bounds) return;
+
+    // Get current container size (fallback to reading from DOM if not set)
+    const height = containerSize.height || puzzleContainer?.clientHeight || 0;
+    if (!height) return;
+
+    const puzzleCenterY = (bounds.minY + bounds.maxY) / 2;
+    const screenCenterY = height / 2;
+    const offsetY = screenCenterY - puzzleCenterY;
+
+    for (const piece of pieces) {
+      piece.y += offsetY;
+    }
+  }
+
+  // Center both horizontally and vertically
+  function centerBoth() {
+    centerHorizontally();
+    centerVertically();
+  }
+
+  // Auto-fit scale to fit the puzzle in view (visual only)
+  function autoFitScale() {
+    const bounds = getPuzzleBounds();
+    if (!bounds) return;
+
+    // Get current container size (fallback to reading from DOM if not set)
+    const width = containerSize.width || puzzleContainer?.clientWidth || 0;
+    const height = containerSize.height || puzzleContainer?.clientHeight || 0;
+    if (!width || !height) return;
+
+    const gutter = 40;
+    const availableWidth = width - gutter * 2;
+    const availableHeight = height - gutter * 2;
+
+    // Calculate scale that fits the puzzle
+    const scaleX = availableWidth / bounds.width;
+    const scaleY = availableHeight / bounds.height;
+    const newScale = Math.min(scaleX, scaleY);
+
+    puzzleScale = newScale;
+  }
+
+  // Adjust scale manually (visual only, doesn't move pieces)
+  function adjustScale(delta) {
+    const newScale = Math.max(0.1, puzzleScale + delta);
+    puzzleScale = newScale;
+  }
+
+  // Move all pieces by a delta
+  function moveAllPieces(dx, dy) {
+    for (const piece of pieces) {
+      piece.x += dx;
+      piece.y += dy;
+    }
+  }
 
 </script>
 
@@ -625,14 +621,32 @@ function fitPuzzle() {
 
     <div class="toolbar">
       <textarea bind:value={importJson} placeholder="Paste puzzle data here..."></textarea>
-      <div class="flex gap-2 items-center">
+      <div class="flex gap-2 items-center flex-wrap">
         <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={handleImport}>Import</button>
-        <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={fitPuzzle}>Fit</button>
         <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={exportPuzzleData}>Export</button>
+        <div class="border-l border-gray-400 h-6 mx-1"></div>
+
+        <!-- Position Controls -->
+        <span class="text-xs text-gray-600">Position:</span>
+        <button class="border bg-blue-50 p-2 cursor-pointer text-sm" onclick={() => moveAllPieces(0, -5)}>↑</button>
+        <button class="border bg-blue-50 p-2 cursor-pointer text-sm" onclick={() => moveAllPieces(-5, 0)}>←</button>
+        <button class="border bg-blue-50 p-2 cursor-pointer text-sm" onclick={() => moveAllPieces(5, 0)}>→</button>
+        <button class="border bg-blue-50 p-2 cursor-pointer text-sm" onclick={() => moveAllPieces(0, 5)}>↓</button>
+        <button class="border bg-blue-100 p-2 cursor-pointer text-xs" onclick={centerBoth}>Center</button>
+
+        <div class="border-l border-gray-400 h-6 mx-1"></div>
+
+        <!-- Scale Controls -->
+        <span class="text-xs text-gray-600">Scale:</span>
+        <button class="border bg-green-50 p-2 cursor-pointer text-sm" onclick={() => adjustScale(-0.1)}>−</button>
+        <span class="text-sm px-2 min-w-[3rem] text-center">{puzzleScale.toFixed(2)}x</span>
+        <button class="border bg-green-50 p-2 cursor-pointer text-sm" onclick={() => adjustScale(0.1)}>+</button>
+        <button class="border bg-green-100 p-2 cursor-pointer text-xs" onclick={autoFitScale}>Auto Fit</button>
+
+        <div class="border-l border-gray-400 h-6 mx-1"></div>
         <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={() => showGrid = !showGrid}>
           {showGrid ? 'Hide' : 'Show'} Grid
         </button>
-
       </div>
     </div>
   </div>

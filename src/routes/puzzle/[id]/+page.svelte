@@ -444,7 +444,7 @@ function triggerConfetti() {
   function fitTargets() {
     if (!containerSize.width || planePuzzle.length === 0) return;
 
-    const gutter = -1; // The padding around the puzzle
+    const gutter = 40; // The padding around the puzzle (balanced for good size and spacing)
 
     // 1. Get ALL transformed vertices for the solved puzzle
     const allFinalVertices = planePuzzle.flatMap(pieceState =>
@@ -465,9 +465,11 @@ function triggerConfetti() {
     const puzzleWidth = bounds.maxX - bounds.minX;
     const puzzleHeight = bounds.maxY - bounds.minY;
     const availableWidth = containerSize.width - gutter * 2;
-    const availableHeight = containerSize.height - (gutter * 2 + 100); // Account for the pieces container at the bottom
+    // Container height already excludes the pieces container padding
+    const availableHeight = containerSize.height - gutter * 2;
 
-    const scaleFactor = Math.min(availableWidth / puzzleWidth, availableHeight / puzzleHeight);
+    // Apply 0.85 multiplier for better breathing room (slightly bigger than listing page)
+    const scaleFactor = Math.min(availableWidth / puzzleWidth, availableHeight / puzzleHeight) * 0.85;
     puzzleScale = scaleFactor;
 
     // 4. Calculate final screen positions for each target
@@ -475,9 +477,9 @@ function triggerConfetti() {
     const puzzleCenterX = (bounds.minX + bounds.maxX) / 2;
     const puzzleCenterY = (bounds.minY + bounds.maxY) / 2;
 
-    // Center of the available screen space
+    // Center of the available screen space (container is now limited and centered)
     const screenCenterX = containerSize.width / 2;
-    const screenCenterY = (containerSize.height - 100) / 2;
+    const screenCenterY = containerSize.height / 2;
 
     // Debug logging
     console.log('Centering Debug:', {
@@ -901,26 +903,25 @@ function triggerConfetti() {
 
   .puzzle-wrapper {
     position: relative;
-    display: flex;
-    flex-direction: column;
     width: 100%;
     height: 100dvh;
     padding: 0 20px;
-    margin:auto;
+    margin: auto;
   }
 
   .puzzle-container {
+    position: relative;
+    top: 0;
+    width: 100%;
+    height: 100svh;
+    margin-top: 40px;
+    padding-bottom: 180px;
     border-radius: 8px;
     /* Prevent scrolling/zooming when interacting with pieces */
-    touch-action: pan-x pan-y;
-    /* Improve touch responsiveness */
+    touch-action: none;
     user-select: none;
     -webkit-user-select: none;
     -webkit-touch-callout: none;
-     touch-action: none;       /* bloque le scroll natif */
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
   }
 
   .target-outline, .tangram-piece {
@@ -1002,7 +1003,7 @@ function triggerConfetti() {
     padding-left: 20px;
     padding-right: 20px;
     position: absolute;
-    bottom: 45px;
+    bottom: 85px;
     left: 0;
     right: 0;
     height: 60px;
@@ -1168,13 +1169,12 @@ function triggerConfetti() {
 
 <div class="puzzle-wrapper" onpointerdown={unlockAudio}>
 
-  <!-- Puzzle area with padding -->
-  <div class="h-full">
-    <div class="relative top-0 h-svh mt-[60px] pb-[160px] puzzle-container {puzzleSolved ? 'puzzle-solved' : ''}"
-          bind:this={puzzleContainer}
-          use:observeResize
-          role="main"
-          onpointerdown={() => activePieceId = null} >
+  <!-- Puzzle area centered -->
+  <div class="puzzle-container {puzzleSolved ? 'puzzle-solved' : ''}"
+        bind:this={puzzleContainer}
+        use:observeResize
+        role="main"
+        onpointerdown={() => activePieceId = null} >
 
     <!-- Target outline -->
     {#each targetPieces as target (target.id)}
@@ -1218,7 +1218,6 @@ function triggerConfetti() {
         {/key}
       </div>
     {/each}
-    </div>
   </div>
 
   {#if activePiece && !activePiece.inContainer}
