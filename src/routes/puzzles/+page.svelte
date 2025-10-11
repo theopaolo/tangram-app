@@ -391,7 +391,7 @@ function triggerConfetti() {
     /* margin-bottom: 50px;
     margin-top: 160px; */
   }
-  .puzzle-card:first-of-type .puzzle-preview .completed {
+  .puzzle-card:first-of-type .puzzle-preview.completed {
     margin-top: 10px;
   }
 
