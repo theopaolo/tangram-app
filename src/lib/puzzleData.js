@@ -19,46 +19,46 @@ export const PIECES_DATA = {
     artwork: PIECES_DATA_SOURCE[3].titre_artwork,
     points: P([[0,0],[5,5],[10,0]])
   },
-  2: { 
-    name: 'Le Second Grand Triangle', 
-    color: PIECES_DATA_SOURCE[5].color, 
-    story: PIECES_DATA_SOURCE[5].story, 
-    artwork: PIECES_DATA_SOURCE[5].titre_artwork, 
-    points: P([[0,0],[5,5],[0,10]]) 
+  2: {
+    name: 'Le Second Grand Triangle',
+    color: PIECES_DATA_SOURCE[5].color,
+    story: PIECES_DATA_SOURCE[5].story,
+    artwork: PIECES_DATA_SOURCE[5].titre_artwork,
+    points: P([[0,0],[5,5],[0,10]])
   },
-  3: { 
-    name: 'Le Petit Triangle', 
-    color: PIECES_DATA_SOURCE[4].color, 
-    story: PIECES_DATA_SOURCE[4].story, 
-    artwork: PIECES_DATA_SOURCE[4].titre_artwork, 
-    points: P([[5,5],[7.5,7.5],[7.5,2.5]]) 
+  3: {
+    name: 'Le Petit Triangle',
+    color: PIECES_DATA_SOURCE[4].color,
+    story: PIECES_DATA_SOURCE[4].story,
+    artwork: PIECES_DATA_SOURCE[4].titre_artwork,
+    points: P([[5,5],[7.5,7.5],[7.5,2.5]])
   },
-  4: { 
-    name: 'Le Carré', 
-    color: PIECES_DATA_SOURCE[6].color, 
-    story: PIECES_DATA_SOURCE[6].story, 
-    artwork: PIECES_DATA_SOURCE[6 ].titre_artwork, 
-    points: P([[5,5],[7.5,7.5],[5,10],[2.5,7.5]]) 
+  4: {
+    name: 'Le Carré',
+    color: PIECES_DATA_SOURCE[6].color,
+    story: PIECES_DATA_SOURCE[6].story,
+    artwork: PIECES_DATA_SOURCE[6 ].titre_artwork,
+    points: P([[5,5],[7.5,7.5],[5,10],[2.5,7.5]])
   },
-  5: { 
-    name: 'Le Parallélogramme', 
-    color: PIECES_DATA_SOURCE[1].color, 
-    story: PIECES_DATA_SOURCE[1].story, 
-    artwork: PIECES_DATA_SOURCE[1].titre_artwork, 
-    points: P([[7.5,2.5],[7.5,7.5],[10,5],[10,0]]) 
+  5: {
+    name: 'Le Parallélogramme',
+    color: PIECES_DATA_SOURCE[1].color,
+    story: PIECES_DATA_SOURCE[1].story,
+    artwork: PIECES_DATA_SOURCE[1].titre_artwork,
+    points: P([[7.5,2.5],[7.5,7.5],[10,5],[10,0]])
   },
-  6: { 
-    name: 'Le 2e Petit Triangle', 
-    color: PIECES_DATA_SOURCE[2].color, 
-    story: PIECES_DATA_SOURCE[2].story, 
-    artwork: PIECES_DATA_SOURCE[2].titre_artwork, 
-    points: P([[0,10],[5,10],[2.5,7.5]]) 
+  6: {
+    name: 'Le 2e Petit Triangle',
+    color: PIECES_DATA_SOURCE[2].color,
+    story: PIECES_DATA_SOURCE[2].story,
+    artwork: PIECES_DATA_SOURCE[2].titre_artwork,
+    points: P([[0,10],[5,10],[2.5,7.5]])
   },
-  7: { 
-    name: 'Le Moyen Triangle', 
-    color: PIECES_DATA_SOURCE[7].color, 
-    story: PIECES_DATA_SOURCE[7].story, 
-    artwork: PIECES_DATA_SOURCE[7].titre_artwork, points: P([[5,10],[10,5],[10,10]]) 
+  7: {
+    name: 'Le Moyen Triangle',
+    color: PIECES_DATA_SOURCE[7].color,
+    story: PIECES_DATA_SOURCE[7].story,
+    artwork: PIECES_DATA_SOURCE[7].titre_artwork, points: P([[5,10],[10,5],[10,10]])
   }
 };
 
@@ -172,13 +172,55 @@ export const puzzleConfigs = [
     description: "Un quatrième nouveau puzzle créatif",
     completed: false,
     data: [
-      {"id":1,"rotation":90,"flipped":false,"x":168.25623216113783,"y":272.52715751220273},
-      {"id":2,"rotation":270,"flipped":false,"x":168.25623216113783,"y":407.87466363080534},
-      {"id":3,"rotation":180,"flipped":false,"x":135.13321378612116,"y":339.9153673096504},
-      {"id":4,"rotation":315,"flipped":false,"x":167.11405911372347,"y":22.962346652163347},
-      {"id":5,"rotation":270,"flipped":false,"x":135.13321378612116,"y":104.05663301858345},
-      {"id":6,"rotation":180,"flipped":false,"x":236.2155284822927,"y":104.05663301858345},
-      {"id":7,"rotation":180,"flipped":false,"x":168.827318684845,"y":205.138947714755}
+      {
+        "id": 1,
+        "rotation": 180,
+        "flipped": false,
+        "x": 318.80419647658096,
+        "y": 466.0605483015255
+      },
+      {
+        "id": 2,
+        "rotation": 180,
+        "flipped": false,
+        "x": 320.1799419920016,
+        "y": 332.61323330572236
+      },
+      {
+        "id": 3,
+        "rotation": 180,
+        "flipped": false,
+        "x": 285.7863041064853,
+        "y": 398.64901804591364
+      },
+      {
+        "id": 4,
+        "rotation": 45,
+        "flipped": false,
+        "x": 318.80419647658096,
+        "y": 83.60329501458443
+      },
+      {
+        "id": 5,
+        "rotation": 90,
+        "flipped": false,
+        "x": 287.16204962190596,
+        "y": 164.77228042440285
+      },
+      {
+        "id": 6,
+        "rotation": 180,
+        "flipped": false,
+        "x": 387.5914722476135,
+        "y": 164.77228042440285
+      },
+      {
+        "id": 7,
+        "rotation": 180,
+        "flipped": false,
+        "x": 320.1799419920016,
+        "y": 265.2017030501104
+      }
     ]
   },
   {

@@ -178,6 +178,13 @@
     activePiece.x += dx;
     activePiece.y += dy;
     activePiece.animationKey += 1;
+
+    // Update canonical coordinates to stay in sync
+    const { puzzleCenterX, puzzleCenterY, screenCenterX, screenCenterY, scale } = lastFit;
+    if (scale > 0) {
+      activePiece.origX = ((activePiece.x - screenCenterX) / scale) + puzzleCenterX;
+      activePiece.origY = ((activePiece.y - screenCenterY) / scale) + puzzleCenterY;
+    }
   }
 
   // Handle arrow key presses and spacebar rotation
@@ -241,16 +248,34 @@
       try {
         const importedData = JSON.parse(importJson);
         if (Array.isArray(importedData) && importedData.length > 0 && 'id' in importedData[0]) {
-          pieces = importedData.map(p => ({
-            ...p,
-            origX: p.x,
-            origY: p.y,
-            animationKey: 0
-          }));
+          // Check if we have valid fit parameters from a previous fit
+          const hasValidFit = lastFit.scale > 0 && lastFit.screenCenterX !== 0;
 
-          requestAnimationFrame(() => {
+          if (hasValidFit) {
+            // Use existing fit parameters to convert canonical → screen coordinates
+            // This maintains perfect stability for export/import cycles
+            const { puzzleCenterX, puzzleCenterY, screenCenterX, screenCenterY, scale } = lastFit;
+            pieces = importedData.map(p => ({
+              ...p,
+              origX: p.x,
+              origY: p.y,
+              x: Math.round(screenCenterX + (p.x - puzzleCenterX) * scale),
+              y: Math.round(screenCenterY + (p.y - puzzleCenterY) * scale),
+              animationKey: 0
+            }));
+          } else {
+            // First import - need to call fitPuzzle to establish coordinate system
+            pieces = importedData.map(p => ({
+              ...p,
+              origX: p.x,
+              origY: p.y,
+              animationKey: 0
+            }));
+
+            requestAnimationFrame(() => {
               fitPuzzle();
-          });
+            });
+          }
 
           alert('Puzzle imported successfully!');
         } else {
@@ -303,6 +328,14 @@
           if (snapIndicator) {
             piece.x = Math.round(snapIndicator.x);
             piece.y = Math.round(snapIndicator.y);
+          }
+
+          // CRITICAL FIX: Update canonical coordinates (origX/origY) after drag
+          // This keeps them in sync with screen coordinates for stable export/import
+          const { puzzleCenterX, puzzleCenterY, screenCenterX, screenCenterY, scale } = lastFit;
+          if (scale > 0) {
+            piece.origX = ((piece.x - screenCenterX) / scale) + puzzleCenterX;
+            piece.origY = ((piece.y - screenCenterY) / scale) + puzzleCenterY;
           }
         }
 
@@ -374,7 +407,8 @@ function fitPuzzle() {
   const puzzleWidth = bounds.maxX - bounds.minX;
   const puzzleHeight = bounds.maxY - bounds.minY;
   const availableWidth = containerSize.width - gutter * 2;
-  const availableHeight = containerSize.height - gutter * 2;
+  // Match puzzle page: reserve space for bottom toolbar/container
+  const availableHeight = containerSize.height - (gutter * 2 + 100);
 
   // Use minimum scale factor to fit both dimensions (like puzzle page)
   const scaleFactor = Math.min(availableWidth / puzzleWidth, availableHeight / puzzleHeight);
@@ -384,7 +418,8 @@ function fitPuzzle() {
   const puzzleCenterX = (bounds.minX + bounds.maxX) / 2;
   const puzzleCenterY = (bounds.minY + bounds.maxY) / 2;
   const screenCenterX = containerSize.width / 2;
-  const screenCenterY = containerSize.height / 2;
+  // Match puzzle page: center above the bottom toolbar/container (100px)
+  const screenCenterY = (containerSize.height - 100) / 2;
 
   // Save transform for canonical export
   lastFit = {
