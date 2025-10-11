@@ -443,7 +443,7 @@ function triggerConfetti() {
     left:0;
   }
   .complet_2{
-    top:8%;
+    top:15%;
     right:0;
   }
   .complet_3{
