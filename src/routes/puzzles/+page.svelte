@@ -438,15 +438,15 @@ function triggerConfetti() {
     left:0;
   }
   .complet_2{
-    bottom:10%;
+    top:10%;
     right:0;
   }
   .complet_3{
-    bottom:10%;
-    left:0;
+    top:10%;
+    right:0;
   }
   .complet_4{
-    top:10%;
+    bottom:10%;
     left:0;
   }
   .complet_5{
