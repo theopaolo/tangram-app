@@ -434,32 +434,32 @@ function triggerConfetti() {
   85.01%, 100% { background-color: var(--c7); }
 }
   .complet_1{
-    bottom:12%;
+    bottom:13%;
     left:0;
   }
   .complet_2{
     top:10%;
-    right:0;
+    left:0;
   }
   .complet_3{
-    top:10%;
+    bottom:10%;
     right:0;
   }
   .complet_4{
-    bottom:10%;
+    bottom:13%;
     left:0;
   }
   .complet_5{
-    top:10%;
+    top:12%;
     left:0;
   }
   .complet_6{
-    top:10%;
+    top:8%;
     right:0;
   }
   .complet_7{
-    bottom:10%;
-    right:10%;
+    bottom:12%;
+    right:8%;
   }
   .puzzle-card:nth-child(even) {
   background-color: rgb(248, 248, 248);
