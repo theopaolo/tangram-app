@@ -385,11 +385,11 @@ function triggerConfetti() {
 
   .puzzle-preview {
     width: 100%;
-    height: 600px;
+    height: 100%;
     position: relative;
     overflow: hidden;
-    margin-bottom: 50px;
-    margin-top: 160px;
+    /* margin-bottom: 50px;
+    margin-top: 160px; */
   }
   .puzzle-preview.completed {
     margin-top: 210px;
