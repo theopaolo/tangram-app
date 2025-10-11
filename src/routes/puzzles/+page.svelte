@@ -438,8 +438,8 @@ function triggerConfetti() {
     left:0;
   }
   .complet_2{
-    top:10%;
-    left:0;
+    top:8%;
+    right:0;
   }
   .complet_3{
     bottom:10%;
@@ -454,8 +454,8 @@ function triggerConfetti() {
     left:0;
   }
   .complet_6{
-    top:8%;
-    right:0;
+    top:10%;
+    left:0;
   }
   .complet_7{
     bottom:12%;
