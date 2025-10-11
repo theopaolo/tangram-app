@@ -418,14 +418,19 @@ function triggerConfetti() {
 
   .puzzle-preview {
     width: 100%;
-    height: 600px;
+    height: 100%;
     position: relative;
-    overflow: hidden;
-    margin-bottom: 50px;
-    margin-top: 160px;
+    /* overflow: hidden; */
+    /* margin-bottom: 50px;
+    margin-top: 160px; */
   }
-  .puzzle-preview.completed {
-    margin-top: 210px;
+
+.puzzle-card:first-of-type .puzzle-preview {
+    margin-top: 60px;
+  }
+
+  .puzzle-card:first-of-type .puzzle-preview.completed {
+    margin-top: 85px;
   }
 
   .puzzle-preview .tangram-piece {
@@ -467,36 +472,36 @@ function triggerConfetti() {
   85.01%, 100% { background-color: var(--c7); }
 }
   .complet_1{
-    bottom:10%;
-    left:10%;
+    bottom:13%;
+    left:0;
   }
   .complet_2{
-    bottom:10%;
-    right:10%;
+    top:14%;
+    right:0;
   }
   .complet_3{
-    top:10%;
-    left:10%;
+    bottom:14%;
+    right:0;
   }
   .complet_4{
-    bottom:10%;
-    left:10%;
+    bottom:14%;
+    left:0;
   }
   .complet_5{
-    top:10%;
-    left:10%;
+    top:15%;
+    left:0;
   }
   .complet_6{
     top:10%;
-    right:10%;
+    left:0;
   }
   .complet_7{
-    bottom:10%;
-    right:10%;
+    bottom:12%;
+    right:8%;
   }
   .puzzle-card:nth-child(even) {
-  background-color: rgb(248, 248, 248);
-}
+    background-color: rgb(248, 248, 248);
+  }
 </style>
 
 <!-- Title -->
@@ -523,7 +528,7 @@ function triggerConfetti() {
 <!-- <div class="p-5 mt-[90px]"> -->
   <div class="">
     {#if allPuzzlesCompleted}
-      <div onclick={triggerConfetti} class="text-center absolute top-[100px] m-auto left-0 right-0 z-1">
+      <div onclick={triggerConfetti} class="text-center absolute top-[80px] m-auto left-0 right-0 z-1">
         <p>Bravo tu as completé les 7 tangrams  !<br/>Télécharge un fond d'écran !</p>
         <a href="/download/Chromogram_Wallpaper_MRAC.jpg" download class="block">
         <div class="w-[124px] h-[68px] m-auto relative mt-2">
@@ -582,7 +587,7 @@ function triggerConfetti() {
             </div>
           {/if}
 
-          <div class="absolute bottom-0 left-0 p-5 text-intro leading-none">#{puzzle.id}</div>
+          <div class="absolute bottom-13 left-[-20px] text-intro leading-none">#{puzzle.id}</div>
         </div>
       </div>
     {/each}
