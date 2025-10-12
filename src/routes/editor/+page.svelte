@@ -3,6 +3,10 @@
   import createInteractionHandler from '../../lib/interaction.js';
   import { PIECES_DATA_WITH_VIEWBOX as SHARED_PIECES_DATA_WITH_VIEWBOX } from '../../lib/puzzleData.js';
 
+  // Fixed container dimensions for puzzle design
+  const CONTAINER_WIDTH = 400;
+  const CONTAINER_HEIGHT = 600;
+
 let pieces = $state([
    { id: 1, x: 50, y: 50, rotation: 0, flipped: false, animationKey: 0 },
    { id: 2, x: 150, y: 50, rotation: 0, flipped: false, animationKey: 0 },
@@ -209,37 +213,43 @@ let pieces = $state([
   }
 
    function exportPuzzleData() {
-    // Calculate bounding box for container
-    const bounds = getPuzzleBounds();
-    if (!bounds) {
+    if (pieces.length === 0) {
       alert('No pieces to export');
       return;
     }
 
-    const containerWidth = bounds.width;
-    const containerHeight = bounds.height;
+    // Get the canvas center (where container frame is centered)
+    const canvasWidth = containerSize.width || puzzleContainer?.clientWidth || 0;
+    const canvasHeight = containerSize.height || puzzleContainer?.clientHeight || 0;
+    const canvasCenterX = canvasWidth / 2;
+    const canvasCenterY = canvasHeight / 2;
 
-    // Normalize coordinates to 0-1 range relative to container
-    const normalizedPieces = pieces.map(({ id, x, y, rotation, flipped }) => ({
+    // Container is centered on canvas, so its top-left is at:
+    const containerLeft = canvasCenterX - (CONTAINER_WIDTH / 2);
+    const containerTop = canvasCenterY - (CONTAINER_HEIGHT / 2);
+
+    // Export coordinates relative to container origin (not screen origin)
+    const exportPieces = pieces.map(({ id, x, y, rotation, flipped }) => ({
       id,
       rotation,
       flipped,
-      x: (x - bounds.minX) / containerWidth,
-      y: (y - bounds.minY) / containerHeight
+      // Convert from screen coordinates to container-relative coordinates
+      x: Math.round(x - containerLeft),
+      y: Math.round(y - containerTop)
     }));
 
     const exportData = {
       container: {
-        width: Math.round(containerWidth),
-        height: Math.round(containerHeight)
+        width: CONTAINER_WIDTH,
+        height: CONTAINER_HEIGHT
       },
-      pieces: normalizedPieces
+      pieces: exportPieces
     };
 
     const jsonString = JSON.stringify(exportData, null, 2);
     console.log(jsonString);
     navigator.clipboard.writeText(jsonString).then(() => {
-        alert('Puzzle data copied to clipboard!\n\nNew format with container and normalized coordinates.');
+        alert(`Puzzle data copied to clipboard!\n\nContainer: ${CONTAINER_WIDTH}×${CONTAINER_HEIGHT}px\nPieces use coordinates relative to container origin (top-left).`);
     }, () => {
         alert('Puzzle data logged to console.');
     });
@@ -253,31 +263,55 @@ let pieces = $state([
       try {
         const importedData = JSON.parse(importJson);
 
+        // Get the canvas center (where container frame is centered)
+        const canvasWidth = containerSize.width || puzzleContainer?.clientWidth || 0;
+        const canvasHeight = containerSize.height || puzzleContainer?.clientHeight || 0;
+        const canvasCenterX = canvasWidth / 2;
+        const canvasCenterY = canvasHeight / 2;
+
+        // Container is centered on canvas, so its top-left is at:
+        const containerLeft = canvasCenterX - (CONTAINER_WIDTH / 2);
+        const containerTop = canvasCenterY - (CONTAINER_HEIGHT / 2);
+
         // Detect format: new format has container property, old format is array
         const isNewFormat = importedData.container && importedData.pieces;
 
         if (isNewFormat) {
-          // New format with container and normalized coordinates
-          const { container, pieces: normalizedPieces } = importedData;
+          const { container, pieces: importedPieces } = importedData;
 
-          // Denormalize coordinates back to absolute positions for editor
-          // Place in center of editor canvas (assume 500x500 working area)
-          const editorCenterX = 400;
-          const editorCenterY = 400;
+          // Check if coordinates are normalized (0-1) or absolute (>1)
+          const firstPiece = importedPieces[0];
+          const isNormalized = firstPiece && firstPiece.x <= 1 && firstPiece.y <= 1;
 
-          pieces = normalizedPieces.map(p => ({
-            id: p.id,
-            rotation: p.rotation,
-            flipped: p.flipped,
-            x: p.x * container.width + editorCenterX - container.width / 2,
-            y: p.y * container.height + editorCenterY - container.height / 2,
-            animationKey: 0
-          }));
+          if (isNormalized) {
+            // Old normalized format - convert to screen coordinates
+            pieces = importedPieces.map(p => ({
+              id: p.id,
+              rotation: p.rotation,
+              flipped: p.flipped,
+              // Convert normalized to container-relative, then to screen coordinates
+              x: containerLeft + (p.x * container.width),
+              y: containerTop + (p.y * container.height),
+              animationKey: 0
+            }));
+            alert('Puzzle imported! (Converted from normalized format)');
+          } else {
+            // New absolute format - convert container-relative to screen coordinates
+            pieces = importedPieces.map(p => ({
+              id: p.id,
+              rotation: p.rotation,
+              flipped: p.flipped,
+              // Convert from container-relative to screen coordinates
+              x: containerLeft + p.x,
+              y: containerTop + p.y,
+              animationKey: 0
+            }));
+            alert('Puzzle imported successfully!');
+          }
 
           puzzleScale = 1;
-          alert('Puzzle imported successfully! (New container format)');
         } else if (Array.isArray(importedData) && importedData.length > 0 && 'id' in importedData[0]) {
-          // Old format with absolute coordinates
+          // Old format with absolute coordinates - assume they're already screen coordinates
           pieces = importedData.map(p => ({
             ...p,
             animationKey: 0
@@ -327,9 +361,7 @@ let pieces = $state([
         const piece = pieces.find(p => p.id === params.pieceId);
         if (!piece) return;
 
-        if (wasTap) {
-          rotateActivePiece();
-        } else if (wasDrag) {
+        if (wasDrag) {
           // Commit to snap target if available
           if (snapIndicator) {
             piece.x = Math.round(snapIndicator.x);
@@ -514,9 +546,22 @@ function getPieceGreyShade(id) {
   .editor-canvas {
     flex-grow: 1;
     position: relative;
-    background-color: red;
+    background-color: #f5f5f5;
     overflow: visible;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
+  .container-frame {
+    position: absolute;
+    border: 3px dashed #2196F3;
+    background: white;
+    pointer-events: none;
+    z-index: 0;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
   }
 
   .editor-canvas.show-grid {
@@ -561,9 +606,6 @@ function getPieceGreyShade(id) {
     /* Prevent default touch behaviors during drag */
     touch-action: none;
   }
-
-
-
   .snap-indicator {
     position: absolute;
     width: 10px;
@@ -622,6 +664,12 @@ function getPieceGreyShade(id) {
       onpointerdown={() => activePieceId = null}
       use:observeResize
     >
+      <!-- Container frame visual -->
+      <div class="container-frame" style="
+        width: {CONTAINER_WIDTH}px;
+        height: {CONTAINER_HEIGHT}px;
+      "></div>
+
       {#each pieces as piece (piece.id)}
         {@const pieceData = PIECES_DATA_WITH_VIEWBOX[piece.id]}
         <div

@@ -15,8 +15,6 @@
   	initializeDebugMode
   } from '../../../lib/puzzleDebug.js';
 
-
-
   let showHelp = $state(true); // rune => re-render quand on assigne
 
   // Get puzzle ID from URL params
@@ -31,10 +29,6 @@
     { label: 'Les Tangrams', href: '/puzzles' },
     { label: `numéro ${puzzleId}`, current: true }
   ];
-
-
-
-
 
 // --- 🎉 EFFET DE PAILLETTES ---
 function triggerConfetti() {
@@ -134,15 +128,11 @@ function triggerConfetti() {
   animate();
 }
 
-
-
-
-
-
   // Update planePuzzle when currentPuzzle changes
   $effect(() => {
     if (currentPuzzle) {
-      planePuzzle = currentPuzzle.data;
+      // New format uses 'pieces', legacy format uses 'data'
+      planePuzzle = currentPuzzle.container ? currentPuzzle.pieces : currentPuzzle.data;
     }
   });
 
@@ -444,11 +434,8 @@ function triggerConfetti() {
   function fitTargets() {
     if (!containerSize.width || planePuzzle.length === 0) return;
 
-    const gutter = 40;
-    const availableWidth = containerSize.width - gutter * 2;
-    const availableHeight = containerSize.height - gutter * 2;
-    const screenCenterX = containerSize.width / 2;
-    const screenCenterY = containerSize.height / 2;
+    // Padding inside the red frame for consistent spacing on all sides
+    const PUZZLE_PADDING = 40;
 
     // Check if puzzle uses new container format
     const currentConfig = puzzleConfigs.find(p => p.id === parseInt(puzzleId));
@@ -457,25 +444,68 @@ function triggerConfetti() {
     let scaleFactor, containerWidth, containerHeight;
 
     if (hasContainer) {
-      // New format: use container dimensions
+      // New format: container dimensions define the puzzle frame
       containerWidth = currentConfig.container.width;
       containerHeight = currentConfig.container.height;
 
-      // Scale container to fit available space
+      // Calculate available space with padding
+      const availableWidth = containerSize.width - (PUZZLE_PADDING * 2);
+      const availableHeight = containerSize.height - (PUZZLE_PADDING * 2);
+
+      // Scale container to fit available space with padding
       scaleFactor = Math.min(
         availableWidth / containerWidth,
         availableHeight / containerHeight
-      ) * 0.85;
+      );
+
+      // Apply custom scale multiplier if defined
+      const customScale = currentConfig.scale ?? 1;
+      scaleFactor *= customScale;
 
       puzzleScale = scaleFactor;
 
-      // Convert normalized coordinates to screen coordinates
+      console.log('Container format puzzle:', {
+        puzzleId,
+        containerDimensions: { width: containerWidth, height: containerHeight },
+        screenDimensions: { width: containerSize.width, height: containerSize.height },
+        availableDimensions: { width: availableWidth, height: availableHeight },
+        padding: PUZZLE_PADDING,
+        scaleFactor,
+        pieces: planePuzzle
+      });
+
+      // Center the container frame in the screen
+      const screenCenterX = containerSize.width / 2;
+      const screenCenterY = containerSize.height / 2;
+
+      // Check if coordinates are normalized (0-1) or absolute (>1)
+      const firstPiece = planePuzzle[0];
+      const isNormalized = firstPiece && firstPiece.x <= 1 && firstPiece.y <= 1;
+
       targetPieces = planePuzzle.map(target => {
-        const screenX = screenCenterX - (containerWidth * scaleFactor / 2) + (target.x * containerWidth * scaleFactor);
-        const screenY = screenCenterY - (containerHeight * scaleFactor / 2) + (target.y * containerHeight * scaleFactor);
+        let screenX, screenY;
+
+        if (isNormalized) {
+          // Old normalized format: convert 0-1 to screen coordinates
+          screenX = screenCenterX - (containerWidth * scaleFactor / 2) + (target.x * containerWidth * scaleFactor);
+          screenY = screenCenterY - (containerHeight * scaleFactor / 2) + (target.y * containerHeight * scaleFactor);
+        } else {
+          // New absolute format: scale absolute coordinates directly
+          const containerCenterX = containerWidth / 2;
+          const containerCenterY = containerHeight / 2;
+          screenX = screenCenterX + (target.x - containerCenterX) * scaleFactor;
+          screenY = screenCenterY + (target.y - containerCenterY) * scaleFactor;
+        }
+
         return { ...target, screenX, screenY };
       });
     } else {
+      // Legacy format: use consistent padding
+      const availableWidth = containerSize.width - (PUZZLE_PADDING * 2);
+      const availableHeight = containerSize.height - (PUZZLE_PADDING * 2);
+      const screenCenterX = containerSize.width / 2;
+      const screenCenterY = containerSize.height / 2;
+
       // Legacy format: calculate bounds from absolute coordinates
       const allFinalVertices = planePuzzle.flatMap(pieceState =>
         getTransformedPoints(pieceState, PIECES_DATA_WITH_VIEWBOX[pieceState.id])
@@ -496,7 +526,11 @@ function triggerConfetti() {
       scaleFactor = Math.min(
         availableWidth / puzzleWidth,
         availableHeight / puzzleHeight
-      ) * 0.85;
+      );
+
+      // Apply custom scale multiplier if defined
+      const customScale = currentConfig?.scale ?? 1;
+      scaleFactor *= customScale;
 
       puzzleScale = scaleFactor;
 
@@ -552,9 +586,10 @@ function triggerConfetti() {
 
   function observeResize(node) {
     const observer = new ResizeObserver(entries => {
-      const { width, height } = entries[0].contentRect;
-      containerSize.width = width;
-      containerSize.height = height;
+      // Get the border-box dimensions (includes padding) using offsetWidth/offsetHeight
+      // This ensures we get the full element size including padding with box-sizing: border-box
+      containerSize.width = entries[0].target.offsetWidth;
+      containerSize.height = entries[0].target.offsetHeight;
       fitTargets();
     });
     observer.observe(node);
@@ -916,23 +951,16 @@ function triggerConfetti() {
     position: relative;
     width: 100%;
     height: 100dvh;
-    padding: 0 20px;
-    margin: auto;
+    padding: 60px 20px 120px 20px; /* top, right, bottom, left - Space for header and pieces container */
+    box-sizing: border-box;
   }
 
   .puzzle-container {
     position: relative;
-    top: 0;
     width: 100%;
-    height: 100svh;
-    margin-top: 40px;
-    padding-bottom: 180px;
-    border-radius: 8px;
-    /* Prevent scrolling/zooming when interacting with pieces */
+    height: 100%;
     touch-action: none;
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-touch-callout: none;
+    box-sizing: border-box;
   }
 
   .target-outline, .tangram-piece {
@@ -1014,10 +1042,10 @@ function triggerConfetti() {
     padding-left: 20px;
     padding-right: 20px;
     position: absolute;
-    bottom: 85px;
+    height: 60px;
+    bottom: 30px;
     left: 0;
     right: 0;
-    height: 60px;
     gap: .5rem;
   }
 .pieces-container {
@@ -1089,7 +1117,6 @@ function triggerConfetti() {
     color: white;
     border: none;
     padding: 8px;
-    border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
   }
@@ -1106,7 +1133,6 @@ function triggerConfetti() {
     background: rgba(0, 0, 0, 0.9);
     color: white;
     padding: 1rem;
-    border-radius: 8px;
     font-family: monospace;
     font-size: 12px;
     max-width: 400px;
@@ -1128,7 +1154,6 @@ function triggerConfetti() {
   .debug-panel .match-result {
     padding: 2px 4px;
     margin: 2px 0;
-    border-radius: 3px;
   }
 
   .debug-panel .match-result.success {
@@ -1273,23 +1298,6 @@ function triggerConfetti() {
           />
         </button>
 
-    <!-- {#if allPuzzlesCompleted}
-      <a href="/puzzles" class="h-[68.41px" aria-label="Retour à l'accueil">
-        <img
-        src="/images/continuer_2.svg"
-        alt="retour"
-        class="h-[68.41px] !w-[101px]"
-        />
-      </a>
-    {/else}
-      <a href="/puzzles" class="h-[68.41px" aria-label="Retour à l'accueil">
-        <img
-        src="/images/continuer.svg"
-        alt="retour"
-        class="h-[68.41px] !w-[101px]"
-        />
-      </a>
-    {/if} -->
       <a href="/puzzles" class="h-[68.41px" aria-label="Continuer">
         <img
         src="/images/continuer.svg"

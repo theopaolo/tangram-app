@@ -235,19 +235,31 @@ function triggerConfetti() {
 
   // Calculate preview scale for puzzle cards
   function calculatePreviewScale(puzzle, _windowWidth, _windowHeight, containerWidth = null, containerHeight = null) {
+    // Consistent padding for previews (same as puzzle page)
+    const PREVIEW_PADDING = 40;
+
     // Use container dimensions if provided, otherwise calculate from window
-    const availableWidth = containerWidth || (_windowWidth ? _windowWidth - 80 : 350);
-    const availableHeight = containerHeight || 580;
+    const totalWidth = containerWidth || (_windowWidth ? _windowWidth : 350);
+    // Make height responsive: use viewport height minus header (120px) and footer padding (100px)
+    const totalHeight = containerHeight || (_windowHeight ? _windowHeight - 220 : 580);
+
+    // Calculate available space after padding
+    const availableWidth = totalWidth - (PREVIEW_PADDING * 2);
+    const availableHeight = totalHeight - (PREVIEW_PADDING * 2);
 
     // Check if puzzle uses new container format
     const hasContainer = puzzle.container;
 
+    // Apply custom scale multiplier if defined
+    const customScale = puzzle.scale ?? 1;
+
     if (hasContainer) {
-      // New format: use container dimensions directly
-      return Math.min(
+      // New format: scale to fit within available space with padding
+      const baseScale = Math.min(
         availableWidth / puzzle.container.width,
         availableHeight / puzzle.container.height
-      ) * 0.85;
+      );
+      return baseScale * customScale;
     } else {
       // Legacy format: calculate from piece positions
       const puzzleData = puzzle.data;
@@ -282,15 +294,17 @@ function triggerConfetti() {
       const puzzleWidth = bounds.maxX - bounds.minX;
       const puzzleHeight = bounds.maxY - bounds.minY;
 
-      return Math.min(availableWidth / puzzleWidth, availableHeight / puzzleHeight) * 0.85;
+      const baseScale = Math.min(availableWidth / puzzleWidth, availableHeight / puzzleHeight);
+      return baseScale * customScale;
     }
   }
 
   // Calculate preview position for puzzle pieces
   function calculatePreviewPosition(piece, puzzle, scale, _windowWidth, _windowHeight, containerWidth = null, containerHeight = null) {
     // Use dynamic center coordinates based on container dimensions
-    const availableWidth = containerWidth || (_windowWidth ? _windowWidth - 80 : 350);
-    const availableHeight = containerHeight || 580;
+    const availableWidth = containerWidth || (_windowWidth ? _windowWidth : 350);
+    // Make height responsive: use viewport height minus header (120px) and footer padding (100px)
+    const availableHeight = containerHeight || (_windowHeight ? _windowHeight - 220 : 580);
     const previewCenterX = availableWidth / 2;
     const previewCenterY = availableHeight / 2;
 
@@ -298,14 +312,27 @@ function triggerConfetti() {
     const hasContainer = puzzle.container;
 
     if (hasContainer) {
-      // New format: use normalized coordinates
       const containerWidth = puzzle.container.width;
       const containerHeight = puzzle.container.height;
 
-      return {
-        x: previewCenterX - (containerWidth * scale / 2) + (piece.x * containerWidth * scale),
-        y: previewCenterY - (containerHeight * scale / 2) + (piece.y * containerHeight * scale)
-      };
+      // Check if coordinates are normalized (0-1) or absolute (>1)
+      const isNormalized = piece.x <= 1 && piece.y <= 1;
+
+      if (isNormalized) {
+        // Old normalized format
+        return {
+          x: previewCenterX - (containerWidth * scale / 2) + (piece.x * containerWidth * scale),
+          y: previewCenterY - (containerHeight * scale / 2) + (piece.y * containerHeight * scale)
+        };
+      } else {
+        // New absolute format: scale coordinates from container center
+        const containerCenterX = containerWidth / 2;
+        const containerCenterY = containerHeight / 2;
+        return {
+          x: previewCenterX + (piece.x - containerCenterX) * scale,
+          y: previewCenterY + (piece.y - containerCenterY) * scale
+        };
+      }
     } else {
       // Legacy format: calculate from absolute coordinates
       const puzzleData = puzzle.data;
@@ -395,11 +422,13 @@ function triggerConfetti() {
 
   .puzzle-gallery {
     display: flex;
-    overflow-x: auto;
-    gap: 2rem;
-    padding: 2rem;
-    scroll-snap-type: x mandatory;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-snap-type: y mandatory;
     -webkit-overflow-scrolling: touch;
+    height: 100vh;
+    scrollbar-width: none;
   }
 
   .puzzle-gallery::-webkit-scrollbar {
@@ -407,26 +436,16 @@ function triggerConfetti() {
   }
 
   .puzzle-card {
-    /* padding: 20px; */
-    /* margin-bottom: 40px; */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     cursor: pointer;
+    flex: 0 0 auto;
     scroll-snap-align: center;
+    scroll-snap-stop: always;
   }
 
   .puzzle-preview {
     width: 100%;
     height: 100%;
     position: relative;
-    /* overflow: hidden; */
-    /* margin-bottom: 50px;
-    margin-top: 160px; */
-  }
-
-.puzzle-card:first-of-type .puzzle-preview {
-    margin-top: 60px;
   }
 
   .puzzle-card:first-of-type .puzzle-preview.completed {
@@ -472,24 +491,24 @@ function triggerConfetti() {
   85.01%, 100% { background-color: var(--c7); }
 }
   .complet_1{
-    bottom:13%;
-    left:0;
+    bottom:24%;
+    left:1rem;
   }
   .complet_2{
     top:14%;
-    right:0;
+    right:1rem;
   }
   .complet_3{
     bottom:14%;
-    right:0;
+    right:1rem;
   }
   .complet_4{
-    bottom:14%;
-    left:0;
+    bottom:24%;
+    left:1rem;
   }
   .complet_5{
     top:15%;
-    left:0;
+    left:1rem;
   }
   .complet_6{
     top:10%;
@@ -549,14 +568,14 @@ function triggerConfetti() {
       </div>
     {/if}
 
-  <div class="flex flex-col">
+  <div class="puzzle-gallery mt-[160px]">
     {#each puzzles as puzzle (puzzle.id)}
       {@const previewScale = calculatePreviewScale(puzzle, windowWidth, windowHeight)}
-      <div class="puzzle-card h-svh justify-center flex px-10" role="button" tabindex="0"
+      <div class="puzzle-card h-[80vh]" role="button" tabindex="0"
           onclick={() => selectPuzzle(puzzle.id)}
           onkeydown={(e) => e.key === 'Enter' && selectPuzzle(puzzle.id)}>
         <div class={allPuzzlesCompleted ? 'puzzle-preview w-full completed' : 'puzzle-preview w-full'}>
-          {#each puzzle.data as originalPiece}
+          {#each (puzzle.container ? puzzle.pieces : puzzle.data) as originalPiece}
             {@const pieceData = PIECES_DATA_WITH_VIEWBOX[originalPiece.id]}
             {@const previewPos = calculatePreviewPosition(originalPiece, puzzle, previewScale, windowWidth, windowHeight)}
             {@const pieceColor = getPieceColor(originalPiece.id, puzzle.id, refreshTrigger)}
@@ -587,7 +606,7 @@ function triggerConfetti() {
             </div>
           {/if}
 
-          <div class="absolute bottom-13 left-[-20px] text-intro leading-none">#{puzzle.id}</div>
+          <div class="absolute bottom-16 left-8 text-intro leading-none">#{puzzle.id}</div>
         </div>
       </div>
     {/each}
