@@ -951,7 +951,7 @@ function triggerConfetti() {
     position: relative;
     width: 100%;
     height: 100dvh;
-    padding: 60px 20px 120px 20px; /* top, right, bottom, left - Space for header and pieces container */
+    padding: 60px 0 110px 0; /* top, right, bottom, left - Space for header and pieces container */
     box-sizing: border-box;
   }
 
@@ -1043,7 +1043,7 @@ function triggerConfetti() {
     padding-right: 20px;
     position: absolute;
     height: 60px;
-    bottom: 30px;
+    bottom: 45px;
     left: 0;
     right: 0;
     gap: .5rem;
