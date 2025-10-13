@@ -1302,7 +1302,7 @@ function triggerConfetti() {
         <img
         src="/images/continuer_2.svg"
         alt="Continuer"
-        class="h-[72.11px] !w-[93.66px]"
+        class="h-[69.11] !w-[95.86]"
         />
       </a>
     </div>
