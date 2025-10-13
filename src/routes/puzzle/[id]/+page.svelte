@@ -1290,7 +1290,7 @@ function triggerConfetti() {
 
 {#if puzzleSolved}
     <div class="success-message text-corps flex flex-row justify-center items-end" transition:fly={{ y: 20, duration: 300 }}>
-        <button onclick={resetPuzzle} class="h-[87.08px] !w-[100px] mr-[10%] bg-transparent border-none cursor-pointer hover:opacity-80 transition-opacity">
+        <button onclick={resetPuzzle} class="h-[87.08px] !w-[100px] mr-[8%] bg-transparent border-none cursor-pointer hover:opacity-80 transition-opacity">
           <img
           src="/images/rebuild.svg"
           alt="Recommencer ce tangram"
@@ -1300,9 +1300,9 @@ function triggerConfetti() {
 
       <a href="/puzzles" class="h-[68.41px" aria-label="Continuer">
         <img
-        src="/images/continuer.svg"
+        src="/images/continuer_2.svg"
         alt="Continuer"
-        class="h-[68.41px] !w-[101px]"
+        class="h-[72.11px] !w-[93.66px]"
         />
       </a>
     </div>
