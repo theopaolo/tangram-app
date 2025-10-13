@@ -9,6 +9,7 @@
   let refreshTrigger = $state(0);
 	let windowWidth = $state(0);
 	let windowHeight = $state(0);
+	let resizeTimeout = null;
 
 	// Get all puzzles
 	const puzzles = getAllPuzzles();
@@ -192,6 +193,10 @@ function triggerConfetti() {
 				window.removeEventListener('focus', handlePageFocus);
 				window.removeEventListener('resize', handleWindowResize);
 			}
+			// Clear any pending resize timeout
+			if (resizeTimeout) {
+				clearTimeout(resizeTimeout);
+			}
 		};
 	});
 
@@ -208,11 +213,17 @@ function triggerConfetti() {
 	}
 
 	function handleWindowResize() {
-		// Update window dimensions when resizing
-		if (typeof window !== 'undefined') {
-			windowWidth = window.innerWidth;
-			windowHeight = window.innerHeight;
+		// Debounce resize updates to prevent layout recalculations during scroll-triggered chrome changes
+		if (resizeTimeout) {
+			clearTimeout(resizeTimeout);
 		}
+
+		resizeTimeout = setTimeout(() => {
+			if (typeof window !== 'undefined') {
+				windowWidth = window.innerWidth;
+				windowHeight = window.innerHeight;
+			}
+		}, 150);
 	}
 
   // Get the appropriate color for a target slot based on the matched piece that occupies it
@@ -538,7 +549,7 @@ function triggerConfetti() {
     {#each puzzles as puzzle (puzzle.id)}
       {@const previewScale = calculatePreviewScale(puzzle, windowWidth, windowHeight)}
 
-      <div class="puzzle-card h-dvh " id="{puzzle.id}" role="button" tabindex="0"
+      <div class="puzzle-card h-[100vh] " id="{puzzle.id}" role="button" tabindex="0"
           onclick={() => selectPuzzle(puzzle.id)}
           onkeydown={(e) => e.key === 'Enter' && selectPuzzle(puzzle.id)}>
         <div class={allPuzzlesCompleted ? 'puzzle-preview w-full completed' : 'puzzle-preview w-full'}>
