@@ -455,7 +455,7 @@ function triggerConfetti() {
 
 
 .puzzle-card:first-of-type .puzzle-preview {
-    padding-top:20px;
+    /* padding-top:20px; */
   }
 
   .puzzle-card:first-of-type .puzzle-preview.completed {
@@ -463,13 +463,16 @@ function triggerConfetti() {
   }
 .puzzle-card:first-of-type .puzzle-preview.completed .complet_1{
     bottom:16%;
-    left:1rem;
+    left:6vw;
   }
 
- .puzzle-card:first-of-type .tangram-piece {
-    top:10%
-  }
 
+ .puzzle-card:first-of-type .puzzle-preview .tangram-piece {
+    top:5%
+  }
+.puzzle-card:first-of-type .puzzle-preview.completed .tangram-piece {
+    top:9%
+  }
 
 
   .phrase{
@@ -522,32 +525,32 @@ function triggerConfetti() {
   85.01%, 100% { background-color: var(--c7); }
 }
   .complet_1{
-    bottom:24%;
-    left:1rem;
+    bottom:16%;
+    left:8vw;
   }
   .complet_2{
-    top:14%;
-    right:1rem;
+    top:20%;
+    right:8vw;
   }
   .complet_3{
-    bottom:14%;
-    right:1rem;
+    bottom:16%;
+    right:8vw;
   }
   .complet_4{
-    bottom:24%;
-    left:1rem;
+    top:20%;
+    left:4vw;
   }
   .complet_5{
-    top:15%;
-    left:1rem;
+    bottom:18%;
+    left:14vw;
   }
   .complet_6{
-    top:10%;
-    left:0;
+    top:15%;
+    left:8vw;
   }
   .complet_7{
-    bottom:12%;
-    right:8%;
+    bottom:15%;
+    right:8vw
   }
   .puzzle-card:nth-child(odd) {
     background-color: rgb(248, 248, 248);
@@ -588,34 +591,27 @@ function triggerConfetti() {
           onclick={() => selectPuzzle(puzzle.id)}
           onkeydown={(e) => e.key === 'Enter' && selectPuzzle(puzzle.id)}>
         <div class={allPuzzlesCompleted ? 'puzzle-preview w-full completed' : 'puzzle-preview w-full'}>
-
-
-
-
-    {#if allPuzzlesCompleted}
-      <div onclick={triggerConfetti} class="phrase text-center absolute top-[12%] m-auto left-0 right-0 z-1">
-        <p>Bravo tu as completé les 7 tangrams  !<br/>Télécharge un fond d'écran !</p>
-        <a href="/download/Chromogram_Wallpaper_MRAC.jpg" download class="block">
-        <div class="w-[124px] h-[68px] m-auto relative mt-2">
-          <div class="blipo w-[26px] h-[42px] bg-black absolute z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex">
-              <img style="width:80%;margin:auto" src="/images/tangrams_b&w.svg" alt="tangrams">
-          </div>
-            <img
-              src="/images/fond_ecran_full.png"
-              alt=""
-              class=""
-            />
-        </div>
-        </a>
-      </div>
-    {:else}
-      <div class="phrase text-center top-[15%] absolute m-auto left-0 right-0 z-1">
-        <p>Voici les 7 tangrams à compléter selon ton envie !<br/>Scrolle pour les découvrir !</p>
-      </div>
-    {/if}
-
-
-
+          {#if allPuzzlesCompleted}
+            <div onclick={triggerConfetti} class="phrase text-center absolute top-[12%] m-auto left-0 right-0 z-1">
+              <p>Bravo tu as completé les 7 tangrams  !<br/>Télécharge un fond d'écran !</p>
+              <a href="/download/Chromogram_Wallpaper_MRAC.jpg" download class="block">
+              <div class="w-[124px] h-[68px] m-auto relative mt-2">
+                <div class="blipo w-[26px] h-[42px] bg-black absolute z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex">
+                    <img style="width:80%;margin:auto" src="/images/tangrams_b&w.svg" alt="tangrams">
+                </div>
+                  <img
+                    src="/images/fond_ecran_full.png"
+                    alt=""
+                    class=""
+                  />
+              </div>
+              </a>
+            </div>
+          {:else}
+            <div class="phrase text-center top-[15%] absolute m-auto left-0 right-0 z-1">
+              <p>Voici les 7 tangrams à compléter selon ton envie !<br/>Scrolle pour les découvrir !</p>
+            </div>
+          {/if}
 
           {#each (puzzle.container ? puzzle.pieces : puzzle.data) as originalPiece}
             {@const pieceData = PIECES_DATA_WITH_VIEWBOX[originalPiece.id]}
