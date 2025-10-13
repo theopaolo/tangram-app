@@ -10,7 +10,6 @@
 	let refreshTrigger = $state(0);
 	let windowWidth = $state(0);
 	let windowHeight = $state(0);
-	let puzzleGalleryElement = $state(null);
 
 	// Get all puzzles
 	const puzzles = getAllPuzzles();
@@ -379,9 +378,7 @@ function triggerConfetti() {
 
   function selectPuzzle(id) {
     // Save scroll position before navigating
-    if (puzzleGalleryElement) {
-      scrollPosition.save('/puzzles', puzzleGalleryElement.scrollTop);
-    }
+    scrollPosition.save('/puzzles', window.scrollY);
     goto(`/puzzle/${id}`);
   }
 
@@ -405,58 +402,33 @@ function triggerConfetti() {
 
 	// Save scroll position before navigating away
 	beforeNavigate(() => {
-		if (puzzleGalleryElement) {
-			scrollPosition.save('/puzzles', puzzleGalleryElement.scrollTop);
-		}
+		scrollPosition.save('/puzzles', window.scrollY);
 	});
 
 	onMount(async () => {
-		// Import scroll freeze utility and unfreeze scroll for puzzles page
-		const { unfreezeScroll, freezeScroll } = await import('$lib/utils/scrollFreeze.js');
+		// Unfreeze scroll since this page uses body scroll
+		const { unfreezeScroll } = await import('$lib/utils/scrollFreeze.js');
 		unfreezeScroll();
 
 		// Restore scroll position after content is rendered
 		await tick();
-		if (puzzleGalleryElement) {
-			const savedPosition = scrollPosition.get('/puzzles');
-			if (savedPosition > 0) {
-				puzzleGalleryElement.scrollTo({
-					top: savedPosition,
-					behavior: 'instant'
-				});
-			}
+		const savedPosition = scrollPosition.get('/puzzles');
+		if (savedPosition > 0) {
+			window.scrollTo({
+				top: savedPosition,
+				behavior: 'instant'
+			});
 		}
-
-		// Return cleanup function to restore scroll freeze when leaving this page
-		return () => {
-			freezeScroll();
-		};
 	});
 </script>
 
 <style>
-  /* Puzzle selection styles */
-  .puzzle-selection {
-    position: absolute;
-    inset: 0;
-    z-index: 15;
-    background: white;
-    display: flex;
-    flex-direction: column;
-    padding-top: 120px;
-  }
-
   .puzzle-gallery {
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 100svh;
-    scrollbar-width: none;
-  }
-
-  .puzzle-gallery::-webkit-scrollbar {
-    display: none;
+    padding-top: 120px;
+    padding-bottom: 60px;
+    min-height: 100vh;
   }
 
   .puzzle-card {
@@ -475,15 +447,7 @@ function triggerConfetti() {
     bottom: 82px;
   } */
 
-
-.puzzle-card:first-of-type .puzzle-preview {
-    /* padding-top:20px; */
-  }
-
-  .puzzle-card:first-of-type .puzzle-preview.completed {
-
-  }
-.puzzle-card:first-of-type .puzzle-preview.completed .complet_1{
+  .puzzle-card:first-of-type .puzzle-preview.completed .complet_1{
     bottom:16%;
     left:6vw;
   }
@@ -591,14 +555,10 @@ function triggerConfetti() {
   </header>
 
 <!-- Puzzle Selection Screen -->
-  <div class="">
-
-
-  <div class="puzzle-gallery" bind:this={puzzleGalleryElement}>
-
-
+<div class="puzzle-gallery">
     {#each puzzles as puzzle (puzzle.id)}
       {@const previewScale = calculatePreviewScale(puzzle, windowWidth, windowHeight)}
+
       <div class="puzzle-card h-dvh " role="button" tabindex="0"
           onclick={() => selectPuzzle(puzzle.id)}
           onkeydown={(e) => e.key === 'Enter' && selectPuzzle(puzzle.id)}>
@@ -672,7 +632,6 @@ function triggerConfetti() {
         />
       </div>
     {/if}
-  </div>
 </div>
 
 <footer class="fixed bottom-0 left-0 z-40 flex w-full items-center justify-between px-5 py-2">
