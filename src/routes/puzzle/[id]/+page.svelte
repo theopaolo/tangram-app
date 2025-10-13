@@ -435,7 +435,7 @@ function triggerConfetti() {
     if (!containerSize.width || planePuzzle.length === 0) return;
 
     // Padding inside the red frame for consistent spacing on all sides
-    const PUZZLE_PADDING = 40;
+    const PUZZLE_PADDING = 0;
 
     // Check if puzzle uses new container format
     const currentConfig = puzzleConfigs.find(p => p.id === parseInt(puzzleId));
@@ -1094,7 +1094,7 @@ function triggerConfetti() {
   }
   .success-message {
       position: fixed;
-      bottom: 60px;
+      bottom: 45px;
       right: 0;
       z-index: 2000;
       left:0;

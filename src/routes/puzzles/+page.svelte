@@ -236,12 +236,12 @@ function triggerConfetti() {
   // Calculate preview scale for puzzle cards
   function calculatePreviewScale(puzzle, _windowWidth, _windowHeight, containerWidth = null, containerHeight = null) {
     // Consistent padding for previews (same as puzzle page)
-    const PREVIEW_PADDING = 40;
+    const PREVIEW_PADDING = 0;
 
     // Use container dimensions if provided, otherwise calculate from window
     const totalWidth = containerWidth || (_windowWidth ? _windowWidth : 350);
     // Make height responsive: use viewport height minus header (120px) and footer padding (100px)
-    const totalHeight = containerHeight || (_windowHeight ? _windowHeight - 220 : 580);
+    const totalHeight = containerHeight || (_windowHeight ? _windowHeight : 580);
 
     // Calculate available space after padding
     const availableWidth = totalWidth - (PREVIEW_PADDING * 2);
@@ -251,7 +251,7 @@ function triggerConfetti() {
     const hasContainer = puzzle.container;
 
     // Apply custom scale multiplier if defined
-    const customScale = puzzle.scale ?? 1;
+    const customScale = puzzle.scale ?? 0.6;
 
     if (hasContainer) {
       // New format: scale to fit within available space with padding
@@ -265,7 +265,7 @@ function triggerConfetti() {
       const puzzleData = puzzle.data;
       if (!puzzleData || !Array.isArray(puzzleData)) {
         console.error('Invalid puzzle data:', puzzle);
-        return 0.85; // Fallback scale
+        return 0.35; // Fallback scale
       }
       const allVertices = puzzleData.flatMap(pieceState => {
         const pieceData = PIECES_DATA_WITH_VIEWBOX[pieceState.id];
@@ -304,7 +304,7 @@ function triggerConfetti() {
     // Use dynamic center coordinates based on container dimensions
     const availableWidth = containerWidth || (_windowWidth ? _windowWidth : 350);
     // Make height responsive: use viewport height minus header (120px) and footer padding (100px)
-    const availableHeight = containerHeight || (_windowHeight ? _windowHeight - 220 : 580);
+    const availableHeight = containerHeight || (_windowHeight ? _windowHeight : 580);
     const previewCenterX = availableWidth / 2;
     const previewCenterY = availableHeight / 2;
 
@@ -425,9 +425,9 @@ function triggerConfetti() {
     flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
-    scroll-snap-type: y mandatory;
-    -webkit-overflow-scrolling: touch;
-    height: 100vh;
+    /* scroll-snap-type: y mandatory;
+    -webkit-overflow-scrolling: touch; */
+    height: 100svh;
     scrollbar-width: none;
   }
 
@@ -448,9 +448,40 @@ function triggerConfetti() {
     position: relative;
   }
 
-  .puzzle-card:first-of-type .puzzle-preview.completed {
-    margin-top: 85px;
+ 
+  /* .puzzle-card:first-of-type .absolute.bottom-13.left-5.text-intro.leading-none{
+    bottom: 82px;
+  } */
+
+
+.puzzle-card:first-of-type .puzzle-preview {
+    padding-top:20px;
   }
+
+  .puzzle-card:first-of-type .puzzle-preview.completed {
+   
+  }
+.puzzle-card:first-of-type .puzzle-preview.completed .complet_1{
+    bottom:16%;
+    left:1rem;
+  }
+
+ .puzzle-card:first-of-type .tangram-piece {
+    top:10%
+  }
+
+
+
+  .phrase{
+    display: none;
+  }
+
+  .puzzle-card:first-of-type .phrase{
+    display: block;
+  }
+
+
+
 
   .puzzle-preview .tangram-piece {
     position: absolute;
@@ -518,7 +549,7 @@ function triggerConfetti() {
     bottom:12%;
     right:8%;
   }
-  .puzzle-card:nth-child(even) {
+  .puzzle-card:nth-child(odd) {
     background-color: rgb(248, 248, 248);
   }
 </style>
@@ -546,8 +577,23 @@ function triggerConfetti() {
 <!-- Puzzle Selection Screen -->
 <!-- <div class="p-5 mt-[90px]"> -->
   <div class="">
+    
+
+  <div class="puzzle-gallery">
+    
+    
+    {#each puzzles as puzzle (puzzle.id)}
+      {@const previewScale = calculatePreviewScale(puzzle, windowWidth, windowHeight)}
+      <div class="puzzle-card h-dvh " role="button" tabindex="0"
+          onclick={() => selectPuzzle(puzzle.id)}
+          onkeydown={(e) => e.key === 'Enter' && selectPuzzle(puzzle.id)}>
+        <div class={allPuzzlesCompleted ? 'puzzle-preview w-full completed' : 'puzzle-preview w-full'}>
+
+
+
+
     {#if allPuzzlesCompleted}
-      <div onclick={triggerConfetti} class="text-center absolute top-[80px] m-auto left-0 right-0 z-1">
+      <div onclick={triggerConfetti} class="phrase text-center absolute top-[12%] m-auto left-0 right-0 z-1">
         <p>Bravo tu as completé les 7 tangrams  !<br/>Télécharge un fond d'écran !</p>
         <a href="/download/Chromogram_Wallpaper_MRAC.jpg" download class="block">
         <div class="w-[124px] h-[68px] m-auto relative mt-2">
@@ -563,18 +609,14 @@ function triggerConfetti() {
         </a>
       </div>
     {:else}
-      <div class="text-center absolute top-[100px] m-auto left-0 right-0 z-1">
+      <div class="phrase text-center top-[15%] absolute m-auto left-0 right-0 z-1">
         <p>Voici les 7 tangrams à compléter selon ton envie !<br/>Scrolle pour les découvrir !</p>
       </div>
     {/if}
 
-  <div class="puzzle-gallery mt-[160px]">
-    {#each puzzles as puzzle (puzzle.id)}
-      {@const previewScale = calculatePreviewScale(puzzle, windowWidth, windowHeight)}
-      <div class="puzzle-card h-[80vh]" role="button" tabindex="0"
-          onclick={() => selectPuzzle(puzzle.id)}
-          onkeydown={(e) => e.key === 'Enter' && selectPuzzle(puzzle.id)}>
-        <div class={allPuzzlesCompleted ? 'puzzle-preview w-full completed' : 'puzzle-preview w-full'}>
+
+
+
           {#each (puzzle.container ? puzzle.pieces : puzzle.data) as originalPiece}
             {@const pieceData = PIECES_DATA_WITH_VIEWBOX[originalPiece.id]}
             {@const previewPos = calculatePreviewPosition(originalPiece, puzzle, previewScale, windowWidth, windowHeight)}
@@ -606,7 +648,7 @@ function triggerConfetti() {
             </div>
           {/if}
 
-          <div class="absolute bottom-16 left-8 text-intro leading-none">#{puzzle.id}</div>
+          <div class="absolute bottom-13 left-5 text-intro leading-none">#{puzzle.id}</div>
         </div>
       </div>
     {/each}
