@@ -279,67 +279,67 @@ export const puzzleConfigs = [
     description: "Un autre nouveau puzzle créatif",
     completed: false,
     container: {
-        width: 400,
-        height: 600
-      },
-      pieces: [
-        {
-          "id": 1,
-          "rotation": 225,
-          "flipped": false,
-          "x": 346,
-          "y": 227
-        },
-        {
-          "id": 2,
-          "rotation": 225,
-          "flipped": false,
-          "x": 61,
-          "y": 227
-        },
-        {
-          "id": 3,
-          "rotation": 315,
-          "flipped": false,
-          "x": 322,
-          "y": 441
-        },
-        {
-          "id": 4,
-          "rotation": 45,
-          "flipped": false,
-          "x": 61,
-          "y": 418
-        },
-        {
-          "id": 5,
-          "rotation": 135,
-          "flipped": false,
-          "x": 346,
-          "y": 370
-        },
-        {
-          "id": 6,
-          "rotation": 135,
-          "flipped": false,
-          "x": 84,
-          "y": 347
-        },
-        {
-          "id": 7,
-          "rotation": 225,
-          "flipped": false,
-          "x": 203,
-          "y": 275
-        }
-      ]
+    "width": 400,
+    "height": 600
+  },
+  pieces: [
+    {
+      "id": 1,
+      "rotation": 225,
+      "flipped": false,
+      "x": 295,
+      "y": 324
+    },
+    {
+      "id": 2,
+      "rotation": 135,
+      "flipped": false,
+      "x": 200,
+      "y": 419
+    },
+    {
+      "id": 3,
+      "rotation": 135,
+      "flipped": false,
+      "x": 129,
+      "y": 300
+    },
+    {
+      "id": 4,
+      "rotation": 45,
+      "flipped": false,
+      "x": 105,
+      "y": 419
+    },
+    {
+      "id": 5,
+      "rotation": 45,
+      "flipped": false,
+      "x": 153,
+      "y": 229
+    },
+    {
+      "id": 6,
+      "rotation": 225,
+      "flipped": false,
+      "x": 82,
+      "y": 347
+    },
+    {
+      "id": 7,
+      "rotation": 225,
+      "flipped": false,
+      "x": 249,
+      "y": 276
+    }
+  ]
   },
   {
     id: 5,
     name: "Nouveau Puzzle 3",
     description: "Un troisième nouveau puzzle créatif",
     completed: false,
-    scale: 0.85,
+    // scale: 0.75,
     container: {
         width: 400,
         height: 600
@@ -406,56 +406,56 @@ export const puzzleConfigs = [
       height: 600
     },
     pieces: [
-      {
-        "id": 1,
-        "rotation": 180,
-        "flipped": false,
-        "x": 194,
-        "y": 480
-      },
-      {
-        "id": 2,
-        "rotation": 180,
-        "flipped": false,
-        "x": 194,
-        "y": 346
-      },
-      {
-        "id": 3,
-        "rotation": 270,
-        "flipped": false,
-        "x": 260,
-        "y": 179
-      },
-      {
-        "id": 4,
-        "rotation": 45,
-        "flipped": false,
-        "x": 204,
-        "y": 98
-      },
-      {
-        "id": 5,
-        "rotation": 90,
-        "flipped": false,
-        "x": 160,
-        "y": 179
-      },
-      {
-        "id": 6,
-        "rotation": 90,
-        "flipped": false,
-        "x": 160,
-        "y": 413
-      },
-      {
-        "id": 7,
-        "rotation": 180,
-        "flipped": false,
-        "x": 193,
-        "y": 280
-      }
-    ]
+    {
+      "id": 1,
+      "rotation": 180,
+      "flipped": false,
+      "x": 202,
+      "y": 474
+    },
+    {
+      "id": 2,
+      "rotation": 180,
+      "flipped": false,
+      "x": 202,
+      "y": 340
+    },
+    {
+      "id": 3,
+      "rotation": 270,
+      "flipped": false,
+      "x": 269,
+      "y": 173
+    },
+    {
+      "id": 4,
+      "rotation": 45,
+      "flipped": false,
+      "x": 201,
+      "y": 92
+    },
+    {
+      "id": 5,
+      "rotation": 90,
+      "flipped": false,
+      "x": 169,
+      "y": 173
+    },
+    {
+      "id": 6,
+      "rotation": 90,
+      "flipped": false,
+      "x": 168,
+      "y": 407
+    },
+    {
+      "id": 7,
+      "rotation": 180,
+      "flipped": false,
+      "x": 202,
+      "y": 274
+    }
+  ]
   },
   {
     id: 7,
