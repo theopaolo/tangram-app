@@ -6,8 +6,9 @@
   import { getAllPuzzles, PIECE_GREY_COLOR, PIECES_DATA_WITH_VIEWBOX } from '$lib/puzzleData.js';
   import { scrollPosition } from '$lib/stores/scrollPositionStore.js';
   import { onMount, tick } from 'svelte';
+  import { unfreezeScroll } from '$lib/utils/scrollFreeze.js';
 
-	let refreshTrigger = $state(0);
+  let refreshTrigger = $state(0);
 	let windowWidth = $state(0);
 	let windowHeight = $state(0);
 
@@ -406,19 +407,7 @@ function triggerConfetti() {
 	});
 
 	onMount(async () => {
-		// Unfreeze scroll since this page uses body scroll
-		const { unfreezeScroll } = await import('$lib/utils/scrollFreeze.js');
 		unfreezeScroll();
-
-		// Restore scroll position after content is rendered
-		await tick();
-		const savedPosition = scrollPosition.get('/puzzles');
-		if (savedPosition > 0) {
-			window.scrollTo({
-				top: savedPosition,
-				behavior: 'instant'
-			});
-		}
 	});
 </script>
 
