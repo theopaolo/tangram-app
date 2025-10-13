@@ -420,7 +420,10 @@ function triggerConfetti() {
 		if (puzzleGalleryElement) {
 			const savedPosition = scrollPosition.get('/puzzles');
 			if (savedPosition > 0) {
-				puzzleGalleryElement.scrollTop = savedPosition;
+				puzzleGalleryElement.scrollTo({
+					top: savedPosition,
+					behavior: 'instant'
+				});
 			}
 		}
 
