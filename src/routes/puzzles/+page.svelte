@@ -1,13 +1,16 @@
 <script>
+  import { beforeNavigate } from '$app/navigation';
   import { goto } from '$app/navigation';
   import Breadcrumb from '$lib/Breadcrumb.svelte';
   import { PIECES_DATA } from '$lib/piecesData';
   import { getAllPuzzles, PIECE_GREY_COLOR, PIECES_DATA_WITH_VIEWBOX } from '$lib/puzzleData.js';
-  import { onMount } from 'svelte';
+  import { scrollPosition } from '$lib/stores/scrollPositionStore.js';
+  import { onMount, tick } from 'svelte';
 
 	let refreshTrigger = $state(0);
 	let windowWidth = $state(0);
 	let windowHeight = $state(0);
+	let puzzleGalleryElement = $state(null);
 
 	// Get all puzzles
 	const puzzles = getAllPuzzles();
@@ -375,6 +378,10 @@ function triggerConfetti() {
   }
 
   function selectPuzzle(id) {
+    // Save scroll position before navigating
+    if (puzzleGalleryElement) {
+      scrollPosition.save('/puzzles', puzzleGalleryElement.scrollTop);
+    }
     goto(`/puzzle/${id}`);
   }
 
@@ -396,10 +403,26 @@ function triggerConfetti() {
 		{ label: 'Les Tangrams', current: true }
 	];
 
+	// Save scroll position before navigating away
+	beforeNavigate(() => {
+		if (puzzleGalleryElement) {
+			scrollPosition.save('/puzzles', puzzleGalleryElement.scrollTop);
+		}
+	});
+
 	onMount(async () => {
 		// Import scroll freeze utility and unfreeze scroll for puzzles page
 		const { unfreezeScroll, freezeScroll } = await import('$lib/utils/scrollFreeze.js');
 		unfreezeScroll();
+
+		// Restore scroll position after content is rendered
+		await tick();
+		if (puzzleGalleryElement) {
+			const savedPosition = scrollPosition.get('/puzzles');
+			if (savedPosition > 0) {
+				puzzleGalleryElement.scrollTop = savedPosition;
+			}
+		}
 
 		// Return cleanup function to restore scroll freeze when leaving this page
 		return () => {
@@ -448,7 +471,7 @@ function triggerConfetti() {
     position: relative;
   }
 
- 
+
   /* .puzzle-card:first-of-type .absolute.bottom-13.left-5.text-intro.leading-none{
     bottom: 82px;
   } */
@@ -459,7 +482,7 @@ function triggerConfetti() {
   }
 
   .puzzle-card:first-of-type .puzzle-preview.completed {
-   
+
   }
 .puzzle-card:first-of-type .puzzle-preview.completed .complet_1{
     bottom:16%;
@@ -580,11 +603,11 @@ function triggerConfetti() {
 <!-- Puzzle Selection Screen -->
 <!-- <div class="p-5 mt-[90px]"> -->
   <div class="">
-    
 
-  <div class="puzzle-gallery">
-    
-    
+
+  <div class="puzzle-gallery" bind:this={puzzleGalleryElement}>
+
+
     {#each puzzles as puzzle (puzzle.id)}
       {@const previewScale = calculatePreviewScale(puzzle, windowWidth, windowHeight)}
       <div class="puzzle-card h-dvh " role="button" tabindex="0"
