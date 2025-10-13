@@ -415,8 +415,8 @@ function triggerConfetti() {
   .puzzle-gallery {
     display: flex;
     flex-direction: column;
-    padding-top: 120px;
-    padding-bottom: 60px;
+   /*  padding-top: 120px;
+    padding-bottom: 60px;*/
     min-height: 100vh;
   }
 
