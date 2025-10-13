@@ -315,7 +315,7 @@
 	</div>
 </div>
 
-<div class="bloc_one absolute top-0 left-0 z-40 flex hidden h-svh w-screen flex-col items-center justify-evenly py-[80px] text-center opacity-0">
+<div class="bloc_one absolute top-0 left-0 z-40 flex hidden h-svh w-screen flex-col items-center justify-evenly  pt-[70px] pb-[40px] text-center opacity-0">
 	<div class="w-[90dvw]">
 		<p>
 			{#if totalFound === 0}
@@ -365,7 +365,7 @@
 
 </footer>
 
-<div class="conta absolute top-0 left-0 flex h-[103dvh] w-[103dvh] translate-0 flex-col justify-around">
+<div class="conta mt-2 absolute top-0 left-0 flex h-[103dvh] w-[103dvh] translate-0 flex-col justify-around">
 	<div>
 		<div class="piece p1">
 			<svg viewBox="0 0 7.5 2.5">
