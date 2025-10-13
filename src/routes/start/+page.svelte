@@ -95,7 +95,7 @@
 <!-- {/if} -->
 
 
-<div class="bloc_one pointer-events-none absolute top-0 left-0 z-30 flex h-svh w-screen flex-col items-center justify-evenly py-[80px] text-center" >
+<div class="bloc_one pointer-events-none absolute top-0 left-0 z-30 flex h-svh w-screen flex-col items-center justify-evenly pt-[70px] pb-[40px] text-center" >
 	<div class="w-[90dvw]">
 		<p>
 			{#if totalFound === 0}
@@ -154,7 +154,7 @@
 	<Breadcrumb items={breadcrumbItems} />
 </footer>
 
-<div class="conta absolute top-[50%] left-[50%] z-10 flex h-[80dvw] w-[80dvw] -translate-[50%]">
+<div class="conta mt-2 absolute top-[50%] left-[50%] z-10 flex h-[80dvw] w-[80dvw] -translate-[50%]">
 	<div>
 		<div class="piece p1">
 			<svg viewBox="0 0 7.5 2.5">
