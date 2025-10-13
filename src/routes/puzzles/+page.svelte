@@ -1,11 +1,9 @@
 <script>
-  import { beforeNavigate } from '$app/navigation';
   import { goto } from '$app/navigation';
   import Breadcrumb from '$lib/Breadcrumb.svelte';
   import { PIECES_DATA } from '$lib/piecesData';
   import { getAllPuzzles, PIECE_GREY_COLOR, PIECES_DATA_WITH_VIEWBOX } from '$lib/puzzleData.js';
-  import { scrollPosition } from '$lib/stores/scrollPositionStore.js';
-  import { onMount, tick } from 'svelte';
+  import { onMount } from 'svelte';
   import { unfreezeScroll } from '$lib/utils/scrollFreeze.js';
 
   let refreshTrigger = $state(0);
@@ -378,8 +376,6 @@ function triggerConfetti() {
   }
 
   function selectPuzzle(id) {
-    // Save scroll position before navigating
-    scrollPosition.save('/puzzles', window.scrollY);
     goto(`/puzzle/${id}`);
   }
 
@@ -401,10 +397,6 @@ function triggerConfetti() {
 		{ label: 'Les Tangrams', current: true }
 	];
 
-	// Save scroll position before navigating away
-	beforeNavigate(() => {
-		scrollPosition.save('/puzzles', window.scrollY);
-	});
 
 	onMount(async () => {
 		unfreezeScroll();
@@ -415,8 +407,6 @@ function triggerConfetti() {
   .puzzle-gallery {
     display: flex;
     flex-direction: column;
-   /*  padding-top: 120px;
-    padding-bottom: 60px;*/
     min-height: 100vh;
   }
 
@@ -548,7 +538,7 @@ function triggerConfetti() {
     {#each puzzles as puzzle (puzzle.id)}
       {@const previewScale = calculatePreviewScale(puzzle, windowWidth, windowHeight)}
 
-      <div class="puzzle-card h-dvh " role="button" tabindex="0"
+      <div class="puzzle-card h-dvh " id="{puzzle.id}" role="button" tabindex="0"
           onclick={() => selectPuzzle(puzzle.id)}
           onkeydown={(e) => e.key === 'Enter' && selectPuzzle(puzzle.id)}>
         <div class={allPuzzlesCompleted ? 'puzzle-preview w-full completed' : 'puzzle-preview w-full'}>

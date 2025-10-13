@@ -813,8 +813,8 @@ function triggerConfetti() {
         const rotationMatch = checkRotationMatch(piece.id, piece.rotation, target.id, target.rotation, planePuzzle, PIECES_DATA, DEBUG_MODE);
 
         if (DEBUG_MODE) {
-          debugLog(`  🔍 Piece ${piece.id} at (${Math.round(piece.x)}, ${Math.round(piece.y)}) rotation: ${piece.rotation}°`);
-          debugLog(`    📏 Distance: ${Math.round(distance)} (tolerance: ${Math.round(tolerance)})`);
+          debugLog(` 🔍 Piece ${piece.id} at (${Math.round(piece.x)}, ${Math.round(piece.y)}) rotation: ${piece.rotation}°`);
+          debugLog(` 📏 Distance: ${Math.round(distance)} (tolerance: ${Math.round(tolerance)})`);
         }
 
         // Check for correct position AND rotation
@@ -882,10 +882,6 @@ function triggerConfetti() {
       // 🎆 Ajout ici :
       setTimeout(() => triggerConfetti(), 100);
     }
-  }
-
-  function backToPuzzleList() {
-    goto('/puzzles');
   }
 
   function resetPuzzle() {
@@ -1166,17 +1162,11 @@ function triggerConfetti() {
 </style>
 
 <header class="fixed left-5 top-0 z-10 flex items-center pt-4 ">
-    <a href="/puzzles" class="flex gap-2" aria-label="Retour à l'accueil">
-      <!-- <img
-      src="/images/chat.svg"
-      alt="grey"
-      class="h-auto !w-[42px]"
-    /> -->
+    <a href="/puzzles#{puzzleId}" class="flex gap-2" aria-label="Retour à l'accueil">
       <img
-      src="/images/retour_tangrams.svg"
-      alt="retour"
-      class="h-auto !w-[162px]"
-    />
+        src="/images/retour_tangrams.svg"
+        alt="retour"
+        class="h-auto !w-[162px]" >
     </a>
 </header>
 
