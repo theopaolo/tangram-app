@@ -22,6 +22,13 @@
   const currentPuzzle = $derived(getPuzzleById(puzzleId));
   let planePuzzle = $state([]);
 
+  // Calculate next puzzle URL (7 puzzles total)
+  const nextPuzzleUrl = $derived(() => {
+    const currentId = parseInt(puzzleId);
+    const nextId = currentId + 1;
+    return nextId <= 7 ? `/puzzle/${nextId}` : `/puzzles`;
+  });
+
   // Breadcrumb items
   const breadcrumbItems = [
     { label: 'Accueil', href: '/home' },
@@ -1288,7 +1295,7 @@ function triggerConfetti() {
           />
         </button>
 
-      <a href="/puzzles" class="h-[68.41px" aria-label="Continuer">
+      <a href={nextPuzzleUrl} class="h-[68.41px" aria-label="Continuer">
         <img
         src="/images/continuer_2.svg"
         alt="Continuer"
