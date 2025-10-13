@@ -448,8 +448,6 @@ function triggerConfetti() {
     flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
-    /* scroll-snap-type: y mandatory;
-    -webkit-overflow-scrolling: touch; */
     height: 100svh;
     scrollbar-width: none;
   }
@@ -461,8 +459,6 @@ function triggerConfetti() {
   .puzzle-card {
     cursor: pointer;
     flex: 0 0 auto;
-    scroll-snap-align: center;
-    scroll-snap-stop: always;
   }
 
   .puzzle-preview {
