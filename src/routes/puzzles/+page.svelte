@@ -566,24 +566,12 @@ function triggerConfetti() {
       class="h-auto !w-[162px]"
         />
     </a>
-
-    <!-- <a href="/start" class="right-5 absolute" aria-label="Retour au Chromogram">
-      <img
-      src="/images/retour_chromo.svg"
-      alt="retour"
-      class="h-auto !w-[162px]"
-        />
-    </a> -->
-
   </header>
 
 <!-- Puzzle Selection Screen -->
-<!-- <div class="p-5 mt-[90px]"> -->
   <div class="">
     
-
   <div class="puzzle-gallery">
-    
     
     {#each puzzles as puzzle (puzzle.id)}
       {@const previewScale = calculatePreviewScale(puzzle, windowWidth, windowHeight)}
@@ -591,8 +579,11 @@ function triggerConfetti() {
           onclick={() => selectPuzzle(puzzle.id)}
           onkeydown={(e) => e.key === 'Enter' && selectPuzzle(puzzle.id)}>
         <div class={allPuzzlesCompleted ? 'puzzle-preview w-full completed' : 'puzzle-preview w-full'}>
+
           {#if allPuzzlesCompleted}
-            <div onclick={triggerConfetti} class="phrase text-center absolute top-[12%] m-auto left-0 right-0 z-1">
+            <!-- svelte-ignore a11y_no_static_element_interactions -->
+            <!-- svelte-ignore a11y_click_events_have_key_events -->
+            <div onclick={(e) => { e.stopPropagation(); triggerConfetti();}} class="phrase text-center absolute top-[12%] m-auto left-0 right-0 z-10000000">
               <p>Bravo tu as completé les 7 tangrams  !<br/>Télécharge un fond d'écran !</p>
               <a href="/download/Chromogram_Wallpaper_MRAC.jpg" download class="block">
               <div class="w-[124px] h-[68px] m-auto relative mt-2">
