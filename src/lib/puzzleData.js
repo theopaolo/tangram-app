@@ -156,6 +156,7 @@ export const puzzleConfigs = [
     name: "Le Cygne",
     description: "Un cygne élégant",
     completed: false,
+    scale: 0.75,
     container: {
         width: 400,
         height: 600
@@ -339,7 +340,7 @@ export const puzzleConfigs = [
     name: "Nouveau Puzzle 3",
     description: "Un troisième nouveau puzzle créatif",
     completed: false,
-    // scale: 0.75,
+    scale: 0.75,
     container: {
         width: 400,
         height: 600

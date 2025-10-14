@@ -262,8 +262,8 @@ function triggerConfetti() {
     // Check if puzzle uses new container format
     const hasContainer = puzzle.container;
 
-    // Apply custom scale multiplier if defined
-    const customScale = puzzle.scale ?? 0.6;
+    // Fixed scale for puzzle listing preview (ignore puzzle.scale)
+    const customScale = 0.6;
 
     if (hasContainer) {
       // New format: scale to fit within available space with padding
