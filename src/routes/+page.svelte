@@ -327,7 +327,7 @@
 </div>
 
 <div
-	class="conta absolute top-1/2 left-1/2 h-[103dvh] w-[103dvh] -translate-x-[60%] -translate-y-1/2"
+	class="conta mt-2 absolute top-1/2 left-1/2 h-[103dvh] w-[103dvh] -translate-x-[60%] -translate-y-1/2"
 >
 	<div class="piece p1">
 		<svg viewBox="0 0 7.5 2.5">
