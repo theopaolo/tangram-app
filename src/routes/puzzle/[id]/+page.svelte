@@ -34,7 +34,7 @@
     { label: 'Accueil', href: '/home' },
     { label: 'Le Chromogram', href: '/start' },
     { label: 'Les Tangrams', href: '/puzzles' },
-    { label: `numéro ${puzzleId}`, current: true }
+    { label: `#${puzzleId}`, current: true }
   ];
 
 // --- 🎉 EFFET DE PAILLETTES ---
