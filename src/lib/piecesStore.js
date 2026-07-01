@@ -3,9 +3,12 @@
  */
 
 import { browser } from '$app/environment';
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
+import { activeChromogramId } from './chromogramStore.js';
 
-const STORAGE_KEY = 'piece'; // Standardizing on 'piece' key
+// Found pieces are scoped per chromogramme set so progress in one set does not
+// leak into another. Key: `piece_<chromogramId>`.
+const keyForActiveSet = () => `piece_${get(activeChromogramId)}`;
 
 /**
  * PiecesStore class for managing found pieces with localStorage persistence
@@ -18,6 +21,16 @@ class PiecesStore {
     constructor() {
         // Subscribe to our own store to get the subscribe method
         this.subscribe = this.#store.subscribe;
+
+        // When the active set changes, reload progress for the new set.
+        if (browser) {
+            activeChromogramId.subscribe(() => {
+                if (this.#hasInitialized) {
+                    this.#pieces = this.#loadFromStorage();
+                    this.#update();
+                }
+            });
+        }
     }
 
     /**
@@ -28,7 +41,7 @@ class PiecesStore {
         if (!browser) return [];
 
         try {
-            const stored = localStorage.getItem(STORAGE_KEY);
+            const stored = localStorage.getItem(keyForActiveSet());
             return stored ? stored.split(',').filter(Boolean) : [];
         } catch (e) {
             console.error('Could not read from localStorage:', e);
@@ -44,7 +57,7 @@ class PiecesStore {
         if (!browser || !this.#hasInitialized) return;
 
         try {
-            localStorage.setItem(STORAGE_KEY, this.#pieces.join(','));
+            localStorage.setItem(keyForActiveSet(), this.#pieces.join(','));
         } catch (e) {
             console.error('Could not save to localStorage:', e);
         }

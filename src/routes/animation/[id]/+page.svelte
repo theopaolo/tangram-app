@@ -4,12 +4,12 @@
   let gsap;
 
   import { goto } from '$app/navigation';
-  import { PIECES_DATA } from '$lib/piecesData';
+  import { activeArtworks } from '$lib/chromogramStore.js';
   import { piecesStore } from '$lib/piecesStore.js';
 
   // Get piece ID from URL params
   const pieceId = $derived($page.params.id);
-  const currentPiece = $derived(PIECES_DATA[pieceId]);
+  const currentPiece = $derived($activeArtworks[pieceId]);
 
 	let totalFound = $state(0);
 	let foundPieces = $state([]);

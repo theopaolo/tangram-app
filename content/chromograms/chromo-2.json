@@ -1,0 +1,35 @@
+{
+  "id": "Chromo-2",
+  "name": "Chromo-test",
+  "title": "Chromo 2",
+  "intro": "CHROMOGRAM ou tangram des couleurs est un jeu proposé par l’artiste Armelle Caron qui se renouvelle à chaque exposition de collection. L’art est habité de mille couleurs. Subtiles, franches, opposées, brutales ou délicates. Elles sont partout et toujours précisément choisies par les artistes.",
+  "puzzles": [
+    "8",
+    "3",
+    "2"
+  ],
+  "pieces": [
+    {
+      "pieceId": 4,
+      "color": "#c12f2f",
+      "color_name": "Brique",
+      "rvb": "193,47,47",
+      "cmjn": "95, 37, 91, 38",
+      "titre_artwork": "Une titre",
+      "artiste": "une artiste",
+      "date": "11/24/1876",
+      "story": "Un court paragraphe de pres",
+      "dapres_toi": "Tralala",
+      "dapres": [
+        "une rep",
+        "deux rep"
+      ],
+      "images": [
+        {
+          "src": "/images/photo_2026-06-11 17.07.50.jpeg",
+          "credits": "@colorcatcher"
+        }
+      ]
+    }
+  ]
+}

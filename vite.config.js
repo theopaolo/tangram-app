@@ -20,6 +20,11 @@ export default defineConfig({
 	server: {
 		host: '0.0.0.0', // Accessible from other devices on the network
 		port: 5173,
+		fs: {
+			// CMS content lives at the repo root (outside src) — allow Vite to
+			// serve the glob-imported JSON in dev.
+			allow: ['content']
+		},
 		...(hasCerts
 			? {
 				// Enable HTTPS only when certs are present

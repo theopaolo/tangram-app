@@ -8,7 +8,7 @@
 
 
   import Breadcrumb from '$lib/Breadcrumb.svelte';
-  import { getPuzzleById, puzzleConfigs, PIECES_DATA, PIECES_DATA_WITH_VIEWBOX, PIECE_GREY_COLOR } from '$lib/puzzleData.js';
+  import { getPuzzleById, puzzleConfigs, activePuzzles, SHAPE_GEOMETRY_WITH_VIEWBOX, shapesWithViewBox, PIECE_GREY_COLOR } from '$lib/puzzleData.js';
   import {
   	checkRotationMatch,
   	debugLog,
@@ -22,11 +22,12 @@
   const currentPuzzle = $derived(getPuzzleById(puzzleId));
   let planePuzzle = $state([]);
 
-  // Calculate next puzzle URL (7 puzzles total)
-  const nextPuzzleUrl = $derived(() => {
-    const currentId = parseInt(puzzleId);
-    const nextId = currentId + 1;
-    return nextId <= 7 ? `/puzzle/${nextId}` : `/puzzles`;
+  // Next puzzle in the active chromogramme's selection (falls back to /puzzles)
+  const nextPuzzleUrl = $derived.by(() => {
+    const list = $activePuzzles;
+    const idx = list.findIndex((p) => String(p.id) === String(puzzleId));
+    const next = idx >= 0 ? list[idx + 1] : null;
+    return next ? `/puzzle/${next.id}` : '/puzzles';
   });
 
   // Breadcrumb items
@@ -42,7 +43,7 @@ function triggerConfetti() {
   const container = document.querySelector('.success-message');
   if (!container) return;
 
-  const pieces = Object.values(PIECES_DATA_WITH_VIEWBOX);
+  const pieces = Object.values($shapesWithViewBox);
   const canvas = document.createElement('canvas');
   canvas.className = 'confetti-canvas';
   Object.assign(canvas.style, {
@@ -206,7 +207,7 @@ function triggerConfetti() {
       if (piece.id !== t.id) return false;
       const distance = Math.hypot(piece.x - t.screenX, piece.y - t.screenY);
       if (distance >= tolerance) return false;
-      const rotOk = checkRotationMatch(piece.id, piece.rotation, t.id, t.rotation, planePuzzle, PIECES_DATA, false);
+      const rotOk = checkRotationMatch(piece.id, piece.rotation, t.id, t.rotation, planePuzzle, SHAPE_GEOMETRY_WITH_VIEWBOX, false);
       return rotOk;
     });
     return target || null;
@@ -328,7 +329,7 @@ function triggerConfetti() {
       target.id,
       target.rotation,
       planePuzzle,
-      PIECES_DATA,
+      SHAPE_GEOMETRY_WITH_VIEWBOX,
       false
     );
 
@@ -341,11 +342,11 @@ function triggerConfetti() {
     if (!piece || piece.inContainer) return PIECE_GREY_COLOR;
 
     if (puzzleSolved || isPieceProperlyPlacedCurrent(piece)) {
-      return PIECES_DATA_WITH_VIEWBOX[pieceId].color;
+      return $shapesWithViewBox[pieceId].color;
     }
 
     // Placed but not correctly aligned: keep base color; opacity handled separately
-    return PIECES_DATA_WITH_VIEWBOX[pieceId].color;
+    return $shapesWithViewBox[pieceId].color;
   }
 
   // No opacity variations needed
@@ -362,7 +363,7 @@ function triggerConfetti() {
       if (piece.id !== target.id) continue;
 
       // Check rotation compatibility
-      const rotationMatch = checkRotationMatch(piece.id, piece.rotation, target.id, target.rotation, planePuzzle, PIECES_DATA, false);
+      const rotationMatch = checkRotationMatch(piece.id, piece.rotation, target.id, target.rotation, planePuzzle, SHAPE_GEOMETRY_WITH_VIEWBOX, false);
       if (!rotationMatch) continue;
 
       // Calculate distance
@@ -430,7 +431,7 @@ function triggerConfetti() {
   // Initialize pieces in the container at the bottom
   function initializePieces() {
     pieces =
-      Object.keys(PIECES_DATA)
+      Object.keys(SHAPE_GEOMETRY_WITH_VIEWBOX)
       .map((id) => (
         {
           id: parseInt(id), x: 0, y: 0, rotation: 0, origX: 0, origY: 0, inContainer: true, animationKey: 0, matched: false,
@@ -515,7 +516,7 @@ function triggerConfetti() {
 
       // Legacy format: calculate bounds from absolute coordinates
       const allFinalVertices = planePuzzle.flatMap(pieceState =>
-        getTransformedPoints(pieceState, PIECES_DATA_WITH_VIEWBOX[pieceState.id])
+        getTransformedPoints(pieceState, $shapesWithViewBox[pieceState.id])
       );
 
       const xs = allFinalVertices.map(p => p.x);
@@ -817,7 +818,7 @@ function triggerConfetti() {
         const distance = Math.hypot(piece.x - target.screenX, piece.y - target.screenY);
 
         // Smart rotation matching
-        const rotationMatch = checkRotationMatch(piece.id, piece.rotation, target.id, target.rotation, planePuzzle, PIECES_DATA, DEBUG_MODE);
+        const rotationMatch = checkRotationMatch(piece.id, piece.rotation, target.id, target.rotation, planePuzzle, SHAPE_GEOMETRY_WITH_VIEWBOX, DEBUG_MODE);
 
         if (DEBUG_MODE) {
           debugLog(` 🔍 Piece ${piece.id} at (${Math.round(piece.x)}, ${Math.round(piece.y)}) rotation: ${piece.rotation}°`);
@@ -855,7 +856,7 @@ function triggerConfetti() {
 
           if (closestPiece) {
             const canFit = closestPiece.piece.id === target.id;
-            const rotMatch = checkRotationMatch(closestPiece.piece.id, closestPiece.piece.rotation, target.id, target.rotation, planePuzzle, PIECES_DATA, false);
+            const rotMatch = checkRotationMatch(closestPiece.piece.id, closestPiece.piece.rotation, target.id, target.rotation, planePuzzle, SHAPE_GEOMETRY_WITH_VIEWBOX, false);
             const rotInfo = `${closestPiece.piece.rotation}°→${target.rotation}°`;
             matchResults.push(`❌ Target ${target.id}: closest is piece ${closestPiece.piece.id} (dist: ${Math.round(closestPiece.distance)}, fit: ${canFit}, rot: ${rotMatch ? '✓' : '✗'}${rotInfo})`);
           } else {
@@ -943,7 +944,7 @@ function triggerConfetti() {
 
     // Initialize debug mode if enabled
     if (DEBUG_MODE) {
-      initializeDebugMode(PIECES_DATA);
+      initializeDebugMode(SHAPE_GEOMETRY_WITH_VIEWBOX);
     }
   });
 </script>
@@ -1211,7 +1212,7 @@ function triggerConfetti() {
 
     <!-- Target outline -->
     {#each targetPieces as target (target.id)}
-      {@const pieceData = PIECES_DATA_WITH_VIEWBOX[target.id]}
+      {@const pieceData = $shapesWithViewBox[target.id]}
       {@const isMagneticTarget = magneticTarget && magneticTarget.id === target.id}
       <div class="target-outline"
         class:magnetic-target={isMagneticTarget}
@@ -1230,7 +1231,7 @@ function triggerConfetti() {
     {/each}
 
     {#each pieces.filter(p => !p.inContainer) as piece (piece.id)}
-      {@const pieceData = PIECES_DATA_WITH_VIEWBOX[piece.id]}
+      {@const pieceData = $shapesWithViewBox[piece.id]}
       <div
         class="tangram-piece"
         class:active={activePieceId === piece.id}
@@ -1264,7 +1265,7 @@ function triggerConfetti() {
 
   <div class="pieces-container" class:hide-container={puzzleSolved} bind:this={piecesContainer}>
     {#each pieces.map(p => p.id === 3 ? pieces.find(x => x.id === 4) : p.id === 4 ? pieces.find(x => x.id === 3) : p) as piece (piece.id)}
-      {@const pieceData = PIECES_DATA_WITH_VIEWBOX[piece.id]}
+      {@const pieceData = $shapesWithViewBox[piece.id]}
         <div class="container-piece relative z-1 numero-{piece.id}" class:is-placeholder={!piece.inContainer}>
           <svg viewBox={pieceData.viewBox}>
             <polygon

@@ -1,0 +1,61 @@
+{
+  "id": 1,
+  "name": "La pomme",
+  "description": "Une pomme coupée en deux",
+  "completed": false,
+  "container": {
+    "width": 400,
+    "height": 600
+  },
+  "pieces": [
+    {
+      "id": 1,
+      "rotation": 90,
+      "flipped": false,
+      "x": 131,
+      "y": 392
+    },
+    {
+      "id": 2,
+      "rotation": 0,
+      "flipped": false,
+      "x": 266,
+      "y": 392
+    },
+    {
+      "id": 3,
+      "rotation": 180,
+      "flipped": false,
+      "x": 97,
+      "y": 326
+    },
+    {
+      "id": 4,
+      "rotation": 0,
+      "flipped": false,
+      "x": 131,
+      "y": 259
+    },
+    {
+      "id": 5,
+      "rotation": 0,
+      "flipped": false,
+      "x": 231,
+      "y": 142
+    },
+    {
+      "id": 6,
+      "rotation": 0,
+      "flipped": false,
+      "x": 266,
+      "y": 224
+    },
+    {
+      "id": 7,
+      "rotation": 270,
+      "flipped": false,
+      "x": 266,
+      "y": 325
+    }
+  ]
+}

@@ -1,20 +1,14 @@
 <script>
 	import { browser } from '$app/environment';
-	import { PIECES_DATA } from '$lib/piecesData';
+	import { getActiveArtworks } from '$lib/chromogramStore.js';
 	import { isCreditsOpen } from '$lib/stores/creditsStore.js';
 	import { onDestroy, onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
 
 	let gsap;
-	const VARS = [
-		PIECES_DATA[1].color,
-		PIECES_DATA[2].color,
-		PIECES_DATA[3].color,
-		PIECES_DATA[4].color,
-		PIECES_DATA[5].color,
-		PIECES_DATA[6].color,
-		PIECES_DATA[7].color
-	];
+	const artworks = getActiveArtworks();
+	const GREY = '#e7e7e7';
+	const VARS = [1, 2, 3, 4, 5, 6, 7].map((n) => artworks[n]?.color ?? GREY);
 	let COLORS = [];
 	let currentIndex = 0;
 	let tl;

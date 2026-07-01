@@ -1,8 +1,8 @@
 <script>
   import { goto } from '$app/navigation';
   import Breadcrumb from '$lib/Breadcrumb.svelte';
-  import { PIECES_DATA } from '$lib/piecesData';
-  import { getAllPuzzles, PIECE_GREY_COLOR, PIECES_DATA_WITH_VIEWBOX } from '$lib/puzzleData.js';
+  import { getActiveArtworks } from '$lib/chromogramStore.js';
+  import { activePuzzles, PIECE_GREY_COLOR, shapesWithViewBox } from '$lib/puzzleData.js';
   import { onMount } from 'svelte';
   import { unfreezeScroll } from '$lib/utils/scrollFreeze.js';
 
@@ -11,8 +11,8 @@
 	let windowHeight = $state(0);
 	let resizeTimeout = null;
 
-	// Get all puzzles
-	const puzzles = getAllPuzzles();
+	// Puzzles available for the active chromogramme set
+	const puzzles = $derived($activePuzzles);
 
 
 
@@ -21,7 +21,7 @@ function triggerConfetti() {
   // const container = document.querySelector('.success-message');
   // if (!container) return;
 
-  const pieces = Object.values(PIECES_DATA_WITH_VIEWBOX);
+  const pieces = Object.values($shapesWithViewBox);
   const canvas = document.createElement('canvas');
   canvas.className = 'confetti-canvas';
   Object.assign(canvas.style, {
@@ -146,7 +146,7 @@ function triggerConfetti() {
         : Array.isArray(progress.matchedTargetIds)
           ? progress.matchedTargetIds.map((tid) => ({ targetId: tid, pieceId: null }))
           : [];
-      const completed = Boolean(progress.completed) || matches.length === Object.keys(PIECES_DATA).length;
+      const completed = Boolean(progress.completed) || matches.length === Object.keys(getActiveArtworks()).length;
       return { matches, completed };
     } catch (e) {
       return { matches: [], completed: false };
@@ -232,15 +232,16 @@ function triggerConfetti() {
     const match = matches.find((m) => m && m.targetId === targetId);
     if (!match) return PIECE_GREY_COLOR;
     const pieceId = match.pieceId ?? targetId; // fallback to target id if older format
-    return PIECES_DATA_WITH_VIEWBOX[pieceId].color;
+    return $shapesWithViewBox[pieceId].color;
   }
 
 
 	function applyCol() {
   	if (typeof document === 'undefined') return; // SSR guard
-		Object.keys(PIECES_DATA).forEach((id) => {
+		const artworks = getActiveArtworks();
+		Object.keys(artworks).forEach((id) => {
 			document.documentElement.style.setProperty(
-				`--c${id}`, PIECES_DATA[id].color
+				`--c${id}`, artworks[id].color
 			);
 		});
 	}
@@ -280,7 +281,7 @@ function triggerConfetti() {
         return 0.35; // Fallback scale
       }
       const allVertices = puzzleData.flatMap(pieceState => {
-        const pieceData = PIECES_DATA_WITH_VIEWBOX[pieceState.id];
+        const pieceData = $shapesWithViewBox[pieceState.id];
         const originX = 150, originY = 150;
         const angle = pieceState.rotation * (Math.PI / 180);
         const cos = Math.cos(angle), sin = Math.sin(angle);
@@ -353,7 +354,7 @@ function triggerConfetti() {
         return { x: previewCenterX, y: previewCenterY }; // Fallback to center
       }
       const allVertices = puzzleData.flatMap(pieceState => {
-        const pieceData = PIECES_DATA_WITH_VIEWBOX[pieceState.id];
+        const pieceData = $shapesWithViewBox[pieceState.id];
         const originX = 150, originY = 150;
         const angle = pieceState.rotation * (Math.PI / 180);
         const cos = Math.cos(angle), sin = Math.sin(angle);
@@ -579,7 +580,7 @@ function triggerConfetti() {
           {/if}
 
           {#each (puzzle.container ? puzzle.pieces : puzzle.data) as originalPiece}
-            {@const pieceData = PIECES_DATA_WITH_VIEWBOX[originalPiece.id]}
+            {@const pieceData = $shapesWithViewBox[originalPiece.id]}
             {@const previewPos = calculatePreviewPosition(originalPiece, puzzle, previewScale, windowWidth, windowHeight)}
             {@const pieceColor = getPieceColor(originalPiece.id, puzzle.id, refreshTrigger)}
             <div

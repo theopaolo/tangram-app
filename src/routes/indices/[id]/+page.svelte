@@ -3,10 +3,10 @@
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 	import { piecesStore } from '$lib/piecesStore.js';
-	import { PIECES_DATA } from '$lib/piecesData';
+	import { activeArtworks } from '$lib/chromogramStore.js';
 
-	
-	const PIECES_ENTRIES = Object.entries(PIECES_DATA);
+
+	const PIECES_ENTRIES = $derived(Object.entries($activeArtworks));
 
 	let foundPieces = $derived($piecesStore);
 
@@ -350,7 +350,7 @@ function triggerConfetti(originEl, color = '#FF0000') {
 	let hasInitialized = $state(false);
 
 	let pieceId = $derived(page.params.id);
-	let currentPiece = $derived(PIECES_DATA[pieceId]);
+	let currentPiece = $derived($activeArtworks[pieceId]);
 	let totalPiece = $derived(Number($piecesStore?.length ?? 0));
 
 	

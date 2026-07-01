@@ -1,7 +1,13 @@
 <script>
 	import { goto } from '$app/navigation';
 	import OptimizedQRScanner from '$lib/OptimizedQRScanner.svelte';
-	import { PIECES_DATA } from '$lib/piecesData';
+	import {
+		setActiveChromogram,
+		getArtworks,
+		getActiveArtworks,
+		hasChromogram,
+		activeSet
+	} from '$lib/chromogramStore.js';
 	import { piecesStore } from '$lib/piecesStore.js';
 	import { onMount } from 'svelte';
 	import Breadcrumb from '$lib/Breadcrumb.svelte';
@@ -51,8 +57,9 @@
 		const { data } = event.detail;
 		const scannedData = data.toString().trim();
 
-		// Extract piece ID from URL format "@https://chromogramrac.com/X/Y"
-		// Remove @ if present, then extract the path and get the second number (Y)
+		// Extract the chromogramme set + piece ID from URL format
+		// "@https://<host>/<chromogramId>/<pieceId>" (e.g. "/chromogram-1/2").
+		let chromogramId = null;
 		let scannedId = null;
 
 		const cleanData = scannedData.replace(/^@/, ''); // Remove leading @
@@ -61,23 +68,35 @@
 			// Try to parse as URL
 			const url = new URL(cleanData);
 			const pathParts = url.pathname.split('/').filter(Boolean); // Remove empty strings
-			scannedId = pathParts[1]; // Get second number (e.g., "2" from "/1/2")
+			chromogramId = pathParts[0];
+			scannedId = pathParts[1];
 		} catch (e) {
 			// If not a valid URL, try to extract from plain format "X/Y"
-			const parts = cleanData.split('/');
-			scannedId = parts[1] || parts[0]; // Try second part, fallback to first
+			const parts = cleanData.split('/').filter(Boolean);
+			if (parts.length >= 2) {
+				chromogramId = parts[0];
+				scannedId = parts[1];
+			} else {
+				scannedId = parts[0];
+			}
 		}
+
+		// Switch to the scanned set (so progress + colours are scoped to it).
+		// Fall back to the active set when the QR omits/uses an unknown set id.
+		const knownSet = chromogramId && hasChromogram(chromogramId);
+		if (knownSet) setActiveChromogram(chromogramId);
+		const artworks = knownSet ? getArtworks(chromogramId) : getActiveArtworks();
 
 		// Update debug data
 		debugData = {
 			rawData: scannedData,
 			extractedId: scannedId,
-			isValid: !!PIECES_DATA[scannedId],
+			isValid: !!artworks[scannedId],
 			timestamp: new Date().toLocaleTimeString(),
 			fullData: event.detail
 		};
 
-		if (PIECES_DATA[scannedId]) {
+		if (artworks[scannedId]) {
 			// Add the scanned piece to the store
 			piecesStore.addPiece(scannedId);
 
@@ -135,7 +154,7 @@
 
 
 <div class="title text-title inf-bold fixed top-5 left-5 z-40 mx-aut w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">
-	<a href="/start">CHROMOGRAM #1</a>
+	<a href="/start">{$activeSet?.title ?? $activeSet?.name ?? ''}</a>
 </div>
 
 <div class="scanner-fullscreen">

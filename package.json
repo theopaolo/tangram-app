@@ -42,6 +42,7 @@
 		"@kuiper/svelte-scan-qrcode": "^0.0.5",
 		"gsap": "^3.13.0",
 		"jsqr": "^1.4.0",
+		"qrcode": "^1.5.4",
 		"swiper": "^11.2.10"
 	},
 	"engines": {

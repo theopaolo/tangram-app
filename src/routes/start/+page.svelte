@@ -5,7 +5,7 @@
 // Tangram pieces data with original colors
 	import AideContent from '$lib/AideContent.svelte';
 	import Breadcrumb from '$lib/Breadcrumb.svelte';
-	import { PIECES_DATA } from '$lib/piecesData';
+	import { getActiveArtworks, activeSet } from '$lib/chromogramStore.js';
 	import { piecesStore } from '$lib/piecesStore.js';
 	import { isAideOpen } from '$lib/stores/aideStore.js';
 
@@ -31,7 +31,7 @@
 
 	function injectPieceStyles() {
 	const style = document.createElement("style");
-	style.innerHTML = Object.keys(PIECES_DATA)
+	style.innerHTML = Object.keys(getActiveArtworks())
 		.map(id => `.p${id} polygon { fill: var(--c${id}); }`)
 		.join("\n");
 	document.head.appendChild(style);
@@ -43,11 +43,12 @@
 	function applyColors() {
 		if (typeof document === 'undefined') return; // SSR guard
 
-		Object.keys(PIECES_DATA).forEach((id) => {
+		const artworks = getActiveArtworks();
+		Object.keys(artworks).forEach((id) => {
 			const isFound = foundPieces.includes(id);
 			document.documentElement.style.setProperty(
 				`--c${id}`,
-				isFound ? PIECES_DATA[id].color : '#E6E6E6'
+				isFound ? artworks[id].color : '#E6E6E6'
 			);
 		});
 	}
@@ -82,7 +83,7 @@
 </script>
 
 <div class="title text-title inf-bold fixed top-[20px] left-[20px] z-10 mx-aut w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">
-	<a href="/home">CHROMOGRAM #1</a>
+	<a href="/home">{$activeSet?.title ?? $activeSet?.name ?? ''}</a>
 </div>
 
 <!-- {#if totalFound !== 7} -->

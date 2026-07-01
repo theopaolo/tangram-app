@@ -1,21 +1,15 @@
 <script>
     import { browser } from '$app/environment';
-    import { PIECES_DATA } from '$lib/piecesData';
+    import { getActiveArtworks } from '$lib/chromogramStore.js';
     import { piecesStore } from '$lib/piecesStore.js';
     import { isAideOpen } from '$lib/stores/aideStore.js';
     import { onDestroy, onMount, tick } from 'svelte';
     import { fly } from 'svelte/transition';
 
 	const TOTAL_BARS = 51;
-	const COLORS = [
-		PIECES_DATA[1].color,
-		PIECES_DATA[2].color,
-		PIECES_DATA[3].color,
-		PIECES_DATA[4].color,
-		PIECES_DATA[5].color,
-		PIECES_DATA[6].color,
-		PIECES_DATA[7].color
-	];
+	const artworks = getActiveArtworks();
+	const GREY = '#e7e7e7';
+	const COLORS = [1, 2, 3, 4, 5, 6, 7].map((n) => artworks[n]?.color ?? GREY);
 	const EFFECT_RADIUS = 200;
 
 	function handleRestart() {
