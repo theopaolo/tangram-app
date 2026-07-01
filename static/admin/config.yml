@@ -9,8 +9,11 @@
 backend:
   name: github
   repo: theopaolo/tangram-app
-  branch: main
-  # base_url: https://your-oauth-handler.example.workers.dev
+  branch: dev
+  # OAuth handled by this app's own serverless endpoints (see src/routes/api/*).
+  # base_url must match the deployed origin; auth_endpoint points at /api/auth.
+  base_url: https://tangram-preprod-git-dev-theopaolos-projects.vercel.app
+  auth_endpoint: api/auth
 
 # Uploaded images go next to the existing artwork images.
 media_folder: static/images
