@@ -574,8 +574,20 @@ function triggerConfetti() {
               </a>
             </div>
           {:else}
+            {@const done = completedPuzzles.length}
+            {@const remaining = puzzles.length - done}
             <div class="phrase text-center top-[15%] absolute m-auto left-0 right-0 z-1">
-              <p>Voici les 7 tangrams à compléter selon ton envie !<br/>Scrolle pour les découvrir !</p>
+              {#if done === 0}
+                <p>Voici les {puzzles.length} tangrams à compléter selon ton envie !<br/>Scrolle pour les découvrir !</p>
+              {:else if remaining === 1}
+                <p>Plus qu'un tangram à compléter !<br/>Tu y es presque !</p>
+              {:else if done >= Math.ceil(puzzles.length / 2)}
+                <p>Il te reste {remaining} tangrams à compléter !<br/>Scrolle pour les retrouver !</p>
+              {:else if done === 1}
+                <p>Tu as déjà réussi 1 tangram !<br/>Scrolle pour continuer !</p>
+              {:else}
+                <p>Tu as déjà réussi {done} tangrams !<br/>Scrolle pour continuer !</p>
+              {/if}
             </div>
           {/if}
 

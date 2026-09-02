@@ -285,7 +285,7 @@
 		border: none;
 	}
 
-	button:focus {
+	button:focus-visible {
 		outline: 2px solid rgba(255, 255, 255, 0.6);
 		outline-offset: 3px;
 	}
