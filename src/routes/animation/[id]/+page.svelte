@@ -636,7 +636,7 @@
 	</div>
 
 	<div
-		class="no-select pointer-events-none relative z-2 flex min-h-svh flex-col items-center justify-between py-[70px] text-center"
+		class="no-select pointer-events-none relative z-2 flex min-h-svh flex-col items-center justify-between py-[50px] text-center"
 	>
 		<div
 			class="pointer-events-none max-w-4/5 border border-black bg-white px-[50px] py-[20px] text-center drop-shadow"

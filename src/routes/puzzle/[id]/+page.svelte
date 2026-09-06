@@ -15,7 +15,9 @@
 		activePuzzles,
 		SHAPE_GEOMETRY_WITH_VIEWBOX,
 		shapesWithViewBox,
-		PIECE_GREY_COLOR
+		PIECE_GREY_COLOR,
+		getCamaieuColor,
+		CAMAIEU_BASE_ARTWORK
 	} from '$lib/puzzleData.js';
 	import { checkRotationMatch, debugLog, initializeDebugMode } from '../../../lib/puzzleDebug.js';
 
@@ -47,7 +49,11 @@
 		const container = document.querySelector('.success-message');
 		if (!container) return;
 
-		const pieces = Object.values($shapesWithViewBox);
+		// Confettis dans le camaïeu du puzzle courant
+		const pieces = Object.entries($shapesWithViewBox).map(([id, shape]) => ({
+			...shape,
+			color: getCamaieuColor(puzzleId, id, $shapesWithViewBox)
+		}));
 		const canvas = document.createElement('canvas');
 		canvas.className = 'confetti-canvas';
 		Object.assign(canvas.style, {
@@ -253,6 +259,15 @@
 		for (const piece of pieces) {
 			const target = findMatchedTargetForPiece(piece);
 			if (target && !usedTargetIds.has(target.id)) {
+				// Recale la pièce validée sur l'orientation et la position canoniques
+				// de sa cible : acceptée grâce à la symétrie (90°/180°), elle restait
+				// sinon affichée dans le mauvais sens
+				if (piece.rotation !== target.rotation) {
+					piece.rotation = target.rotation;
+					piece.animationKey += 1;
+				}
+				piece.x = target.screenX;
+				piece.y = target.screenY;
 				matches.push({
 					targetId: target.id,
 					pieceId: piece.id,
@@ -385,11 +400,11 @@
 		if (!piece || piece.inContainer) return PIECE_GREY_COLOR;
 
 		if (puzzleSolved || isPieceProperlyPlacedCurrent(piece)) {
-			return $shapesWithViewBox[pieceId].color;
+			return getCamaieuColor(puzzleId, pieceId, $shapesWithViewBox);
 		}
 
 		// Placed but not correctly aligned: keep base color; opacity handled separately
-		return $shapesWithViewBox[pieceId].color;
+		return getCamaieuColor(puzzleId, pieceId, $shapesWithViewBox);
 	}
 
 	// No opacity variations needed
@@ -502,6 +517,8 @@
 
 		// Padding inside the red frame for consistent spacing on all sides
 		const PUZZLE_PADDING = 0;
+		// Légère marge de respiration à droite et à gauche de la figure
+		const PUZZLE_H_MARGIN = 20;
 
 		// Check if puzzle uses new container format
 		const currentConfig = puzzleConfigs.find((p) => p.id === parseInt(puzzleId));
@@ -515,17 +532,49 @@
 			containerHeight = currentConfig.container.height;
 
 			// Calculate available space with padding
-			const availableWidth = containerSize.width - PUZZLE_PADDING * 2;
+			const availableWidth = containerSize.width - PUZZLE_PADDING * 2 - PUZZLE_H_MARGIN * 2;
 			const availableHeight = containerSize.height - PUZZLE_PADDING * 2;
 
-			// Scale container to fit available space with padding
-			scaleFactor = Math.min(availableWidth / containerWidth, availableHeight / containerHeight);
+			// L'échelle se calcule sur l'emprise RÉELLE de la figure, pas sur le
+			// container déclaré : plusieurs puzzles (2, 3, 4…) ont des pièces qui
+			// débordent de leur container 400x600 et sortaient de l'écran mobile.
+			// Convention de rendu : chaque pièce est centrée sur (x, y) et pivotée
+			// autour du centre de sa propre bbox.
+			const figVertices = planePuzzle.flatMap((t) => {
+				const geom = $shapesWithViewBox[t.id];
+				if (!geom) return [];
+				const [vbX, vbY, vbW, vbH] = geom.viewBox.split(' ').map(Number);
+				const bcx = vbX + vbW / 2;
+				const bcy = vbY + vbH / 2;
+				const a = (((t.rotation ?? 0) % 360) * Math.PI) / 180;
+				const cos = Math.cos(a);
+				const sin = Math.sin(a);
+				return geom.points
+					.split(' ')
+					.map((s) => s.split(',').map(Number))
+					.map(([px, py]) => ({
+						x: (px - bcx) * cos - (py - bcy) * sin + t.x,
+						y: (px - bcx) * sin + (py - bcy) * cos + t.y
+					}));
+			});
+			const figMinX = Math.min(...figVertices.map((p) => p.x));
+			const figMaxX = Math.max(...figVertices.map((p) => p.x));
+			const figMinY = Math.min(...figVertices.map((p) => p.y));
+			const figMaxY = Math.max(...figVertices.map((p) => p.y));
+			const figCenterX = (figMinX + figMaxX) / 2;
+			const figCenterY = (figMinY + figMaxY) / 2;
+
+			scaleFactor = Math.min(
+				availableWidth / (figMaxX - figMinX),
+				availableHeight / (figMaxY - figMinY)
+			);
 
 			// Apply custom scale multiplier if defined
 			const customScale = currentConfig.scale ?? 1;
 			scaleFactor *= customScale;
 
 			puzzleScale = scaleFactor;
+			var figCenter = { x: figCenterX, y: figCenterY };
 
 			console.log('Container format puzzle:', {
 				puzzleId,
@@ -559,11 +608,10 @@
 						(containerHeight * scaleFactor) / 2 +
 						target.y * containerHeight * scaleFactor;
 				} else {
-					// New absolute format: scale absolute coordinates directly
-					const containerCenterX = containerWidth / 2;
-					const containerCenterY = containerHeight / 2;
-					screenX = screenCenterX + (target.x - containerCenterX) * scaleFactor;
-					screenY = screenCenterY + (target.y - containerCenterY) * scaleFactor;
+					// New absolute format: center on the figure's real bounds so the
+					// whole tangram stays on screen even when it overflows its container
+					screenX = screenCenterX + (target.x - figCenter.x) * scaleFactor;
+					screenY = screenCenterY + (target.y - figCenter.y) * scaleFactor;
 				}
 
 				return { ...target, screenX, screenY };
@@ -920,6 +968,15 @@
 			// If we found a valid piece, mark it as matched
 			if (validPiece) {
 				matchedPieceIds.add(validPiece.id);
+				// Recale la pièce sur l'orientation et la position canoniques de la
+				// cible : une pièce validée grâce à la symétrie (90°/180°) restait
+				// sinon affichée « à l'envers » malgré l'acceptation
+				if (validPiece.rotation !== target.rotation) {
+					validPiece.rotation = target.rotation;
+					validPiece.animationKey += 1;
+				}
+				validPiece.x = target.screenX;
+				validPiece.y = target.screenY;
 				if (DEBUG_MODE) {
 					const distance = Math.hypot(validPiece.x - target.screenX, validPiece.y - target.screenY);
 					matchResults.push(
@@ -1056,9 +1113,23 @@
 
 <header class="fixed top-0 left-5 z-10 flex items-center pt-4">
 	<a href="/puzzles#{puzzleId}" class="flex gap-2" aria-label="Retour à l'accueil">
-		<img src="/images/retour_tangrams.svg" alt="retour" class="h-auto !w-[162px]" />
+		<img src="/images/retour_tangrams.svg" alt="retour" class="h-auto !w-[154px]" />
 	</a>
 </header>
+
+{#if CAMAIEU_BASE_ARTWORK[Number(puzzleId)]}
+	<!-- top 6px : centre l'encre du visuel sur celle de retour_tangrams
+	     (le dessin de retour_oeuvre.svg est décalé de ~1,5px dans son canevas) -->
+	<header class="fixed top-[6.5px] right-5 z-10 flex items-center pt-4">
+		<a
+			href="/indices/{CAMAIEU_BASE_ARTWORK[Number(puzzleId)]}"
+			class="flex gap-2"
+			aria-label="Retour à l'œuvre"
+		>
+			<img src="/images/retour_oeuvre.svg" alt="retour œuvre" class="h-auto !w-[85px]" />
+		</a>
+	</header>
+{/if}
 
 {#if showHelp}
 	<div class="fixed inset-0 z-[9999] grid place-items-center p-10">
@@ -1177,8 +1248,12 @@
 					<polygon
 						use:draggable={piece.inContainer && { pieceId: piece.id }}
 						points={pieceData.points}
-						fill={piece.inContainer ? pieceData.color : 'transparent'}
-						stroke={piece.inContainer ? 'none' : pieceData.color}
+						fill={piece.inContainer
+							? getCamaieuColor(puzzleId, piece.id, $shapesWithViewBox)
+							: 'transparent'}
+						stroke={piece.inContainer
+							? 'none'
+							: getCamaieuColor(puzzleId, piece.id, $shapesWithViewBox)}
 						stroke-width={piece.inContainer ? '0' : '2'}
 						vector-effect="non-scaling-stroke"
 						pointer-events={piece.inContainer ? 'auto' : 'none'}

@@ -1,7 +1,7 @@
 {
   "id": 1,
-  "name": "La pomme",
-  "description": "Une pomme coupée en deux",
+  "name": "Le Maillot",
+  "description": "Un maillot... de bain bleu ?",
   "completed": false,
   "container": {
     "width": 400,
@@ -10,52 +10,52 @@
   "pieces": [
     {
       "id": 1,
-      "rotation": 90,
+      "rotation": 45,
       "flipped": false,
-      "x": 131,
-      "y": 392
+      "x": 150,
+      "y": 399
     },
     {
       "id": 2,
-      "rotation": 0,
+      "rotation": 315,
       "flipped": false,
-      "x": 266,
-      "y": 392
+      "x": 246,
+      "y": 304
     },
     {
       "id": 3,
-      "rotation": 180,
+      "rotation": 135,
       "flipped": false,
-      "x": 97,
-      "y": 326
+      "x": 175,
+      "y": 185
     },
     {
       "id": 4,
-      "rotation": 0,
+      "rotation": 45,
       "flipped": false,
-      "x": 131,
-      "y": 259
+      "x": 246,
+      "y": 209
     },
     {
       "id": 5,
-      "rotation": 0,
+      "rotation": 135,
       "flipped": false,
-      "x": 231,
-      "y": 142
+      "x": 341,
+      "y": 257
     },
     {
       "id": 6,
-      "rotation": 0,
+      "rotation": 315,
       "flipped": false,
-      "x": 266,
-      "y": 224
+      "x": 34,
+      "y": 280
     },
     {
       "id": 7,
-      "rotation": 270,
+      "rotation": 225,
       "flipped": false,
-      "x": 266,
-      "y": 325
+      "x": 104,
+      "y": 257
     }
   ]
 }

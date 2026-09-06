@@ -1,9 +1,8 @@
 {
   "id": 2,
-  "name": "Le Cygne",
-  "description": "Un cygne élégant",
+  "name": "La Montagne",
+  "description": "La montagne argentée",
   "completed": false,
-  "scale": 0.75,
   "container": {
     "width": 400,
     "height": 600
@@ -11,52 +10,52 @@
   "pieces": [
     {
       "id": 1,
-      "rotation": 180,
+      "rotation": 315,
       "flipped": false,
-      "x": 267,
-      "y": 395
+      "x": 59,
+      "y": 323
     },
     {
       "id": 2,
-      "rotation": 90,
+      "rotation": 135,
       "flipped": false,
-      "x": 132,
-      "y": 395
+      "x": 342,
+      "y": 323
     },
     {
       "id": 3,
       "rotation": 315,
       "flipped": false,
-      "x": 265,
-      "y": 535
+      "x": 224,
+      "y": 347
     },
     {
       "id": 4,
-      "rotation": 45,
+      "rotation": 0,
       "flipped": false,
-      "x": 140,
-      "y": 185
+      "x": 200,
+      "y": 209
     },
     {
       "id": 5,
-      "rotation": 45,
+      "rotation": 135,
       "flipped": false,
-      "x": 93,
-      "y": 280
+      "x": 154,
+      "y": 277
     },
     {
       "id": 6,
-      "rotation": 135,
+      "rotation": 225,
       "flipped": false,
-      "x": 110,
-      "y": 534
+      "x": 129,
+      "y": 347
     },
     {
       "id": 7,
-      "rotation": 225,
+      "rotation": 135,
       "flipped": false,
-      "x": 93,
-      "y": 138
+      "x": 295,
+      "y": 276
     }
   ]
 }

@@ -11,52 +11,52 @@
   "pieces": [
     {
       "id": 1,
-      "rotation": 180,
+      "rotation": 225,
       "flipped": false,
-      "x": 334,
-      "y": 354
+      "x": 153,
+      "y": 164
     },
     {
       "id": 2,
-      "rotation": 270,
+      "rotation": 225,
       "flipped": false,
-      "x": 65,
-      "y": 354
+      "x": 248,
+      "y": 164
     },
     {
       "id": 3,
-      "rotation": 180,
+      "rotation": 315,
       "flipped": false,
-      "x": 300,
-      "y": 287
+      "x": 318,
+      "y": 526
     },
     {
       "id": 4,
-      "rotation": 0,
+      "rotation": 90,
       "flipped": false,
-      "x": 200,
-      "y": 220
+      "x": 195,
+      "y": 50
     },
     {
       "id": 5,
-      "rotation": 0,
+      "rotation": 135,
       "flipped": false,
-      "x": 233,
-      "y": 321
+      "x": 247,
+      "y": 398
     },
     {
       "id": 6,
-      "rotation": 0,
+      "rotation": 315,
       "flipped": false,
-      "x": 132,
-      "y": 253
+      "x": 37,
+      "y": 462
     },
     {
       "id": 7,
-      "rotation": 270,
+      "rotation": 0,
       "flipped": false,
-      "x": 132,
-      "y": 354
+      "x": 133,
+      "y": 370
     }
   ]
 }

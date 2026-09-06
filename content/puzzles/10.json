@@ -1,0 +1,19 @@
+{
+  "id": 10,
+  "name": "Figure éditeur",
+  "description": "À renommer",
+  "completed": false,
+  "container": {
+    "width": 400,
+    "height": 600
+  },
+  "pieces": [
+    { "id": 1, "rotation": 45, "flipped": false, "x": 154, "y": 447 },
+    { "id": 2, "rotation": 315, "flipped": false, "x": 250, "y": 352 },
+    { "id": 3, "rotation": 135, "flipped": false, "x": 179, "y": 233 },
+    { "id": 4, "rotation": 45, "flipped": false, "x": 250, "y": 257 },
+    { "id": 5, "rotation": 135, "flipped": false, "x": 345, "y": 305 },
+    { "id": 6, "rotation": 315, "flipped": false, "x": 38, "y": 328 },
+    { "id": 7, "rotation": 225, "flipped": false, "x": 108, "y": 305 }
+  ]
+}

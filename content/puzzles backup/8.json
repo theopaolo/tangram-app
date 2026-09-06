@@ -1,0 +1,8 @@
+{
+  "id": 8,
+  "name": "Pingou",
+  "description": "Super pingo",
+  "completed": false,
+  "scale": null,
+  "layout": "{\n  \"container\": {\n    \"width\": 400,\n    \"height\": 600\n  },\n  \"pieces\": [\n    {\n      \"id\": 1,\n      \"rotation\": 90,\n      \"flipped\": false,\n      \"x\": 231,\n      \"y\": 311\n    },\n    {\n      \"id\": 2,\n      \"rotation\": 180,\n      \"flipped\": false,\n      \"x\": 94,\n      \"y\": 311\n    },\n    {\n      \"id\": 3,\n      \"rotation\": 180,\n      \"flipped\": false,\n      \"x\": 197,\n      \"y\": 242\n    },\n    {\n      \"id\": 4,\n      \"rotation\": 0,\n      \"flipped\": false,\n      \"x\": 232,\n      \"y\": 174\n    },\n    {\n      \"id\": 5,\n      \"rotation\": 180,\n      \"flipped\": false,\n      \"x\": 334,\n      \"y\": 345\n    },\n    {\n      \"id\": 6,\n      \"rotation\": 90,\n      \"flipped\": false,\n      \"x\": 334,\n      \"y\": 242\n    },\n    {\n      \"id\": 7,\n      \"rotation\": 90,\n      \"flipped\": false,\n      \"x\": 231,\n      \"y\": 379\n    }\n  ]\n}"
+}

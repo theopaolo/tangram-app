@@ -1,0 +1,61 @@
+{
+  "id": 7,
+  "name": "Nouveau Puzzle 5",
+  "description": "Un cinquième nouveau puzzle créatif",
+  "completed": false,
+  "container": {
+    "width": 400,
+    "height": 600
+  },
+  "pieces": [
+    {
+      "id": 1,
+      "rotation": 45,
+      "flipped": false,
+      "x": 248,
+      "y": 362
+    },
+    {
+      "id": 2,
+      "rotation": 45,
+      "flipped": false,
+      "x": 153,
+      "y": 362
+    },
+    {
+      "id": 3,
+      "rotation": 315,
+      "flipped": false,
+      "x": 319,
+      "y": 292
+    },
+    {
+      "id": 4,
+      "rotation": 45,
+      "flipped": false,
+      "x": 200,
+      "y": 457
+    },
+    {
+      "id": 5,
+      "rotation": 45,
+      "flipped": false,
+      "x": 105,
+      "y": 267
+    },
+    {
+      "id": 6,
+      "rotation": 45,
+      "flipped": false,
+      "x": 272,
+      "y": 243
+    },
+    {
+      "id": 7,
+      "rotation": 225,
+      "flipped": false,
+      "x": 200,
+      "y": 220
+    }
+  ]
+}

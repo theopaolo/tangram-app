@@ -1,7 +1,7 @@
 {
   "id": 3,
-  "name": "Nouveau Puzzle",
-  "description": "Un nouveau puzzle créatif",
+  "name": "Obsession",
+  "description": "Obsession Rouge",
   "completed": false,
   "container": {
     "width": 400,
@@ -10,52 +10,52 @@
   "pieces": [
     {
       "id": 1,
-      "rotation": 225,
+      "rotation": 90,
       "flipped": false,
-      "x": 346,
-      "y": 227
+      "x": 409,
+      "y": 283
     },
     {
       "id": 2,
-      "rotation": 225,
+      "rotation": 0,
       "flipped": false,
-      "x": 61,
-      "y": 227
+      "x": -9,
+      "y": 283
     },
     {
       "id": 3,
-      "rotation": 315,
+      "rotation": 225,
       "flipped": false,
-      "x": 321,
-      "y": 440
+      "x": 128,
+      "y": 259
     },
     {
       "id": 4,
       "rotation": 45,
       "flipped": false,
-      "x": 60,
-      "y": 418
+      "x": 199,
+      "y": 235
     },
     {
       "id": 5,
-      "rotation": 135,
+      "rotation": 225,
       "flipped": false,
-      "x": 345,
-      "y": 369
+      "x": 246,
+      "y": 330
     },
     {
       "id": 6,
-      "rotation": 135,
+      "rotation": 225,
       "flipped": false,
-      "x": 84,
-      "y": 347
+      "x": 270,
+      "y": 259
     },
     {
       "id": 7,
-      "rotation": 225,
+      "rotation": 45,
       "flipped": false,
-      "x": 203,
-      "y": 275
+      "x": 151,
+      "y": 282
     }
   ]
 }
