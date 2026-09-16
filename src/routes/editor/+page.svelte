@@ -1,7 +1,8 @@
 <script>
   import { onMount } from 'svelte';
+  import { invalidateAll } from '$app/navigation';
   import createInteractionHandler from '../../lib/interaction.js';
-  import { SHAPE_GEOMETRY_WITH_VIEWBOX as SHARED_PIECES_DATA_WITH_VIEWBOX } from '../../lib/puzzleData.js';
+  import { SHAPE_GEOMETRY_WITH_VIEWBOX as SHARED_PIECES_DATA_WITH_VIEWBOX, getAllPuzzles } from '../../lib/puzzleData.js';
 
   // Fixed container dimensions for puzzle design
   const CONTAINER_WIDTH = 400;
@@ -31,6 +32,11 @@ let pieces = $state([
   // --- STATE ---
   let activePieceId = $state(null);
   let importJson = $state('');
+  // Save-to-DB controls: '' = create a new puzzle, otherwise the id to overwrite.
+  let saveTargetId = $state('');
+  let saveName = $state('');
+  let saving = $state(false);
+  let savedPuzzles = $state(getAllPuzzles().map(({ id, name }) => ({ id, name })));
   let containerSize = $state({ width: 0, height: 0 });
   let puzzleScale = $state(1);
   let puzzleContainer;
@@ -212,12 +218,9 @@ let pieces = $state([
     }
   }
 
-   function exportPuzzleData() {
-    if (pieces.length === 0) {
-      alert('No pieces to export');
-      return;
-    }
-
+  // Current layout as `{ container, pieces }` with coordinates relative to the
+  // container origin (top-left) — the format stored in the DB and importable here.
+  function buildExportData() {
     // Get the canvas center (where container frame is centered)
     const canvasWidth = containerSize.width || puzzleContainer?.clientWidth || 0;
     const canvasHeight = containerSize.height || puzzleContainer?.clientHeight || 0;
@@ -228,23 +231,29 @@ let pieces = $state([
     const containerLeft = canvasCenterX - (CONTAINER_WIDTH / 2);
     const containerTop = canvasCenterY - (CONTAINER_HEIGHT / 2);
 
-    // Export coordinates relative to container origin (not screen origin)
-    const exportPieces = pieces.map(({ id, x, y, rotation, flipped }) => ({
-      id,
-      rotation,
-      flipped,
-      // Convert from screen coordinates to container-relative coordinates
-      x: Math.round(x - containerLeft),
-      y: Math.round(y - containerTop)
-    }));
-
-    const exportData = {
+    return {
       container: {
         width: CONTAINER_WIDTH,
         height: CONTAINER_HEIGHT
       },
-      pieces: exportPieces
+      pieces: pieces.map(({ id, x, y, rotation, flipped }) => ({
+        id,
+        rotation,
+        flipped,
+        // Convert from screen coordinates to container-relative coordinates
+        x: Math.round(x - containerLeft),
+        y: Math.round(y - containerTop)
+      }))
     };
+  }
+
+  function exportPuzzleData() {
+    if (pieces.length === 0) {
+      alert('No pieces to export');
+      return;
+    }
+
+    const exportData = buildExportData();
 
     const jsonString = JSON.stringify(exportData, null, 2);
     console.log(jsonString);
@@ -253,6 +262,52 @@ let pieces = $state([
     }, () => {
         alert('Puzzle data logged to console.');
     });
+  }
+
+  // Persist the current layout to the DB via the auth-checked admin API.
+  async function savePuzzleToDb() {
+    if (pieces.length === 0) {
+      alert('No pieces to save');
+      return;
+    }
+    if (!saveName.trim()) {
+      alert('Donne un nom au puzzle avant de sauvegarder.');
+      return;
+    }
+
+    saving = true;
+    try {
+      const { container, pieces: exportPieces } = buildExportData();
+      const res = await fetch('/admin/api/puzzles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: saveTargetId === '' ? null : Number(saveTargetId),
+          name: saveName.trim(),
+          container,
+          pieces: exportPieces
+        })
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.message ?? `HTTP ${res.status}`);
+      }
+      const { id } = await res.json();
+      // Refresh layout data so the saved puzzle shows up in /puzzles and here.
+      await invalidateAll();
+      savedPuzzles = getAllPuzzles().map(({ id, name }) => ({ id, name }));
+      saveTargetId = String(id);
+      alert(`Puzzle #${id} « ${saveName.trim()} » sauvegardé.`);
+    } catch (e) {
+      alert(`Échec de la sauvegarde : ${e.message}`);
+    } finally {
+      saving = false;
+    }
+  }
+
+  function onSaveTargetChange() {
+    const target = savedPuzzles.find((p) => String(p.id) === saveTargetId);
+    if (target) saveName = target.name;
   }
 
   function handleImport() {
@@ -714,6 +769,19 @@ function getPieceGreyShade(id) {
       <div class="flex gap-2 items-center flex-wrap">
         <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={handleImport}>Import</button>
         <button class="border bg-amber-50 p-2 cursor-pointer text-sm" onclick={exportPuzzleData}>Export</button>
+        <div class="border-l border-gray-400 h-6 mx-1"></div>
+
+        <!-- Save to DB -->
+        <select class="border bg-white p-2 text-sm" bind:value={saveTargetId} onchange={onSaveTargetChange}>
+          <option value="">Nouveau puzzle</option>
+          {#each savedPuzzles as p (p.id)}
+            <option value={String(p.id)}>Écraser #{p.id} — {p.name}</option>
+          {/each}
+        </select>
+        <input class="border bg-white p-2 text-sm" type="text" placeholder="Nom du puzzle" bind:value={saveName} />
+        <button class="border bg-emerald-100 p-2 cursor-pointer text-sm font-semibold" onclick={savePuzzleToDb} disabled={saving}>
+          {saving ? 'Sauvegarde…' : 'Save'}
+        </button>
         <div class="border-l border-gray-400 h-6 mx-1"></div>
 
         <!-- Position Controls -->

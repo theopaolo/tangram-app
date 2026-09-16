@@ -36,3 +36,30 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+
+## Contenu & administration (Turso + /admin)
+
+Le contenu (chromogrammes + puzzles) vit dans une base **Turso** (libSQL/SQLite) ;
+les images téléversées vont sur **Vercel Blob**. L'édition se fait dans **`/admin`**
+(login username/mot de passe, utilisateurs créés à la main). Plus de CMS git, plus d'OAuth.
+
+### Mise en place
+
+1. Créer une base Turso (`turso db create tangram`), récupérer l'URL + un token
+   (`turso db show tangram --url`, `turso db tokens create tangram`).
+2. Copier `.env.example` vers `.env` et remplir `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`
+   (en local, `TURSO_DATABASE_URL=file:local.db` marche aussi, sans token).
+3. `npm run migrate` — crée les tables (re-exécutable).
+4. `npm run seed` — importe les JSON historiques de `content/` (re-exécutable, upsert).
+5. `npm run create-user -- <username> '<mot de passe>'` — crée/reset un éditeur.
+6. Sur Vercel : ajouter les mêmes variables d'env + `BLOB_READ_WRITE_TOKEN`
+   (créé automatiquement en attachant un store Blob au projet).
+
+### Au quotidien
+
+- `/admin` — tableau de bord : chromogrammes (7 pièces, textes, couleurs, images,
+  sélection/ordre des puzzles du set) et puzzles.
+- `/editor` — éditeur visuel de figures ; le bouton **Save** enregistre directement
+  la figure en base (nouveau puzzle ou écrasement d'un existant).
+- `/qr` — planches de QR codes par set.
+- Les scripts `migrate`/`seed`/`create-user` tournent contre la base pointée par `.env`.

@@ -1,8 +1,13 @@
-// Tangram shape geometry (static) + puzzle definitions (CMS-authored) +
+// Tangram shape geometry (static) + puzzle definitions (DB-authored via /admin) +
 // a derived store that re-skins the shapes with the active chromogramme's colours.
 
 import { derived } from 'svelte/store';
-import { activeArtworks, activeChromogramId, chromogramSets } from './chromogramStore.js';
+import {
+  activeArtworks,
+  activeChromogramId,
+  chromogramSets,
+  initChromograms
+} from './chromogramStore.js';
 
 // Unit-based coordinate system for perfect alignment
 const UNIT = 27;       // 270px / 10 units
@@ -82,30 +87,22 @@ function mergeShapes(artworks) {
  */
 export const shapesWithViewBox = derived(activeArtworks, ($artworks) => mergeShapes($artworks));
 
-// Puzzles are CMS-authored JSON files (global; reused across all sets).
-const puzzleModules = import.meta.glob('/content/puzzles/*.json', { eager: true });
+// Puzzles are authored in /admin and stored in the DB (global; reused across
+// all sets). Populated (mutated in place) by `initContent` so existing imports
+// keep pointing at the same array.
+export const puzzleConfigs = [];
 
-// A puzzle may carry its geometry either as top-level `container` + `pieces`
-// (legacy/generated) or as a `layout` field holding the JSON exported from the
-// /editor (`{ container, pieces }`, pasted as a string in the CMS). Normalise
-// both to top-level `container` + `pieces` so every consumer stays the same.
-function normalizePuzzle(p) {
-  if (p.layout == null || p.layout === '') return p;
-  try {
-    const parsed = typeof p.layout === 'string' ? JSON.parse(p.layout) : p.layout;
-    const { layout, ...rest } = p;
-    return { ...rest, container: parsed.container, pieces: parsed.pieces ?? [] };
-  } catch (e) {
-    console.error(`Invalid puzzle layout JSON for puzzle ${p.id}:`, e);
-    const { layout, ...rest } = p;
-    return { ...rest, container: p.container ?? { width: 400, height: 600 }, pieces: [] };
-  }
+/**
+ * Populate chromogramme sets + puzzles from the root layout load data.
+ * Must run before any consumer renders (called from +layout.svelte).
+ * @param {{ chromograms: Array<object>, puzzles: Array<object> }} data
+ */
+export function initContent({ chromograms, puzzles }) {
+  puzzleConfigs.length = 0;
+  puzzleConfigs.push(...(puzzles ?? []).slice().sort((a, b) => a.id - b.id));
+  // Chromograms last: this sets the active id, whose derived stores read puzzleConfigs.
+  initChromograms(chromograms);
 }
-
-export const puzzleConfigs = Object.values(puzzleModules)
-  .map((m) => m.default ?? m)
-  .map(normalizePuzzle)
-  .sort((a, b) => a.id - b.id);
 
 export function getPuzzleById(id) {
   return puzzleConfigs.find((puzzle) => puzzle.id === parseInt(id));

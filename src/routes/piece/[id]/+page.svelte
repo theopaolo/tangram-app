@@ -5,7 +5,10 @@
 	import { onMount } from 'svelte';
 
 
-	import { PIECES_DATA } from '$lib/piecesData';
+	import { getDefaultArtworks } from '$lib/piecesData';
+
+	// Resolved at component init, after the root layout populated the stores.
+	const PIECES_DATA = getDefaultArtworks();
 
 	// --- DERIVED STATE --- (Principle 2: DRY)
 	// Let Svelte derive state from the reactive `page` store.

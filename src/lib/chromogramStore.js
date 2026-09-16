@@ -2,33 +2,30 @@
  * Active chromogramme set selection.
  *
  * Each chromogramme set is a full collection of 7 artworks (colour, story,
- * artist, image, quiz) authored via the CMS and stored as JSON in
- * `content/chromograms/`. The QR scanned by a visitor selects which set is
- * "active"; every colour/text consumer reads the active set.
+ * artist, image, quiz) authored via /admin and stored in the database. The
+ * root layout load fetches every set and calls `initChromograms` (via
+ * `initContent` in puzzleData.js) before any consumer renders. The QR scanned
+ * by a visitor selects which set is "active"; every colour/text consumer reads
+ * the active set.
  */
 
 import { browser } from '$app/environment';
 import { writable, derived, get } from 'svelte/store';
-
-// Eager-load every chromogramme set at build time.
-const modules = import.meta.glob('/content/chromograms/*.json', { eager: true });
 
 /** Normalise a set id so URLs/filenames resolve regardless of case. */
 export const normalizeId = (id) => String(id ?? '').toLowerCase();
 
 /**
  * Map of normalised set id -> set definition ({ id, name, pieces: [...] }).
- * Keyed by lowercased id because the CMS/filename slug is lowercased while the
- * `id` field may be typed with capitals — both must resolve to the same set.
+ * Keyed by lowercased id because the URL slug is lowercased while the `id`
+ * field may be typed with capitals — both must resolve to the same set.
+ * Populated (mutated in place) by `initChromograms` so existing imports keep
+ * pointing at the same object.
  */
 export const chromogramSets = {};
-for (const path in modules) {
-  const set = modules[path].default ?? modules[path];
-  if (set?.id) chromogramSets[normalizeId(set.id)] = set;
-}
 
-/** Sorted list of available set ids. */
-export const chromogramIds = Object.keys(chromogramSets).sort();
+/** Sorted list of available set ids (mutated in place by `initChromograms`). */
+export const chromogramIds = [];
 
 /** A set is complete when it has an artwork for every tangram piece (1..7). */
 export function isCompleteSet(set) {
@@ -37,25 +34,13 @@ export function isCompleteSet(set) {
   return [1, 2, 3, 4, 5, 6, 7].every((n) => ids.has(n));
 }
 
-// Default to the first *complete* set so a half-authored CMS draft never
-// becomes the landing set. Fall back to the first set if none are complete.
-const DEFAULT_ID = chromogramIds.find((id) => isCompleteSet(chromogramSets[id])) ?? chromogramIds[0];
+// Default to the first *complete* set so a half-authored draft never becomes
+// the landing set. Set by `initChromograms`.
+let defaultId = null;
 const STORAGE_KEY = 'active_chromogram';
 
-function loadInitialId() {
-  if (browser) {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored && chromogramSets[stored]) return stored;
-    } catch (e) {
-      console.error('Could not read active chromogram:', e);
-    }
-  }
-  return DEFAULT_ID;
-}
-
-/** The currently active set id (persisted to localStorage). */
-export const activeChromogramId = writable(loadInitialId());
+/** The currently active set id (persisted to localStorage). Null until init. */
+export const activeChromogramId = writable(null);
 
 if (browser) {
   activeChromogramId.subscribe((id) => {
@@ -65,6 +50,38 @@ if (browser) {
       console.error('Could not save active chromogram:', e);
     }
   });
+}
+
+/**
+ * Populate the sets from the layout-load data and pick the active id.
+ * Called once per render on the server and once at hydration on the client.
+ * @param {Array<object>} sets chromogramme set definitions from the DB
+ */
+export function initChromograms(sets) {
+  for (const key of Object.keys(chromogramSets)) delete chromogramSets[key];
+  for (const set of sets ?? []) {
+    if (set?.id) chromogramSets[normalizeId(set.id)] = set;
+  }
+  chromogramIds.length = 0;
+  chromogramIds.push(...Object.keys(chromogramSets).sort());
+  defaultId = chromogramIds.find((id) => isCompleteSet(chromogramSets[id])) ?? chromogramIds[0] ?? null;
+
+  if (browser) {
+    let initial = defaultId;
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored && chromogramSets[stored]) initial = stored;
+    } catch (e) {
+      console.error('Could not read active chromogram:', e);
+    }
+    const current = get(activeChromogramId);
+    if (!current || !chromogramSets[normalizeId(current)]) activeChromogramId.set(initial);
+  } else {
+    // SSR: always reset — the store module is shared across requests, so a
+    // previous request's selection must not leak into this one. Pages that
+    // target a specific set (e.g. /[chromogramId]) re-select after this.
+    activeChromogramId.set(defaultId);
+  }
 }
 
 /**
@@ -91,7 +108,7 @@ export function hasChromogram(id) {
  * @param {string} id
  */
 export function getArtworks(id) {
-  const set = chromogramSets[normalizeId(id)] ?? chromogramSets[DEFAULT_ID];
+  const set = chromogramSets[normalizeId(id)] ?? chromogramSets[defaultId];
   const map = {};
   if (set) for (const piece of set.pieces) map[piece.pieceId] = piece;
   return map;
@@ -99,7 +116,7 @@ export function getArtworks(id) {
 
 /** Get a whole set definition by id (falls back to the default set). */
 export function getSet(id) {
-  return chromogramSets[normalizeId(id)] ?? chromogramSets[DEFAULT_ID];
+  return chromogramSets[normalizeId(id)] ?? chromogramSets[defaultId];
 }
 
 /** Read the active set's artworks once (non-reactive). */
