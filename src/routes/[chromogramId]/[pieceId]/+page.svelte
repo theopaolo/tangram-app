@@ -19,7 +19,12 @@
 
 		// Validate piece exists within the resolved set
 		const artworks = knownSet ? getArtworks(chromogramId) : getActiveArtworks();
-		if (artworks[pieceId]) {
+		// `/<set>/all` = resolved mode: mark every piece found so the set can be
+		// browsed without scanning any QR (scanner CTA hides at 7/7).
+		if (pieceId === 'all') {
+			Object.keys(artworks).forEach((id) => piecesStore.addPiece(id));
+			goto('/');
+		} else if (artworks[pieceId]) {
 			// Add piece to store (saves to localStorage)
 			piecesStore.addPiece(pieceId);
 
