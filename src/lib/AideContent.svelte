@@ -1,6 +1,6 @@
 <script>
     import { browser } from '$app/environment';
-    import { getActiveArtworks } from '$lib/chromogramStore.js';
+    import { getActiveArtworks, activeChromogramId } from '$lib/chromogramStore.js';
     import { piecesStore } from '$lib/piecesStore.js';
     import { isAideOpen } from '$lib/stores/aideStore.js';
     import { onDestroy, onMount, tick } from 'svelte';
@@ -221,6 +221,16 @@
 		<button style="border:1px solid" class="relative mt-12 mb-14 text-black text-bouton inf-bold z-0 w-fit bg-white px-5 py-3 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]" onclick={handleRestart}>
 			<div class="leading-[1.5] rounded-full absolute top-1 left-2 bg-black text-white h-5 w-5">!</div>CLIQUE ICI POUR<br/>RECOMMENCER LE JEU À ZÉRO
 		</button>
+
+		<!-- Cross-link between editions: #1 opens resolved (its QR codes are gone),
+		     #2 opens as-is so the visitor keeps their progress. -->
+		<div class="mb-14">
+			{#if $activeChromogramId === 'chromogram-1'}
+				<a href="/chromo-2" onclick={handleClose} class="text-black text-bouton inf-bold w-fit border border-black bg-white px-5 py-3 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">RETOUR AU CHROMOGRAM #2</a>
+			{:else}
+				<a href="/chromogram-1/all" onclick={handleClose} class="text-black text-bouton inf-bold w-fit border border-black bg-white px-5 py-3 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]">VOIR LE CHROMOGRAM #1</a>
+			{/if}
+		</div>
 	</div>
 
 	<div class="striped-container fixed bottom-0 left-0" bind:this={container}>
