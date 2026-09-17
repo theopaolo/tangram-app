@@ -349,7 +349,7 @@
 	class="meme d-none absolute inset-x-0 top-0 z-10 flex h-[100dvh] flex-col items-center justify-evenly px-2 pt-[105px] pb-[25px]"
 >
 	<div class="text-bouton intro-intro height-auto max-w-prose text-center whitespace-pre-line">
-		{$activeSet?.intro ?? ''}
+		{@html $activeSet?.intro ?? ''}
 	</div>
 
 	<div

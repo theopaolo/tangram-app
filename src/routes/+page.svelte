@@ -313,7 +313,7 @@
 	<div
 		class="text-bouton intro-intro height-auto max-w-prose text-center whitespace-pre-line opacity-0"
 	>
-		{$activeSet?.intro ?? ''}
+		{@html $activeSet?.intro ?? ''}
 	</div>
 
 	<div

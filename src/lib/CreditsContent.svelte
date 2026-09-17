@@ -13,7 +13,19 @@
 	let currentIndex = 0;
 	let tl;
 
+	// Synchronise la barre Safari iOS (meta theme-color) avec le fond animé,
+	// sinon elle garde la première couleur pendant tout le cycle
+	function setThemeColor(color) {
+		if (!browser) return;
+		document.querySelector('meta[name="theme-color"]')?.setAttribute('content', color);
+	}
+
+	function syncThemeColor() {
+		setThemeColor(gsap.getProperty('.animated-bg', 'backgroundColor'));
+	}
+
 	function handleClose() {
+		setThemeColor('#ffffff');
 		isCreditsOpen.close();
 	}
 
@@ -28,7 +40,8 @@
 			tl.to('.animated-bg', {
 				backgroundColor: color,
 				duration: 1,
-				ease: 'power2.inOut'
+				ease: 'power2.inOut',
+				onUpdate: syncThemeColor
 			});
 			tl.to({}, { duration: 2.5 });
 		});
@@ -44,6 +57,7 @@
 			backgroundColor: COLORS[currentIndex],
 			duration: 0.2,
 			ease: 'power2.inOut',
+			onUpdate: syncThemeColor,
 			onComplete: () => {
 				makeTimeline(currentIndex);
 			}
@@ -81,6 +95,7 @@
 		if (!browser) return;
 
 		if (tl) tl.kill();
+		setThemeColor('#ffffff');
 		document.removeEventListener('click', nextColor);
 		document.removeEventListener('touchstart', nextColor);
 	});

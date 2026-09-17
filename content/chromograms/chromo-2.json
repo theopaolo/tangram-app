@@ -2,7 +2,7 @@
   "id": "Chromo-2",
   "name": "Chromogram #2",
   "title": "CHROMOGRAM #2",
-  "intro": "CHROMOGRAM ou tangram des couleurs est un jeu proposé par l’artiste Armelle Caron qui se renouvelle à chaque exposition de collection. L’art est habité de mille couleurs. Subtiles, franches, opposées, brutales ou délicates. Elles sont partout et toujours précisément choisies par les artistes.\n\nLe CHROMOGRAM #2 vous propose de les découvrir dans les salles de l’exposition Stop The Machine. Ce jeu est une invitation à chercher 7 QR codes cachés dans les salles. Chacun d’eux t’invite à retrouver une couleur dans les œuvres présentées à proximité pour débloquer un élément du tangram et ainsi reconstituer le CHROMOGRAM.",
+  "intro": "CHROMOGRAM ou tangram des couleurs est un jeu proposé par l’artiste Armelle Caron qui se renouvelle à chaque exposition de collection. L’art est habité de mille couleurs. Subtiles, franches, opposées, brutales ou délicates. Elles sont partout et toujours précisément choisies par les artistes.\n\nLe CHROMOGRAM #2 vous propose de les découvrir dans les salles de l’exposition <i>Stop The Machine !</i>. Ce jeu est une invitation à chercher 7 QR codes cachés dans les salles. Chacun d’eux t’invite à retrouver une couleur dans les œuvres présentées à proximité pour débloquer un élément du tangram et ainsi reconstituer le CHROMOGRAM.",
   "puzzles": [
     "1",
     "2",
@@ -22,7 +22,7 @@
       "titre_artwork": "Dip",
       "artiste": "Lisa Milroy",
       "date": "2018",
-      "story": "Lisa Milroy peint des objets du quotidien agencés en de minutieuses mises en scène. Elle donne de la valeur à un geste, à une situation ou à un objet ordinaire comme si la peinture pouvait révéler la beauté cachée du banal et inviter à la contemplation. Le bord d’une piscine, un camaïeu de bleu, des corps absents… L’œuvre Dip est une image à la fois simple et mystérieuse qui nous fait regarder autrement ce que l’on croit déjà connaître.",
+      "story": "Lisa Milroy peint des objets du quotidien agencés en de minutieuses mises en scène. Elle donne de la valeur à un geste, à une situation ou à un objet ordinaire comme si la peinture pouvait révéler la beauté cachée du banal et inviter à la contemplation. Le bord d’une piscine, un camaïeu de bleu, des corps absents… L’œuvre <i>Dip</i> est une image à la fois simple et mystérieuse qui nous fait regarder autrement ce que l’on croit déjà connaître.",
       "dapres_toi": "D’après toi, à qui appartiennent ces maillots de bains ?",
       "dapres": [
         "Au personnel du Mrac",
@@ -32,7 +32,7 @@
       "images": [
         {
           "src": "/images/chromo2/milroy_dip.jpg",
-          "credits": "Lisa Milroy, Dip, 2018. Collection Frac Occitanie Montpellier. © Lisa Milroy, © Kate MacGarry, London. Photographie Lisa Milroy."
+          "credits": "Lisa Milroy, <i>Dip</i>, 2018. Collection Frac Occitanie Montpellier. © Lisa Milroy, © Kate MacGarry, London. Photographie Lisa Milroy."
         }
       ]
     },
@@ -45,7 +45,7 @@
       "titre_artwork": "Landscape and Saint Victoire",
       "artiste": "Ida Tursic & Wilfried Mille",
       "date": "2015",
-      "story": "Ida Tursic et Wilfried Mille réutilisent et manipulent des images issues d’internet, de la publicité ou de l’histoire de l’art qu’ils détournent. Dans la peinture Landscape and Sainte-Victoire, le duo évoque le genre du paysage en citant l’artiste Paul Cézanne et son motif de prédilection, la montagne Sainte-Victoire. Les artistes renouvellent le genre avec ce paysage monochrome argenté/gris. La montagne est effacée et se trouve reléguée au second plan derrière un champ de fleurs. L’association entre le gris froid et les touches de couleurs vives crée une dissonance visuelle et perturbe nos repères.",
+      "story": "Ida Tursic et Wilfried Mille réutilisent et manipulent des images issues d’internet, de la publicité ou de l’histoire de l’art qu’ils détournent. Dans la peinture <i>Landscape and Sainte-Victoire</i>, le duo évoque le genre du paysage en citant l’artiste Paul Cézanne et son motif de prédilection, la montagne Sainte-Victoire. Les artistes renouvellent le genre avec ce paysage monochrome argenté/gris. La montagne est effacée et se trouve reléguée au second plan derrière un champ de fleurs. L’association entre le gris froid et les touches de couleurs vives crée une dissonance visuelle et perturbe nos repères.",
       "dapres_toi": "D’après toi, pourquoi ce paysage est-il gris ?",
       "dapres": [
         "Il n’y avait plus d’encre dans l’imprimante",
@@ -55,7 +55,7 @@
       "images": [
         {
           "src": "/images/chromo2/tursic_mille_landscape.jpg",
-          "credits": "Ida Tursic & Wilfried Mille, Landscape and Saint Victoire, 2015. Collection du Mrac Occitanie, Sérignan. © Ida Tursic & Wilfried Mille. Photographie Galerie Max Hetzler."
+          "credits": "Ida Tursic & Wilfried Mille, <i>Landscape and Saint Victoire</i>, 2015. Collection du Mrac Occitanie, Sérignan. © Ida Tursic & Wilfried Mille. Photographie Galerie Max Hetzler."
         }
       ]
     },
@@ -68,7 +68,7 @@
       "titre_artwork": "Qui est ?",
       "artiste": "Dominique Figarella",
       "date": "2004",
-      "story": "Les œuvres de Dominique Figarella fonctionnent comme des trompe-l’œil. Pour réaliser Qui est ? l’artiste a versé une flaque de peinture laquée qu’il a photographiée avant qu’elle n’ait le temps de sécher. On peut voir le reflet des projecteurs dans la tache. Il a ensuite essuyé cette tache puis collé la photographie. L’image du tableau en train de se faire devient une partie de l’œuvre.",
+      "story": "Les œuvres de Dominique Figarella fonctionnent comme des trompe-l’œil. Pour réaliser <i>Qui est ?</i> l’artiste a versé une flaque de peinture laquée qu’il a photographiée avant qu’elle n’ait le temps de sécher. On peut voir le reflet des projecteurs dans la tache. Il a ensuite essuyé cette tache puis collé la photographie. L’image du tableau en train de se faire devient une partie de l’œuvre.",
       "dapres_toi": "D’après toi, pourquoi le tableau est-il en deux parties ?",
       "dapres": [
         "Massacre à la tronçonneuse",
@@ -78,7 +78,7 @@
       "images": [
         {
           "src": "/images/chromo2/figarella_qui_est.jpg",
-          "credits": "Dominique Figarella, Qui est ?, 2004. Collection du Mrac Occitanie, Sérignan. © Adagp, Paris, 2026. Photographie Jean-Paul Planchon."
+          "credits": "Dominique Figarella, <i>Qui est ?</i>, 2004. Collection du Mrac Occitanie, Sérignan. © Adagp, Paris, 2026. Photographie Jean-Paul Planchon."
         }
       ]
     },
@@ -91,7 +91,7 @@
       "titre_artwork": "Dots Obsession",
       "artiste": "Yayoi Kusama",
       "date": "1998",
-      "story": "L’artiste Yayoi Kusama a une obsession pour les pois. Elle imagine que la Terre, la Lune et chaque être humain sont de petits points perdus dans l’univers immense. Pour l’installation Dots Obsession, elle utilise des ballons de toutes les formes et des miroirs qui reflètent à l’infini. Elle fait ainsi disparaitre les murs et les coins de la pièce pour nous faire perdre tous nos repères.",
+      "story": "L’artiste Yayoi Kusama a une obsession pour les pois. Elle imagine que la Terre, la Lune et chaque être humain sont de petits points perdus dans l’univers immense. Pour l’installation <i>Dots Obsession</i>, elle utilise des ballons de toutes les formes et des miroirs qui reflètent à l’infini. Elle fait ainsi disparaitre les murs et les coins de la pièce pour nous faire perdre tous nos repères.",
       "dapres_toi": "D’après toi, qui habite ici ?",
       "dapres": [
         "Une coccinelle hypocondriaque",
@@ -101,7 +101,7 @@
       "images": [
         {
           "src": "/images/chromo2/kusama_dots_obsession.jpg",
-          "credits": "Yayoi Kusama, Dots Obsession, 1998. Collection les Abattoirs Musée – Frac Occitanie Toulouse. © Yayoi Kusama. Photographie Grand Rond Production."
+          "credits": "Yayoi Kusama, <i>Dots Obsession</i>, 1998. Collection les Abattoirs Musée – Frac Occitanie Toulouse. © Yayoi Kusama. Photographie Grand Rond Production."
         }
       ]
     },
@@ -124,7 +124,7 @@
       "images": [
         {
           "src": "/images/chromo2/lesueur_carmen_miranda.jpg",
-          "credits": "Natacha Lesueur, Sans titre, de la série « Carmen Miranda », 2009. Collection Frac Occitanie Montpellier. © Adagp, Paris, 2026. Photographie Natacha Lesueur."
+          "credits": "Natacha Lesueur, <i>Sans titre</i>, de la série <i>Carmen Miranda</i>, 2009. Collection Frac Occitanie Montpellier. © Adagp, Paris, 2026. Photographie Natacha Lesueur."
         }
       ]
     },
@@ -137,7 +137,7 @@
       "titre_artwork": "Work n° 262,\nHalf the Air in a Given Space",
       "artiste": "Martin Creed",
       "date": "2001",
-      "story": "L’œuvre Half the air in a given space (La moitié de l’air dans un espace donné) de l’artiste Martin Creed est une installation interactive. Le concept est d’une simplicité mathématique : l’artiste calcule le volume d’une pièce et enferme exactement la moitié de cet air dans des milliers de ballons colorés, remplissant la salle jusqu’au plafond ou au-dessus de nos têtes.",
+      "story": "L’œuvre <i>Half the air in a given space</i> (La moitié de l’air dans un espace donné) de l’artiste Martin Creed est une installation interactive. Le concept est d’une simplicité mathématique : l’artiste calcule le volume d’une pièce et enferme exactement la moitié de cet air dans des milliers de ballons colorés, remplissant la salle jusqu’au plafond ou au-dessus de nos têtes.",
       "dapres_toi": "D’après toi, où te trouves-tu ?",
       "dapres": [
         "Dans le bain moussant de Hulk",
@@ -147,7 +147,7 @@
       "images": [
         {
           "src": "/images/chromo2/creed_work_262.jpg",
-          "credits": "Martin Creed, Work n° 262, sous-titre : Half the Air in a Given Space, 2001. Collection Frac Occitanie Montpellier. © Adagp, Paris, 2026. Photographie Marie Brucker."
+          "credits": "Martin Creed, <i>Work n° 262, sous-titre : Half the Air in a Given Space</i>, 2001. Collection Frac Occitanie Montpellier. © Adagp, Paris, 2026. Photographie Marie Brucker."
         }
       ]
     },
@@ -160,17 +160,17 @@
       "titre_artwork": "Karstic story",
       "artiste": "Valère Costes",
       "date": "2007",
-      "story": "Valère Costes crée des œuvres à la croisée des sciences et des arts. Il invente des dispositifs, sortes de machines imaginaires, où le vivant et les phénomènes physiques se retrouvent confrontés à une technologie plus ou moins sophistiquée. Karstic Story tente de recréer, par un savant mécanisme de goutte-à-goutte, un univers naturel de grotte, à la fois ludique, curieux et merveilleux.",
+      "story": "Valère Costes crée des œuvres à la croisée des sciences et des arts. Il invente des dispositifs, sortes de machines imaginaires, où le vivant et les phénomènes physiques se retrouvent confrontés à une technologie plus ou moins sophistiquée. <i>Karstic Story</i> tente de recréer, par un savant mécanisme de goutte-à-goutte, un univers naturel de grotte, à la fois ludique, curieux et merveilleux.",
       "dapres_toi": "D’après toi, quelle pourrait être l’autre fonction de cette machine ?",
       "dapres": [
         "Construire une termitière",
-        "Faire du grott-esque",
-        "Faire passer le temps"
+        "Pétrifier les visiteurs qui touchent",
+        "Un sablier géant"
       ],
       "images": [
         {
           "src": "/images/chromo2/costes_karstic_story.jpg",
-          "credits": "Valère Costes, Karstic story, 2007. Collection les Abattoirs Musée – Frac Occitanie Toulouse. © Françoise Maisongrande. Photographie Sylvie Leonard."
+          "credits": "Valère Costes, <i>Karstic story</i>, 2007. Collection les Abattoirs Musée – Frac Occitanie Toulouse. © Françoise Maisongrande. Photographie Sylvie Leonard."
         }
       ]
     }
