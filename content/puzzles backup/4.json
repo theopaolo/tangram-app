@@ -1,0 +1,61 @@
+{
+  "id": 4,
+  "name": "Nouveau Puzzle 2",
+  "description": "Un autre nouveau puzzle créatif",
+  "completed": false,
+  "container": {
+    "width": 400,
+    "height": 600
+  },
+  "pieces": [
+    {
+      "id": 1,
+      "rotation": 225,
+      "flipped": false,
+      "x": 295,
+      "y": 324
+    },
+    {
+      "id": 2,
+      "rotation": 135,
+      "flipped": false,
+      "x": 200,
+      "y": 419
+    },
+    {
+      "id": 3,
+      "rotation": 135,
+      "flipped": false,
+      "x": 129,
+      "y": 300
+    },
+    {
+      "id": 4,
+      "rotation": 45,
+      "flipped": false,
+      "x": 105,
+      "y": 419
+    },
+    {
+      "id": 5,
+      "rotation": 45,
+      "flipped": false,
+      "x": 153,
+      "y": 229
+    },
+    {
+      "id": 6,
+      "rotation": 225,
+      "flipped": false,
+      "x": 82,
+      "y": 347
+    },
+    {
+      "id": 7,
+      "rotation": 225,
+      "flipped": false,
+      "x": 249,
+      "y": 276
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 <script>
 	import { goto, preloadCode } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import { PIECES_DATA } from '$lib/piecesData';
+	import { getActiveArtworks, activeSet } from '$lib/chromogramStore.js';
 	import { piecesStore } from '$lib/piecesStore.js';
 
 	let totalFound = $state(0);
@@ -14,8 +14,9 @@
 	function applyColors() {
 		if (typeof document === 'undefined') return; // SSR guard
 
-		Object.keys(PIECES_DATA).forEach((id) => {
-			const color = PIECES_DATA[id].color;
+		const artworks = getActiveArtworks();
+		Object.keys(artworks).forEach((id) => {
+			const color = artworks[id].color;
 
 			document.querySelectorAll(`.p${id} polygon`).forEach((el) => {
 				el.setAttribute("fill", color);
@@ -293,7 +294,7 @@
 	<div
 		class="title text-intro inf-bold fixed z-10 mx-auto w-fit w-max border bg-white px-[14px] py-1 tracking-[4%] drop-shadow-[var(--my-drop-shadow)]"
 	>
-		CHROMOGRAM #1
+		{$activeSet?.title ?? $activeSet?.name ?? ''}
 	</div>
 
 	<div class="controls fixed right-[50px] bottom-[35px] z-20">
@@ -312,11 +313,7 @@
 	<div
 		class="text-bouton intro-intro height-auto max-w-prose text-center whitespace-pre-line opacity-0"
 	>
-		CHROMOGRAM ou tangram des couleurs est un jeu proposé par l'artiste Armelle Caron qui se renouvelle à chaque exposition de collection. L'art est habité de mille couleurs. Subtiles, franches, opposées, brutales ou délicates. Elles sont partout et toujours précisément choisies par les artistes.
-
-		Le CHROMOGRAM #1 vous propose de les découvrir dans les salles de l'exposition ALLONS, de les observer avec attention pour révéler toutes leurs nuances.
-
-		Retrouve les œuvres choisies par Armelle Caron à l’aide des 7 QR codes cachés dans l’exposition. Chacun d’eux propose une couleur à retrouver dans une œuvre de la même salle. Débloque ainsi, une à une, les formes du tangram.
+		{@html $activeSet?.intro ?? ''}
 	</div>
 
 	<div

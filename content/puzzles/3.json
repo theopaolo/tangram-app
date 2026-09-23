@@ -1,0 +1,61 @@
+{
+  "id": 3,
+  "name": "Obsession",
+  "description": "Obsession Rouge",
+  "completed": false,
+  "container": {
+    "width": 400,
+    "height": 600
+  },
+  "pieces": [
+    {
+      "id": 1,
+      "rotation": 90,
+      "flipped": false,
+      "x": 409,
+      "y": 283
+    },
+    {
+      "id": 2,
+      "rotation": 0,
+      "flipped": false,
+      "x": -9,
+      "y": 283
+    },
+    {
+      "id": 3,
+      "rotation": 225,
+      "flipped": false,
+      "x": 128,
+      "y": 259
+    },
+    {
+      "id": 4,
+      "rotation": 45,
+      "flipped": false,
+      "x": 199,
+      "y": 235
+    },
+    {
+      "id": 5,
+      "rotation": 225,
+      "flipped": false,
+      "x": 246,
+      "y": 330
+    },
+    {
+      "id": 6,
+      "rotation": 225,
+      "flipped": false,
+      "x": 270,
+      "y": 259
+    },
+    {
+      "id": 7,
+      "rotation": 45,
+      "flipped": false,
+      "x": 151,
+      "y": 282
+    }
+  ]
+}

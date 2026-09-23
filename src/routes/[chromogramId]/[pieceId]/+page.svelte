@@ -2,18 +2,29 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { piecesStore } from '$lib/piecesStore.js';
-	import { PIECES_DATA } from '$lib/piecesData';
+	import { setActiveChromogram, getArtworks, getActiveArtworks, hasChromogram } from '$lib/chromogramStore.js';
 	import { onMount } from 'svelte';
 
-	// Extract pieceId from URL params
+	// Extract params from URL
+	const chromogramId = $derived($page.params.chromogramId);
 	const pieceId = $derived($page.params.pieceId);
 
 	onMount(() => {
-		// Initialize store
+		// Switch to the scanned set so progress + colours are scoped to it.
+		const knownSet = hasChromogram(chromogramId);
+		if (knownSet) setActiveChromogram(chromogramId);
+
+		// Initialize store (now keyed to the active set)
 		piecesStore.initialize();
 
-		// Validate piece exists
-		if (PIECES_DATA[pieceId]) {
+		// Validate piece exists within the resolved set
+		const artworks = knownSet ? getArtworks(chromogramId) : getActiveArtworks();
+		// `/<set>/all` = resolved mode: mark every piece found so the set can be
+		// browsed without scanning any QR (scanner CTA hides at 7/7).
+		if (pieceId === 'all') {
+			Object.keys(artworks).forEach((id) => piecesStore.addPiece(id));
+			goto('/');
+		} else if (artworks[pieceId]) {
 			// Add piece to store (saves to localStorage)
 			piecesStore.addPiece(pieceId);
 

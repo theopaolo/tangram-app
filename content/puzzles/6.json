@@ -1,0 +1,62 @@
+{
+  "id": 6,
+  "name": "Nouveau Puzzle 4",
+  "description": "Un quatrième nouveau puzzle créatif",
+  "completed": false,
+  "scale": 0.8,
+  "container": {
+    "width": 400,
+    "height": 600
+  },
+  "pieces": [
+    {
+      "id": 1,
+      "rotation": 90,
+      "flipped": false,
+      "x": 136,
+      "y": 327
+    },
+    {
+      "id": 2,
+      "rotation": 0,
+      "flipped": false,
+      "x": 271,
+      "y": 327
+    },
+    {
+      "id": 3,
+      "rotation": 180,
+      "flipped": false,
+      "x": 102,
+      "y": 260
+    },
+    {
+      "id": 4,
+      "rotation": 0,
+      "flipped": false,
+      "x": 136,
+      "y": 193
+    },
+    {
+      "id": 5,
+      "rotation": 270,
+      "flipped": false,
+      "x": 237,
+      "y": 159
+    },
+    {
+      "id": 6,
+      "rotation": 0,
+      "flipped": false,
+      "x": 208,
+      "y": 441
+    },
+    {
+      "id": 7,
+      "rotation": 270,
+      "flipped": false,
+      "x": 271,
+      "y": 260
+    }
+  ]
+}

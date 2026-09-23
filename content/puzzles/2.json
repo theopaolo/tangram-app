@@ -1,0 +1,61 @@
+{
+  "id": 2,
+  "name": "La Montagne",
+  "description": "La montagne argentée",
+  "completed": false,
+  "container": {
+    "width": 400,
+    "height": 600
+  },
+  "pieces": [
+    {
+      "id": 1,
+      "rotation": 315,
+      "flipped": false,
+      "x": 59,
+      "y": 323
+    },
+    {
+      "id": 2,
+      "rotation": 135,
+      "flipped": false,
+      "x": 342,
+      "y": 323
+    },
+    {
+      "id": 3,
+      "rotation": 315,
+      "flipped": false,
+      "x": 224,
+      "y": 347
+    },
+    {
+      "id": 4,
+      "rotation": 0,
+      "flipped": false,
+      "x": 200,
+      "y": 209
+    },
+    {
+      "id": 5,
+      "rotation": 135,
+      "flipped": false,
+      "x": 154,
+      "y": 277
+    },
+    {
+      "id": 6,
+      "rotation": 225,
+      "flipped": false,
+      "x": 129,
+      "y": 347
+    },
+    {
+      "id": 7,
+      "rotation": 135,
+      "flipped": false,
+      "x": 295,
+      "y": 276
+    }
+  ]
+}

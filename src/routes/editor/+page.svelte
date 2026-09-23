@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import createInteractionHandler from '../../lib/interaction.js';
-  import { PIECES_DATA_WITH_VIEWBOX as SHARED_PIECES_DATA_WITH_VIEWBOX } from '../../lib/puzzleData.js';
+  import { SHAPE_GEOMETRY_WITH_VIEWBOX as SHARED_PIECES_DATA_WITH_VIEWBOX } from '../../lib/puzzleData.js';
 
   // Fixed container dimensions for puzzle design
   const CONTAINER_WIDTH = 400;

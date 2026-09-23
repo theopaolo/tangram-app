@@ -1,15 +1,15 @@
 <script>
-  import { onMount } from "svelte";
-  import { page } from '$app/stores';
-  let gsap;
+	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	let gsap;
 
-  import { goto } from '$app/navigation';
-  import { PIECES_DATA } from '$lib/piecesData';
-  import { piecesStore } from '$lib/piecesStore.js';
+	import { goto } from '$app/navigation';
+	import { activeArtworks } from '$lib/chromogramStore.js';
+	import { piecesStore } from '$lib/piecesStore.js';
 
-  // Get piece ID from URL params
-  const pieceId = $derived($page.params.id);
-  const currentPiece = $derived(PIECES_DATA[pieceId]);
+	// Get piece ID from URL params
+	const pieceId = $derived($page.params.id);
+	const currentPiece = $derived($activeArtworks[pieceId]);
 
 	let totalFound = $state(0);
 	let foundPieces = $state([]);
@@ -21,591 +21,661 @@
 		foundPieces = piecesStore.pieces;
 	});
 
-  function handleCC(id) {
+	function handleCC(id) {
 		if (foundPieces.includes(id)) {
 			goto(`/indices/${id}`);
 		}
 	}
 
-  // Animation-specific configuration based on piece ID
-  const getAnimationConfig = (id) => {
-    switch(id) {
-      case '1':
-        return {
-          cols: 5, rows: 16, w: 7.5, h: 2.5, rowGap: -0.02,
-          visibleCols: 2.6, shape: '7.5,2.5 2.5,2.5 0,0 5,0'
-        };
-      case '2':
-        return {
-          cols: 7, rows: 7, w: 5, h: 5, rowGap: 0,
-          visibleCols: 2.2, shape: '0,0 5,0 5,5'
-        };
-      case '3':
-        return {
-          cols: 11, rows: 5, w: 5, h: 10, rowGap: 0,
-          visibleCols: 2.2, shape: '0,10 0,0 5,5'
-        };
-      case '4':
-        return {
-          cols: 9, rows: 9, w: 2.5, h: 5, rowGap: 0,
-          visibleCols: 4.3, shape: '2.5,5 2.5,0 0,2.5'
-        };
-      case '5':
-        return {
-          cols: 11, rows: 11, w: 10, h: 5, rowGap: 0,
-          visibleCols: 1.4, shape: '0,5 10,5 5,0'
-        };
-      case '6':
-        return {
-          cols: 7, rows: 9, w: 5, h: 5, rowGap: 0,
-          visibleCols: 2.3, shape: '0,2.5 2.5,0 5,2.5 2.5,5'
-        };
-      case '7':
-        return {
-          cols: 9, rows: 15, w: 5, h: 2.5, rowGap: 0,
-          visibleCols: 2.5, shape: '5,0 0,0 2.5,2.5'
-        };
-      default:
-        return {
-          cols: 11, rows: 5, w: 5, h: 10, rowGap: 0,
-          visibleCols: 2.2, shape: '0,10 0,0 5,5'
-        };
-    }
-  };
+	// Animation-specific configuration based on piece ID
+	const getAnimationConfig = (id) => {
+		switch (id) {
+			case '1':
+				return {
+					cols: 5,
+					rows: 16,
+					w: 7.5,
+					h: 2.5,
+					rowGap: -0.02,
+					visibleCols: 2.6,
+					shape: '7.5,2.5 2.5,2.5 0,0 5,0'
+				};
+			case '2':
+				return {
+					cols: 7,
+					rows: 7,
+					w: 5,
+					h: 5,
+					rowGap: 0,
+					visibleCols: 2.2,
+					shape: '0,0 5,0 5,5'
+				};
+			case '3':
+				return {
+					cols: 11,
+					rows: 5,
+					w: 5,
+					h: 10,
+					rowGap: 0,
+					visibleCols: 2.2,
+					shape: '0,10 0,0 5,5'
+				};
+			case '4':
+				return {
+					cols: 9,
+					rows: 9,
+					w: 2.5,
+					h: 5,
+					rowGap: 0,
+					visibleCols: 4.3,
+					shape: '2.5,5 2.5,0 0,2.5'
+				};
+			case '5':
+				return {
+					cols: 11,
+					rows: 11,
+					w: 10,
+					h: 5,
+					rowGap: 0,
+					visibleCols: 1.4,
+					shape: '0,5 10,5 5,0'
+				};
+			case '6':
+				return {
+					cols: 7,
+					rows: 9,
+					w: 5,
+					h: 5,
+					rowGap: 0,
+					visibleCols: 2.3,
+					shape: '0,2.5 2.5,0 5,2.5 2.5,5'
+				};
+			case '7':
+				return {
+					cols: 9,
+					rows: 15,
+					w: 5,
+					h: 2.5,
+					rowGap: 0,
+					visibleCols: 2.5,
+					shape: '5,0 0,0 2.5,2.5'
+				};
+			default:
+				return {
+					cols: 11,
+					rows: 5,
+					w: 5,
+					h: 10,
+					rowGap: 0,
+					visibleCols: 2.2,
+					shape: '0,10 0,0 5,5'
+				};
+		}
+	};
 
-  const config = $derived(getAnimationConfig(pieceId));
-  const rowPitch = $derived(config.h + config.rowGap);
-  const viewW = $derived(config.visibleCols * config.w);
-  const viewH = $derived(config.rows * rowPitch);
-  const gridW = $derived(config.cols * config.w);
-  const gridH = $derived(config.rows * config.h);
+	const config = $derived(getAnimationConfig(pieceId));
+	const rowPitch = $derived(config.h + config.rowGap);
+	const viewW = $derived(config.visibleCols * config.w);
+	const viewH = $derived(config.rows * rowPitch);
+	const gridW = $derived(config.cols * config.w);
+	const gridH = $derived(config.rows * config.h);
 
-  // For animation 2 - directional movement
-  const directions = {
-    rightdown: { dx: 1, dy: 1 },
-    rightup: { dx: 1, dy: -1 },
-    leftup: { dx: -1, dy: -1 },
-    leftdown: { dx: -1, dy: 1 }
-  };
-  let currentDir = $state(directions.rightdown);
-  let tween = $state(null);
+	onMount(async () => {
+		const mod = await import('gsap');
+		gsap = mod.gsap;
 
-  // Helper function for animation 2 directional movement
-  function startTween(tiles, dir, speedFactor = 1, inertial = false) {
-    if (tween) tween.kill();
+		const svg = document.querySelector('svg');
+		const whole = document.querySelector('.whole');
+		const pieces = document.querySelectorAll('.piece');
+		const tiles = document.querySelectorAll('.tile');
+		const wrapper = document.getElementById('zoom-wrapper');
 
-    tween = gsap.to(tiles, {
-      x: `+=${dir.dx * config.cols * config.w * 0.5 * speedFactor}`,
-      y: `+=${dir.dy * config.rows * config.h * 0.5 * speedFactor}`,
-      duration: inertial
-        ? gsap.utils.clamp(2, 10, 8 / speedFactor)
-        : 40,
-      ease: inertial ? "power3.out" : "linear",
-      repeat: inertial ? 0 : -1,
-      yoyo: inertial ? false : true,
-      modifiers: {
-        x: gsap.utils.unitize(x => parseFloat(x) % (config.cols * config.w)),
-        y: gsap.utils.unitize(y => parseFloat(y) % (config.rows * config.h))
-      }
-    });
-  }
+		let zoomed = false;
 
-  onMount(async () => {
-    const mod = await import("gsap");
-    gsap = mod.gsap;
+		// Tap vs double tap : petit délai pour que le tap simple
+		// ne se déclenche pas aussi pendant un double tap.
+		// 180 ms : le minimum pour attraper un double clic sans que
+		// la latence du simple clic soit trop sensible.
+		let tapTimeout;
+		const addTapHandlers = (el, onTap, onDoubleTap) => {
+			el?.addEventListener('click', () => {
+				clearTimeout(tapTimeout);
+				tapTimeout = setTimeout(onTap, 180);
+			});
+			el?.addEventListener('dblclick', (e) => {
+				clearTimeout(tapTimeout);
+				onDoubleTap(e);
+			});
+		};
 
-    const svg = document.querySelector("svg");
-    const whole = document.querySelector(".whole");
-    const pieces = document.querySelectorAll(".piece");
-    const rowsEls = document.querySelectorAll(".row");
-    const tiles = document.querySelectorAll(".tile");
-    const wrapper = document.getElementById("zoom-wrapper");
+		// Animation logic based on piece ID
+		switch (pieceId) {
+			case '1': // Respiration — pulsation radiale depuis le centre
+				gsap.to(pieces, {
+					scale: 0.55,
+					transformOrigin: '50% 50%',
+					duration: 3,
+					ease: 'sine.inOut',
+					yoyo: true,
+					repeat: -1,
+					stagger: { each: 0.06, grid: [config.rows, config.cols], from: 'center' }
+				});
 
-    let zoomed = false;
+				addTapHandlers(
+					whole,
+					// Tap : onde de rotation depuis le centre — angle et sens différents à chaque tap
+					() => {
+						const angle = gsap.utils.random([-1, 1]) * gsap.utils.random(45, 200);
+						gsap.to(pieces, {
+							rotation: `+=${angle}`,
+							transformOrigin: '50% 50%',
+							duration: gsap.utils.random(0.8, 1.6),
+							ease: 'power2.inOut',
+							stagger: { each: 0.02, grid: [config.rows, config.cols], from: 'center' }
+						});
+					},
+					// Double tap : zoom + rotation d'ensemble dans le même mouvement —
+					// angle et sens tirés au sort, retour à plat au dézoom
+					() => {
+						gsap.to(svg, {
+							scale: zoomed ? 1 : 2,
+							rotation: zoomed ? 0 : gsap.utils.random([-1, 1]) * gsap.utils.random(60, 180),
+							transformOrigin: '50% 50%',
+							duration: 1.2,
+							ease: 'power2.inOut'
+						});
+						zoomed = !zoomed;
+					}
+				);
+				break;
 
-    // Animation logic based on piece ID
-    switch(pieceId) {
-      case '1': // Individual piece rotation
-        pieces.forEach((polygon) => {
-          gsap.to(polygon, {
-            rotation: "+=360",
-            transformOrigin: "50% 50%",
-            duration: 210,
-            repeat: -1,
-            ease: "linear"
-          });
-       });
+			case '2': // Éclosion (variante) — les triangles s'écartent doucement puis se recomposent
+				gsap.to(pieces, {
+					x: () => `+=${gsap.utils.random(-config.w * 0.4, config.w * 0.4)}`,
+					y: () => `+=${gsap.utils.random(-config.h * 0.4, config.h * 0.4)}`,
+					rotation: () => `+=${gsap.utils.random(-120, 120)}`,
+					transformOrigin: '50% 50%',
+					duration: 3,
+					ease: 'sine.inOut',
+					yoyo: true,
+					repeat: -1,
+					repeatRefresh: true,
+					repeatDelay: 0.5,
+					stagger: { each: 0.015, from: 'random' }
+				});
 
-        // Double click interaction
-        whole?.addEventListener("dblclick", () => {
-          const randomRotation = gsap.utils.random(-120, 180);
-          gsap.to(svg, {
-            scale: zoomed ? 1 : 2.1,
-            rotation: `+=${randomRotation}`,
-            transformOrigin: "40% 55%",
-            duration: 1.2,
-            ease: "power2.inOut",
-          });
-          zoomed = !zoomed;
-        });
+				addTapHandlers(
+					whole,
+					// Tap : frisson — contraction rapide des pièces
+					() => {
+						gsap.fromTo(
+							pieces,
+							{ scale: 1 },
+							{
+								scale: 0.4,
+								transformOrigin: '50% 50%',
+								duration: 0.3,
+								ease: 'power2.out',
+								yoyo: true,
+								repeat: 1,
+								overwrite: 'auto',
+								stagger: { each: 0.003, from: 'random' }
+							}
+						);
+					},
+					// Double tap : zoom sur le point touché
+					(e) => {
+						const pt = svg.createSVGPoint();
+						pt.x = e.clientX;
+						pt.y = e.clientY;
+						const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
 
-        // Click interactions
-        pieces.forEach(piece => {
-          piece.addEventListener("click", () => {
-            const dir = Math.random() < 0.5 ? -20 : 20;
-            const diro = Math.random() < 0.5 ? -10 : 10;
-            gsap.to(piece, {
-              x: `+=${dir}`,
-              y: `+=${diro}`,
-              // rotate: 360,
-              duration: 3,
-              transformOrigin: "40% 55%",
-              ease: "power2.inOut",
-              yoyo: true,
-              repeat: 1,
-            });
-          });
-        });
-        break;
+						gsap.to(wrapper, {
+							scale: zoomed ? 1 : 2,
+							svgOrigin: `${svgP.x} ${svgP.y}`,
+							duration: 1.2,
+							ease: 'power2.inOut'
+						});
+						zoomed = !zoomed;
+					}
+				);
+				break;
 
-      case '2': // Directional tiles movement with swipe
-        if (tiles.length > 0) {
-          startTween(tiles, currentDir, 1, false);
-        }
+			case '3': // Algues — balancement organique porté par le courant
+				const sway = gsap.fromTo(
+					pieces,
+					{ rotation: -7 },
+					{
+						rotation: 7,
+						transformOrigin: '50% 100%',
+						duration: 6.5,
+						ease: 'sine.inOut',
+						yoyo: true,
+						repeat: -1,
+						stagger: { each: 0.12, grid: [config.rows, config.cols], from: 'start' }
+					}
+				);
 
-        // Swipe detection
-        let startX = 0, startY = 0, startTime = 0;
-        whole?.addEventListener("touchstart", (e) => {
-          const touch = e.changedTouches[0];
-          startX = touch.clientX;
-          startY = touch.clientY;
-          startTime = Date.now();
-        });
+				// Glissement — en plus du balancement, chaque algue dérive lentement
+				// autour de sa place, portée par le courant
+				gsap.to(pieces, {
+					x: () => `+=${gsap.utils.random(-config.w * 0.4, config.w * 0.4)}`,
+					y: () => `+=${gsap.utils.random(-config.h * 0.12, config.h * 0.12)}`,
+					duration: () => gsap.utils.random(9, 14),
+					ease: 'sine.inOut',
+					yoyo: true,
+					repeat: -1,
+					repeatRefresh: true,
+					stagger: { each: 0.04, grid: [config.rows, config.cols], from: 'start' }
+				});
 
-        whole?.addEventListener("touchend", (e) => {
-          const touch = e.changedTouches[0];
-          const dx = touch.clientX - startX;
-          const dy = touch.clientY - startY;
-          const dt = Date.now() - startTime;
+				// Travelling latéral — la fenêtre ne montre que ~2 colonnes sur 11 :
+				// toute la nappe dérive lentement pour faire défiler les autres, puis revient
+				gsap.to(document.querySelectorAll('.row'), {
+					x: -(gridW - viewW),
+					duration: 80,
+					ease: 'sine.inOut',
+					yoyo: true,
+					repeat: -1
+				});
 
-          if (Math.abs(dx) < 30 && Math.abs(dy) < 30) return;
+				addTapHandlers(
+					whole,
+					// Tap : bourrasque — un coup de courant traverse la nappe dans un sens
+					// tiré au sort. Chaque algue se couche avec sa propre amplitude et son
+					// propre tempo, puis revient toujours à la verticale (pas de skew
+					// résiduel même en cliquant en rafale), pendant que le balancement
+					// s'emballe et se calme
+					() => {
+						const dir = gsap.utils.random([-1, 1]);
+						gsap.fromTo(
+							sway,
+							{ timeScale: 2 },
+							{ timeScale: 1, duration: 3, ease: 'power2.out', overwrite: 'auto' }
+						);
+						gsap.to(pieces, {
+							keyframes: [
+								{
+									skewX: () => dir * gsap.utils.random(12, 32),
+									duration: 0.7,
+									ease: 'sine.out'
+								},
+								{
+									skewX: 0,
+									duration: () => gsap.utils.random(0.9, 1.6),
+									ease: 'sine.inOut'
+								}
+							],
+							transformOrigin: '50% 100%',
+							overwrite: 'auto',
+							stagger: {
+								each: 0.018,
+								grid: [config.rows, config.cols],
+								from: dir === 1 ? 'start' : 'end'
+							}
+						});
+					},
+					// Double tap : plongée inclinée dans les algues
+					() => {
+						gsap.to(svg, {
+							scale: zoomed ? 1 : 2.6,
+							rotation: zoomed ? 0 : 12,
+							transformOrigin: '50% 50%',
+							duration: 1.2,
+							ease: 'power2.inOut'
+						});
+						zoomed = !zoomed;
+					}
+				);
+				break;
 
-          const horiz = dx > 0 ? "right" : "left";
-          const vert = dy > 0 ? "down" : "up";
-          const key = horiz + vert;
+			case '4': // Engrenages — rotation lente du plateau, contre-rotation des pièces
+				const plateau = gsap.to(svg, {
+					rotation: 360,
+					transformOrigin: '50% 50%',
+					duration: 240,
+					ease: 'none',
+					repeat: -1
+				});
 
-          if (directions[key]) {
-            currentDir = directions[key];
-            const dist = Math.sqrt(dx*dx + dy*dy);
-            const speed = dist / dt;
-            const speedFactor = gsap.utils.clamp(0.5, 3, speed * 0.5);
-            startTween(tiles, currentDir, speedFactor, true);
-          }
-        });
+				const gears = gsap.to(pieces, {
+					rotation: -360,
+					transformOrigin: '50% 50%',
+					duration: 24,
+					ease: 'none',
+					repeat: -1
+				});
 
-        // Click interactions
-        let clickTimeout;
-        whole?.addEventListener("click", () => {
-          clearTimeout(clickTimeout);
-          clickTimeout = setTimeout(() => {
-            gsap.to(pieces, {
-              rotation: "+=45",
-              transformOrigin: "50% 50%",
-              duration: 0.4,
-              ease: "power2.inOut"
-            });
-          }, 250);
-        });
+				addTapHandlers(
+					whole,
+					// Tap : les engrenages s'emballent puis reprennent leur rythme
+					() => {
+						gsap.fromTo(
+							gears,
+							{ timeScale: 6 },
+							{ timeScale: 1, duration: 3, ease: 'power3.out', overwrite: 'auto' }
+						);
+					},
+					// Double tap : zoom au centre, le plateau ralentit tant qu'on est zoomé
+					() => {
+						gsap.to(wrapper, {
+							scale: zoomed ? 1 : 3,
+							transformOrigin: '50% 50%',
+							duration: 1.2,
+							ease: 'power2.inOut'
+						});
+						gsap.to(plateau, {
+							timeScale: zoomed ? 1 : 0.15,
+							duration: 1.2,
+							ease: 'power2.inOut'
+						});
+						zoomed = !zoomed;
+					}
+				);
+				break;
 
-        whole?.addEventListener("dblclick", () => {
-          clearTimeout(clickTimeout);
-          const randomRotation = gsap.utils.random(-120, 10);
-          gsap.to(pieces, {
-            scale: zoomed ? 1 : 1.2,
-            rotation: `+=${randomRotation}`,
-            transformOrigin: "50% 50%",
-            duration: 0.6,
-            ease: "power2.inOut"
-          });
-          zoomed = !zoomed;
-        });
-        break;
+			case '5': // Éclosion — le motif se disperse doucement puis se recompose
+				gsap.to(pieces, {
+					x: () => `+=${gsap.utils.random(-config.w * 0.5, config.w * 0.5)}`,
+					y: () => `+=${gsap.utils.random(-config.h * 0.5, config.h * 0.5)}`,
+					rotation: () => `+=${gsap.utils.random(-150, 150)}`,
+					transformOrigin: '50% 50%',
+					duration: 3.5,
+					ease: 'sine.inOut',
+					yoyo: true,
+					repeat: -1,
+					repeatRefresh: true,
+					repeatDelay: 0.6,
+					stagger: { each: 0.012, from: 'random' }
+				});
 
-      case '3': // Row-based triangular wave movement
-        const cycleDuration = 60;
-        gsap.ticker.add(() => {
-          const now = performance.now() / 1000;
-          const cycle = now % cycleDuration;
-          const t = cycle / cycleDuration;
+				addTapHandlers(
+					whole,
+					// Tap : frisson — contraction rapide des pièces
+					() => {
+						gsap.fromTo(
+							pieces,
+							{ scale: 1 },
+							{
+								scale: 0.4,
+								transformOrigin: '50% 50%',
+								duration: 0.3,
+								ease: 'power2.out',
+								yoyo: true,
+								repeat: 1,
+								overwrite: 'auto',
+								stagger: { each: 0.003, from: 'random' }
+							}
+						);
+					},
+					// Double tap : zoom sur le point touché
+					(e) => {
+						const pt = svg.createSVGPoint();
+						pt.x = e.clientX;
+						pt.y = e.clientY;
+						const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
 
-          let progress;
-          if (t < 0.5) {
-            progress = (t / 0.5) * 0.7;
-          } else {
-            progress = 0.7 * (1 - (t - 0.5) / 0.5);
-          }
+						gsap.to(wrapper, {
+							scale: zoomed ? 1 : 2,
+							svgOrigin: `${svgP.x} ${svgP.y}`,
+							duration: 1.2,
+							ease: 'power2.inOut'
+						});
+						zoomed = !zoomed;
+					}
+				);
+				break;
 
-          rowsEls.forEach((row, i) => {
-            const dir = i % 2 === 0 ? 1 : -1;
-            const x = (dir === -1 ? progress : 0.7 - progress) * (viewW - config.cols * config.w);
-            row.setAttribute("transform", `translate(${x}, ${i * config.h})`);
-          });
-        });
+			case '6': // Mosaïque — retournements en damier, effet de persiennes
+				const evens = Array.from(pieces).filter((_, i) => i % 2 === 0);
+				const odds = Array.from(pieces).filter((_, i) => i % 2 === 1);
 
-        // Interactions
-        whole?.addEventListener("dblclick", () => {
-          const randomRotation = gsap.utils.random(-120, 200);
-          gsap.to(svg, {
-            scale: zoomed ? 1 : 0.7,
-            rotation: `+=${randomRotation}`,
-            transformOrigin: "50% 50%",
-            duration: 1.2,
-            ease: "power2.inOut"
-          });
-          zoomed = !zoomed;
-        });
+				// Retournements décalés pièce par pièce (stagger) : jamais toute une
+				// moitié du damier à plat au même instant — moins de clignotement
+				const flipEvens = gsap.to(evens, {
+					scaleY: -1,
+					transformOrigin: '50% 50%',
+					duration: 1.2,
+					ease: 'power2.inOut',
+					yoyo: true,
+					repeat: -1,
+					repeatDelay: 1.1,
+					stagger: { each: 0.03, from: 'start' }
+				});
+				const flipOdds = gsap.to(odds, {
+					scaleY: -1,
+					transformOrigin: '50% 50%',
+					duration: 1.2,
+					ease: 'power2.inOut',
+					yoyo: true,
+					repeat: -1,
+					repeatDelay: 1.1,
+					delay: 0.85,
+					stagger: { each: 0.03, from: 'start' }
+				});
 
-        pieces.forEach((polygon) => {
-          const rotateTween = gsap.to(polygon, {
-            rotation: "+=360",
-            transformOrigin: "50% 50%",
-            duration: 2,
-            ease: "linear",
-            repeat: -1,
-            paused: true
-          });
+				addTapHandlers(
+					whole,
+					// Tap : vague de rotation depuis les bords — les persiennes se calment
+					// le temps de la vague pour éviter l'effet stroboscopique
+					() => {
+						[flipEvens, flipOdds].forEach((flip) => {
+							gsap.fromTo(
+								flip,
+								{ timeScale: 0.35 },
+								{ timeScale: 1, duration: 2, ease: 'power2.in', overwrite: 'auto' }
+							);
+						});
+						gsap.to(pieces, {
+							rotation: '+=90',
+							transformOrigin: '50% 50%',
+							duration: 0.8,
+							ease: 'back.inOut(1.4)',
+							stagger: { each: 0.01, grid: [config.rows, config.cols], from: 'edges' }
+						});
+					},
+					// Double tap : recul pour voir toute la nappe
+					() => {
+						gsap.to(wrapper, {
+							scale: zoomed ? 1 : 0.5,
+							transformOrigin: '50% 50%',
+							duration: 1.2,
+							ease: 'power2.inOut'
+						});
+						zoomed = !zoomed;
+					}
+				);
+				break;
 
-          polygon.addEventListener("mousedown", () => rotateTween.play());
-          polygon.addEventListener("mouseup", () => rotateTween.pause());
-          polygon.addEventListener("mouseleave", () => rotateTween.pause());
-          polygon.addEventListener("touchstart", () => rotateTween.play());
-          polygon.addEventListener("touchend", () => rotateTween.pause());
-          polygon.addEventListener("touchcancel", () => rotateTween.pause());
-        });
-        break;
+			case '7': // Spirale — rotations en phase décalée depuis le centre, moiré hypnotique
+				gsap.to(pieces, {
+					rotation: '+=360',
+					transformOrigin: '50% 50%',
+					duration: 12,
+					ease: 'none',
+					repeat: -1,
+					stagger: { each: 0.1, grid: [config.rows, config.cols], from: 'center' }
+				});
 
-      case '4': // SVG rotation + zoom
-        const svgRotation = gsap.to(svg, {
-          rotation: 360,
-          transformOrigin: "50% 50%",
-          duration: 120,
-          ease: "linear",
-          repeat: -1
-        });
+				addTapHandlers(
+					whole,
+					// Tap : pulsation radiale qui traverse la spirale
+					() => {
+						gsap.fromTo(
+							pieces,
+							{ scale: 1 },
+							{
+								scale: 0.5,
+								transformOrigin: '50% 50%',
+								duration: 0.4,
+								ease: 'sine.inOut',
+								yoyo: true,
+								repeat: 1,
+								overwrite: 'auto',
+								stagger: { each: 0.015, grid: [config.rows, config.cols], from: 'center' }
+							}
+						);
+					},
+					// Double tap : zoom sur le point touché
+					(e) => {
+						const pt = svg.createSVGPoint();
+						pt.x = e.clientX;
+						pt.y = e.clientY;
+						const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
 
-        svg?.addEventListener("dblclick", (e) => {
-          const pt = svg.createSVGPoint();
-          pt.x = e.clientX;
-          pt.y = e.clientY;
-          const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
+						gsap.to(wrapper, {
+							scale: zoomed ? 1 : 2.5,
+							svgOrigin: `${svgP.x} ${svgP.y}`,
+							duration: 1.2,
+							ease: 'power2.inOut'
+						});
+						zoomed = !zoomed;
+					}
+				);
+				break;
 
-          gsap.to(wrapper, {
-            scale: zoomed ? 1 : 4,
-            svgOrigin: `${svgP.x} ${svgP.y}`,
-            duration: 1.2,
-            ease: "power2.inOut"
-          });
-          zoomed = !zoomed;
-        });
+			default:
+				// Repli : rotation lente de l'ensemble
+				gsap.to(pieces, {
+					rotation: '+=360',
+					transformOrigin: '50% 50%',
+					duration: 180,
+					ease: 'none',
+					repeat: -1
+				});
+		}
 
-        whole?.addEventListener("click", () => {
-          gsap.to(pieces, {
-            rotation: () => `+=${gsap.utils.random(-360, 360)}`,
-            transformOrigin: "50% 50%",
-            duration: 2,
-            ease: "power2.inOut"
-          });
-        });
-        break;
+		// --- Import scroll freeze utility ---
+		const { freezeScroll, unfreezeScroll } = await import('$lib/utils/scrollFreeze.js');
 
-      case '5': // Scale + rotation with yoyo
-        gsap.to(svg, {
-          scale: -1.5,
-          rotate: 100,
-          transformOrigin: "50% 50%",
-          duration: 120,
-          yoyo: true,
-          ease: "linear",
-          repeat: -1
-        });
+		// Freeze scroll on mobile
+		freezeScroll();
 
-        svg?.addEventListener("dblclick", (e) => {
-          const pt = svg.createSVGPoint();
-          pt.x = e.clientX;
-          pt.y = e.clientY;
-          const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
-
-          gsap.to(wrapper, {
-            scale: zoomed ? 1 : 2,
-            rotate: zoomed ? -120 : 120,
-            svgOrigin: `${svgP.x} ${svgP.y}`,
-            duration: 1.2,
-            ease: "power2.inOut"
-          });
-          zoomed = !zoomed;
-        });
-
-        whole?.addEventListener("click", () => {
-          gsap.to(pieces, {
-            rotate: 30,
-            y: () => `+=${gsap.utils.random(-10, 10)}`,
-            x: () => `+=${gsap.utils.random(-10, 10)}`,
-            transformOrigin: "50% 50%",
-            duration: 2,
-            ease: "power2.inOut"
-          });
-        });
-        break;
-
-      case '6': // Horizontal movement
-        gsap.to(svg, {
-          x: 100,
-          transformOrigin: "50% 50%",
-          duration: 10,
-          yoyo: true,
-          ease: "linear",
-          repeat: -1
-        });
-
-        svg?.addEventListener("dblclick", (e) => {
-          const pt = svg.createSVGPoint();
-          pt.x = e.clientX;
-          pt.y = e.clientY;
-          const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
-
-          gsap.to(wrapper, {
-            scale: zoomed ? 1 : 0.5,
-            svgOrigin: `${svgP.x} ${svgP.y}`,
-            duration: 1.2,
-            ease: "power2.inOut"
-          });
-          zoomed = !zoomed;
-        });
-
-        whole?.addEventListener("click", () => {
-          gsap.to(pieces, {
-            rotation: () => `+=${gsap.utils.random(-180, 120)}`,
-            scale: () => `+${gsap.utils.random(1.5, 0.7)}`,
-            transformOrigin: "50% 50%",
-            duration: 2,
-            ease: "power2.inOut"
-          });
-        });
-        break;
-
-      case '7': // Random individual rotations
-        gsap.to(pieces, {
-          rotation: () => `+=${gsap.utils.random(-360, 360)}`,
-          transformOrigin: "50% 50%",
-          duration: 140,
-          ease: "linear",
-          repeat: -1
-        });
-
-        svg?.addEventListener("dblclick", (e) => {
-          const pt = svg.createSVGPoint();
-          pt.x = e.clientX;
-          pt.y = e.clientY;
-          const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
-
-          gsap.to(wrapper, {
-            rotation: () => `+=${gsap.utils.random(-180, 90)}`,
-            svgOrigin: `${svgP.x} ${svgP.y}`,
-            duration: 1.2,
-            ease: "power2.inOut"
-          });
-          zoomed = !zoomed;
-        });
-
-        whole?.addEventListener("click", () => {
-          gsap.to(svg, {
-            scale: () => `+${gsap.utils.random(0.8, 1.5)}`,
-            transformOrigin: "50% 50%",
-            duration: 2,
-            ease: "power2.inOut"
-          });
-        });
-        break;
-
-      default:
-        // Fallback to animation 3 behavior
-        const defaultCycleDuration = 60;
-        gsap.ticker.add(() => {
-          const now = performance.now() / 1000;
-          const cycle = now % defaultCycleDuration;
-          const t = cycle / defaultCycleDuration;
-
-          let progress;
-          if (t < 0.5) {
-            progress = (t / 0.5) * 0.7;
-          } else {
-            progress = 0.7 * (1 - (t - 0.5) / 0.5);
-          }
-
-          rowsEls.forEach((row, i) => {
-            const dir = i % 2 === 0 ? 1 : -1;
-            const x = (dir === -1 ? progress : 0.7 - progress) * (viewW - config.cols * config.w);
-            row.setAttribute("transform", `translate(${x}, ${i * config.h})`);
-          });
-        });
-    }
-
-    // --- Import scroll freeze utility ---
-    const { freezeScroll, unfreezeScroll } = await import('$lib/utils/scrollFreeze.js');
-
-    // Freeze scroll on mobile
-    freezeScroll();
-
-    // --- Cleanup quand le composant est démonté ---
-    return () => {
-      unfreezeScroll();
-      if (tween) tween.kill();
-      gsap.globalTimeline.clear();
-      gsap.ticker.remove();
-    };
-  });
+		// --- Cleanup quand le composant est démonté ---
+		return () => {
+			unfreezeScroll();
+			gsap.globalTimeline.clear();
+		};
+	});
 </script>
 
-<style>
-  polygon {
-    will-change: transform;
-  }
-  .row, .whole {
-    will-change: transform;
-  }
-</style>
-
 {#if currentPiece}
+	<div class="absolute z-1 h-svh w-screen">
+		<div class="whole absolute z-1 h-svh w-screen">
+			{#if pieceId === '2' || pieceId === '4' || pieceId === '5' || pieceId === '6' || pieceId === '7'}
+				<!-- Animations 2,4,5,6,7: Have zoom wrapper -->
+				<svg
+					overflow="visible"
+					viewBox={`${-viewW / 2} ${-viewH / 2} ${viewW} ${viewH}`}
+					width="100%"
+					height="100%"
+					preserveAspectRatio="xMidYMid slice"
+				>
+					<g id="zoom-wrapper" transform={`translate(${-gridW / 2}, ${-gridH / 2})`}>
+						{#each Array(config.rows) as _, r}
+							<g class="row" transform={`translate(0, ${r * config.h})`}>
+								{#each Array(config.cols) as _, c}
+									<polygon
+										fill={currentPiece.color}
+										class="piece"
+										points={config.shape}
+										transform={`translate(${c * config.w}, 0)`}
+									/>
+								{/each}
+							</g>
+						{/each}
+					</g>
+				</svg>
+			{:else if pieceId === '1'}
+				<svg
+					overflow="visible"
+					viewBox={`0 0 ${viewW} ${viewH}`}
+					width="100%"
+					height="100%"
+					preserveAspectRatio="xMidYMid slice"
+				>
+					<g transform={`translate(${(viewW - gridW) / 2}, ${(viewH - gridH) / 2})`}>
+						{#each Array(config.rows) as _, r}
+							<g class="row" transform={`translate(0, ${r * rowPitch})`}>
+								{#each Array(config.cols) as _, c}
+									<polygon
+										fill={currentPiece.color}
+										class="piece"
+										points={config.shape}
+										transform={`translate(${c * config.w}, 0)`}
+									/>
+								{/each}
+							</g>
+						{/each}
+					</g>
+				</svg>
+			{:else}
+				<!-- Animations 1,3: Basic row structure -->
+				<svg
+					overflow="visible"
+					viewBox={`0 0 ${viewW} ${viewH}`}
+					width="100%"
+					height="100%"
+					preserveAspectRatio="xMidYMid slice"
+				>
+					{#each Array(config.rows) as _, r}
+						<g class="row" transform={`translate(0, ${r * rowPitch})`}>
+							{#each Array(config.cols) as _, c}
+								<polygon
+									fill={currentPiece.color}
+									class="piece"
+									points={config.shape}
+									transform={`translate(${c * config.w}, 0)`}
+								/>
+							{/each}
+						</g>
+					{/each}
+				</svg>
+			{/if}
+		</div>
+	</div>
 
-<div class="h-svh absolute w-screen z-1">
-  <div class="whole h-svh absolute w-screen z-1">
-    {#if pieceId === '2'}
-      <!-- Animation 2: Directional tiles -->
-      <svg
-        viewBox={`${(config.cols * config.w - viewW) / 2} ${(config.rows * config.h - viewH) / 2} ${viewW} ${viewH}`}
-        width="100%"
-        height="100%"
-        preserveAspectRatio="xMidYMid slice"
-      >
-        {#each [-1,0,1] as rr}
-          {#each [-1,0,1] as cc}
-            <g class="tile" transform={`translate(${cc * config.cols * config.w}, ${rr * config.rows * config.h})`}>
-              {#each Array(config.rows) as _, r}
-                <g transform={`translate(0, ${r * config.h})`}>
-                  {#each Array(config.cols) as _, c}
-                    <polygon
-                      fill={currentPiece.color}
-                      class="piece"
-                      points={config.shape}
-                      transform={`translate(${c * config.w}, 0)`}
-                    />
-                  {/each}
-                </g>
-              {/each}
-            </g>
-          {/each}
-        {/each}
-      </svg>
-    {:else if pieceId === '4' || pieceId === '5' || pieceId === '6' || pieceId === '7'}
-      <!-- Animations 4,5,6,7: Have zoom wrapper -->
-      <svg
-        overflow="visible"
-        viewBox={`${-viewW / 2} ${-viewH / 2} ${viewW} ${viewH}`}
-        width="100%"
-        height="100%"
-        preserveAspectRatio="xMidYMid slice"
-      >
-        <g id="zoom-wrapper" transform={`translate(${-gridW / 2}, ${-gridH / 2})`}>
-          {#each Array(config.rows) as _, r}
-            <g class="row" transform={`translate(0, ${r * config.h})`}>
-              {#each Array(config.cols) as _, c}
-                <polygon
-                  fill={currentPiece.color}
-                  class="piece"
-                  points={config.shape}
-                  transform={`translate(${c * config.w}, 0)`}
-                />
-              {/each}
-            </g>
-          {/each}
-        </g>
-      </svg>
-    {:else if pieceId === '1'}
-      <svg
-        overflow="visible"
-        viewBox={`0 0 ${viewW} ${viewH}`}
-        width="100%"
-        height="100%"
-        preserveAspectRatio="xMidYMid slice"
-      >
-        <g transform={`translate(${(viewW - gridW) / 2}, ${(viewH - gridH) / 2})`}>
-          {#each Array(config.rows) as _, r}
-            <g class="row" transform={`translate(0, ${r * rowPitch})`}>
-              {#each Array(config.cols) as _, c}
-                <polygon
-                  fill={currentPiece.color}
-                  class="piece"
-                  points={config.shape}
-                  transform={`translate(${c * config.w}, 0)`}
-                />
-              {/each}
-            </g>
-          {/each}
-        </g>
-      </svg>
-    {:else}
-      <!-- Animations 1,3: Basic row structure -->
-      <svg
-        overflow="visible"
-        viewBox={`0 0 ${viewW} ${viewH}`}
-        width="100%"
-        height="100%"
-        preserveAspectRatio="xMidYMid slice"
-      >
-        {#each Array(config.rows) as _, r}
-          <g class="row" transform={`translate(0, ${r * rowPitch})`}>
-            {#each Array(config.cols) as _, c}
-              <polygon
-                fill={currentPiece.color}
-                class="piece"
-                points={config.shape}
-                transform={`translate(${c * config.w}, 0)`}
-              />
-            {/each}
-          </g>
-        {/each}
-      </svg>
-    {/if}
-  </div>
-</div>
+	<div
+		class="no-select pointer-events-none relative z-2 flex min-h-svh flex-col items-center justify-between py-[50px] text-center"
+	>
+		<div
+			class="pointer-events-none max-w-4/5 border border-black bg-white px-[50px] py-[20px] text-center drop-shadow"
+		>
+			Bravo tu as découvert
+			<div class="text-titre-alt inf-bold my-5 uppercase">
+				{currentPiece.color_name}
+			</div>
+			Retrouve l’œuvre choisie par Armelle<br />qui correspond à cette couleur.
+			<!-- À quelle œuvre penses-tu que<br/>cette couleur appartient ? -->
+		</div>
 
-<div class="no-select relative z-2 flex flex-col py-[70px] items-center justify-between min-h-svh text-center pointer-events-none">
-  <div class="py-[20px] px-[50px] max-w-4/5 text-center bg-white border border-black drop-shadow pointer-events-none">
-    Bravo tu as découvert
-    <div class="text-titre-alt inf-bold my-5 uppercase">
-     {currentPiece.color_name}
-    </div>
-    Retrouve l’œuvre choisie par Armelle<br/>qui correspond à cette couleur.
-     <!-- À quelle œuvre penses-tu que<br/>cette couleur appartient ? -->
-  </div>
-
-  <button
-    class="pointer-events-auto text-titre-alt inf-bold uppercase py-[25px] px-[30px] max-w-4/5 text-center height-auto whitespace-pre-line bg-white border border-black drop-shadow-[var(--my-drop-shadow)]"
-    onclick={() => handleCC(pieceId)}
-    tabindex="0"
-    onkeydown={(e) => e.key === 'Enter' && handleCC(pieceId)}
-  >
-      VERIFIE TON HYPOTHÈSE<br/>EN APPUYANT ICI
-  </button>
-</div>
+		<button
+			class="text-titre-alt inf-bold height-auto pointer-events-auto max-w-4/5 border border-black bg-white px-[30px] py-[25px] text-center whitespace-pre-line uppercase drop-shadow-[var(--my-drop-shadow)]"
+			onclick={() => handleCC(pieceId)}
+			tabindex="0"
+			onkeydown={(e) => e.key === 'Enter' && handleCC(pieceId)}
+		>
+			VERIFIE TON HYPOTHÈSE<br />EN APPUYANT ICI
+		</button>
+	</div>
 {:else}
-<div class="flex items-center justify-center min-h-svh">
-  <div class="text-center">
-    <h1 class="text-2xl font-bold mb-4">Pièce non trouvée</h1>
-    <p>La pièce {pieceId} n'existe pas.</p>
-    <button onclick={() => goto('/start')} class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
-      Retour au début
-    </button>
-  </div>
-</div>
+	<div class="flex min-h-svh items-center justify-center">
+		<div class="text-center">
+			<h1 class="mb-4 text-2xl font-bold">Pièce non trouvée</h1>
+			<p>La pièce {pieceId} n'existe pas.</p>
+			<button onclick={() => goto('/start')} class="mt-4 rounded bg-blue-500 px-4 py-2 text-white">
+				Retour au début
+			</button>
+		</div>
+	</div>
 {/if}
+
+<style>
+	polygon {
+		will-change: transform;
+	}
+	.row,
+	.whole {
+		will-change: transform;
+	}
+</style>

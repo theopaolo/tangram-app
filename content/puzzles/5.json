@@ -1,0 +1,62 @@
+{
+  "id": 5,
+  "name": "Nouveau Puzzle 3",
+  "description": "Un troisième nouveau puzzle créatif",
+  "completed": false,
+  "scale": 0.75,
+  "container": {
+    "width": 400,
+    "height": 600
+  },
+  "pieces": [
+    {
+      "id": 1,
+      "rotation": 225,
+      "flipped": false,
+      "x": 153,
+      "y": 164
+    },
+    {
+      "id": 2,
+      "rotation": 225,
+      "flipped": false,
+      "x": 248,
+      "y": 164
+    },
+    {
+      "id": 3,
+      "rotation": 315,
+      "flipped": false,
+      "x": 318,
+      "y": 526
+    },
+    {
+      "id": 4,
+      "rotation": 90,
+      "flipped": false,
+      "x": 195,
+      "y": 50
+    },
+    {
+      "id": 5,
+      "rotation": 135,
+      "flipped": false,
+      "x": 247,
+      "y": 398
+    },
+    {
+      "id": 6,
+      "rotation": 315,
+      "flipped": false,
+      "x": 37,
+      "y": 462
+    },
+    {
+      "id": 7,
+      "rotation": 0,
+      "flipped": false,
+      "x": 133,
+      "y": 370
+    }
+  ]
+}

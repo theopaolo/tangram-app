@@ -1,0 +1,62 @@
+{
+  "id": 2,
+  "name": "Le Cygne",
+  "description": "Un cygne élégant",
+  "completed": false,
+  "scale": 0.75,
+  "container": {
+    "width": 400,
+    "height": 600
+  },
+  "pieces": [
+    {
+      "id": 1,
+      "rotation": 180,
+      "flipped": false,
+      "x": 267,
+      "y": 395
+    },
+    {
+      "id": 2,
+      "rotation": 90,
+      "flipped": false,
+      "x": 132,
+      "y": 395
+    },
+    {
+      "id": 3,
+      "rotation": 315,
+      "flipped": false,
+      "x": 265,
+      "y": 535
+    },
+    {
+      "id": 4,
+      "rotation": 45,
+      "flipped": false,
+      "x": 140,
+      "y": 185
+    },
+    {
+      "id": 5,
+      "rotation": 45,
+      "flipped": false,
+      "x": 93,
+      "y": 280
+    },
+    {
+      "id": 6,
+      "rotation": 135,
+      "flipped": false,
+      "x": 110,
+      "y": 534
+    },
+    {
+      "id": 7,
+      "rotation": 225,
+      "flipped": false,
+      "x": 93,
+      "y": 138
+    }
+  ]
+}
